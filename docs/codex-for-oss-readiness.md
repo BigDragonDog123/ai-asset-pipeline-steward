@@ -14,7 +14,7 @@ Verified from OpenAI's Codex for Open Source pages:
 - Applicants must describe whether they are a primary or core maintainer.
 - Applicants must explain why the repository qualifies, using signals such as stars, downloads, ecosystem importance, usage, or active maintenance.
 - Selected maintainers may receive six months of ChatGPT Pro with Codex, API credits, and conditional Codex Security access.
-- Applications are reviewed on a rolling basis; selection is not guaranteed.
+- Applications are reviewed on a rolling basis; no fixed public deadline was observed on 2026-06-02, and selection is not guaranteed.
 
 Sources:
 
@@ -51,7 +51,7 @@ Source:
 | Application packet | Pass | `docs/codex-for-oss-application.json` and `asset-pipeline-steward application .` render draft form fields and check answer length limits. |
 | Final submission gate | Early | `asset-pipeline-steward submission-ready .` blocks final submission until external feedback is recorded and personal form fields are confirmed for manual entry. |
 | Public repository | Pass | `https://github.com/BigDragonDog123/ai-asset-pipeline-steward` is public. |
-| GitHub connector authorization | Partial | Codex can fetch the repository by explicit full name, but GitHub App installation listing still reports no visible installations. |
+| GitHub connector authorization | Pass | Codex can fetch the repository by explicit full name and reports admin, maintain, push, triage, and pull permissions. |
 | Public adoption | Early | Public evidence includes a release, CI, starter issues, usage examples, and Dependabot PRs. Stars, forks, downloads, and external feedback are still at early-stage values. |
 | Maintainer activity evidence | Early | The repo now has commits, public CI, release, issues, changelog, roadmap, and evidence tracking; it still needs public feedback or third-party usage. |
 
@@ -72,6 +72,7 @@ Unknown:
 - The exact selection threshold.
 - Whether this repository will be considered ecosystem-important without external adoption.
 - Whether skill-focused repos alone are favored unless tied to a widely used project.
+- Whether the rolling program will change or close before the repository reaches stronger adoption evidence.
 
 ## Next Milestones
 

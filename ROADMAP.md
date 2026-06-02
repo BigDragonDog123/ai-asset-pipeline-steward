@@ -4,7 +4,7 @@ This roadmap is organized around public maintainer evidence. Each milestone shou
 
 ## Milestone 1: Public Scaffold
 
-Status: complete locally.
+Status: complete.
 
 - README, license, contributing guide, security policy, code of conduct.
 - Repo-scoped Codex skill.
@@ -26,7 +26,7 @@ Status: complete locally.
 
 ## Milestone 2: First Public Release
 
-Status: next.
+Status: complete.
 
 - Push the repository to GitHub.
 - Open 3 to 5 roadmap issues.
@@ -36,25 +36,28 @@ Status: next.
 
 ## Milestone 3: Useful Maintainer Workflows
 
-Status: planned.
+Status: in progress.
 
 - Add more manifest examples for handoff-heavy workflows.
-- Expand the public-safe extraction tutorial with screenshots or rendered examples.
+- Expand the public-safe extraction tutorial with rendered examples.
 - Add richer validation rules for handoff completeness and resume safety.
 - Extend the report command with richer maintainer handoff sections.
+- Keep the end-to-end maintainer-loop walkthrough current as feedback arrives.
 
 ## Milestone 4: Adoption Evidence
 
-Status: planned.
+Status: active.
 
 - Ask for feedback from AI workflow builders and open-source maintainers.
 - Track real feature requests and bug reports.
 - Add integrations or examples from public-safe projects.
 - Collect stars, forks, external links, and usage notes.
+- Convert the first external critique into a visible maintenance response.
 
 ## Milestone 5: Codex For OSS Application
 
-Status: wait for public evidence.
+Status: wait for public evidence; do not rush.
 
 - Apply only after the repo is public, active, and has credible usage or ecosystem-value evidence.
 - Keep the application under the official 500-character fields where required.
+- Official pages currently describe rolling review, so the stronger path is to grow the repository before submission.

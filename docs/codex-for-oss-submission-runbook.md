@@ -10,6 +10,8 @@ https://openai.com/form/codex-for-oss/
 
 For the current one-page evidence summary, use `docs/codex-for-oss-review-packet.md`.
 
+Timing note verified on 2026-06-02: the official pages describe rolling review, not a fixed public deadline. Keep the repository in growth mode until at least one real external feedback or adoption signal is recorded.
+
 Official form requirements verified on 2026-06-02:
 
 - first name;
@@ -37,7 +39,7 @@ asset-pipeline-steward submission-ready .
 
 Submit only when:
 
-- `external_feedback_urls` has at least one public URL, or you intentionally accept the weaker application;
+- `external_feedback_urls` has at least one public URL;
 - the feedback URL was recorded with `asset-pipeline-steward record-feedback` or reviewed against the same public-safety rules;
 - current public GitHub metrics were refreshed by `record-feedback` or manually reviewed if GitHub API warnings appeared;
 - first name, last name, ChatGPT email, and OpenAI Organization ID are known;
