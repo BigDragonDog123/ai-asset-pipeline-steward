@@ -26,6 +26,7 @@ Do not rush a weak application just because the application packet is ready. Sub
 - Public usage note: `docs/public-usage-note.md`
 - First feedback playbook: `docs/first-feedback-playbook.md`
 - Feedback response playbook: `docs/feedback-response-playbook.md`
+- Feedback status update draft: `docs/feedback-status-update.md`
 - Outreach kit: `docs/feedback-outreach-kit.md`
 - Outreach tracker: `docs/outreach-tracker.md`
 - Reviewer brief: `docs/reviewer-brief.md`

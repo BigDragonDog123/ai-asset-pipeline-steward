@@ -9,6 +9,7 @@ To print the concise first-feedback plan from the CLI, run:
 ```bash
 asset-pipeline-steward first-feedback-playbook .
 asset-pipeline-steward feedback-response-playbook .
+asset-pipeline-steward feedback-status-update .
 ```
 
 ## Short Request

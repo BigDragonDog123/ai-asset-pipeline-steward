@@ -2336,6 +2336,90 @@ def format_feedback_response_playbook(playbook: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def build_feedback_status_update(root: Path) -> dict[str, Any]:
+    repo_url = public_repository_url(root)
+    issue_url = f"{repo_url}/issues/8"
+    feedback_form = f"{repo_url}/issues/new?template=feedback.yml"
+    review_landing = public_blob_url(root, "REVIEW.md")
+    first_feedback = public_blob_url(root, "docs/first-feedback-playbook.md")
+    response_playbook = public_blob_url(root, "docs/feedback-response-playbook.md")
+    terminal_examples = public_blob_url(root, "docs/terminal-examples.md")
+    comment = (
+        "Maintainer status update for the Codex for OSS growth path.\n\n"
+        "Current status:\n"
+        "- Still waiting for a real public feedback URL from someone other than the maintainer.\n"
+        "- Maintainer-authored comments, docs, and command updates count as maintenance activity only, not external adoption evidence.\n"
+        "- Public GitHub API checks may require `GITHUB_TOKEN` when unauthenticated requests are rate-limited.\n\n"
+        "Reviewer entrypoints:\n"
+        f"- Review landing: {review_landing}\n"
+        f"- First feedback playbook: {first_feedback}\n"
+        f"- Feedback response playbook: {response_playbook}\n"
+        f"- Terminal examples: {terminal_examples}\n"
+        f"- Feedback form: {feedback_form}\n\n"
+        "Maintainer commands after feedback appears:\n\n"
+        "```bash\n"
+        "asset-pipeline-steward feedback-candidates .\n"
+        "asset-pipeline-steward record-feedback <public-feedback-url>\n"
+        "asset-pipeline-steward feedback-response-playbook .\n"
+        "asset-pipeline-steward latest-ci .\n"
+        "asset-pipeline-steward submission-ready . --manual-ready\n"
+        "```\n\n"
+        "This update is intentionally not recorded in `external_feedback_urls`."
+    )
+    return {
+        "repository_url": repo_url,
+        "issue_url": issue_url,
+        "goal": (
+            "Generate a public-safe maintainer status update that can be pasted into "
+            "issue #8 when GitHub write access is unavailable."
+        ),
+        "comment": comment,
+        "manual_steps": [
+            f"Open {issue_url}",
+            "Paste the comment draft as a maintainer update.",
+            "Do not record the maintainer-authored comment as external feedback evidence.",
+            "Wait for a public non-maintainer feedback URL before running record-feedback.",
+            "Reprint this draft with asset-pipeline-steward feedback-status-update .",
+        ],
+        "links": {
+            "review_landing": review_landing,
+            "first_feedback_playbook": first_feedback,
+            "feedback_response_playbook": response_playbook,
+            "terminal_examples": terminal_examples,
+            "feedback_form": feedback_form,
+        },
+    }
+
+
+def format_feedback_status_update(update: dict[str, Any]) -> str:
+    lines = [
+        "# Feedback Status Update Draft",
+        "",
+        f"Issue: {update['issue_url']}",
+        "",
+        "## Goal",
+        "",
+        str(update["goal"]),
+        "",
+        "## Comment Draft",
+        "",
+        "````text",
+        str(update["comment"]),
+        "````",
+        "",
+        "## Manual Steps",
+        "",
+    ]
+    for step in update["manual_steps"]:
+        lines.append(f"- {step}")
+
+    lines.extend(["", "## Links", ""])
+    for label, url in update["links"].items():
+        lines.append(f"- {label}: {url}")
+
+    return "\n".join(lines)
+
+
 def load_starter_issues(root: Path) -> tuple[list[dict[str, Any]], list[Finding]]:
     path = root / STARTER_ISSUES_FILE
     if not path.exists():
@@ -2525,7 +2609,7 @@ def build_parser() -> argparse.ArgumentParser:
             "evidence/collect-evidence/latest-ci/feedback-candidates/record-feedback/"
             "application/submission-ready/starter-issues/reviewer-checklist/"
             "first-feedback-playbook/feedback-response-playbook/"
-            "public-usage-note/codex-oss-status"
+            "feedback-status-update/public-usage-note/codex-oss-status"
         ),
     )
     parser.add_argument("manifest", nargs="?", help="Path, feedback URL, or issue URL")
@@ -2758,6 +2842,20 @@ def main(argv: list[str] | None = None) -> int:
             print(format_feedback_response_playbook(playbook))
         return 0
 
+    if command == "feedback-status-update":
+        root = manifest_path or Path(".")
+        update = build_feedback_status_update(root)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": True,
+                "status_update": update,
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(format_feedback_status_update(update))
+        return 0
+
     if command == "public-usage-note":
         root = manifest_path or Path(".")
         note = build_public_usage_note(root)
@@ -2830,6 +2928,8 @@ def resolve_command(
     if command_or_manifest == "first-feedback-playbook":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "feedback-response-playbook":
+        return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "feedback-status-update":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "public-usage-note":
         return command_or_manifest, manifest or Path(".")

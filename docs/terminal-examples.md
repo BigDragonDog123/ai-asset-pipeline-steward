@@ -70,6 +70,16 @@ asset-pipeline-steward feedback-response-playbook .
 
 Expected output includes public-safety rules, a response sequence, response options, a public reply template, and final gate commands. The goal is visible maintenance evidence: a recorded feedback URL plus a public maintainer response through an issue, docs change, validation rule, release note, or roadmap decision.
 
+## Print Feedback Status Update
+
+Use this when GitHub connector write access is unavailable and a maintainer needs a public-safe issue #8 status update draft.
+
+```bash
+asset-pipeline-steward feedback-status-update .
+```
+
+Expected output includes a comment draft, issue #8 URL, reviewer links, and a reminder that maintainer-authored text is maintenance activity only, not external adoption evidence.
+
 ## Collect Public GitHub Evidence
 
 Use this after the repository exists on GitHub:

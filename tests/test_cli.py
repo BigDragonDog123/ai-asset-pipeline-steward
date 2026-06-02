@@ -22,6 +22,7 @@ from asset_pipeline_steward.cli import (
     build_maintenance_report,
     build_manifest_schema,
     build_feedback_response_playbook,
+    build_feedback_status_update,
     build_public_usage_note,
     build_submission_checks,
     check_latest_main_ci,
@@ -810,6 +811,39 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("visible maintenance evidence", text)
         self.assertIn("asset-pipeline-steward feedback-response-playbook .", text)
         self.assertIn("record-feedback <public-feedback-url>", text)
+
+    def test_feedback_status_update_command_prints_issue_comment_draft(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["feedback-status-update", str(ROOT)])
+
+        self.assertEqual(0, exit_code)
+        text = output.getvalue()
+        self.assertIn("# Feedback Status Update Draft", text)
+        self.assertIn("/issues/8", text)
+        self.assertIn("Comment Draft", text)
+        self.assertIn("not external adoption evidence", text)
+        self.assertIn("feedback-status-update", text)
+
+    def test_feedback_status_update_command_prints_json(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["feedback-status-update", str(ROOT), "--json"])
+
+        self.assertEqual(0, exit_code)
+        payload = json.loads(output.getvalue())
+        self.assertTrue(payload["ok"])
+        self.assertIn("comment", payload["status_update"])
+        self.assertIn("/issues/8", payload["status_update"]["issue_url"])
+
+    def test_feedback_status_update_doc_exists(self) -> None:
+        update = build_feedback_status_update(ROOT)
+        text = (ROOT / "docs" / "feedback-status-update.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("# Feedback Status Update Draft", text)
+        self.assertIn(update["issue_url"], text)
+        self.assertIn("asset-pipeline-steward feedback-status-update .", text)
+        self.assertIn("not external adoption evidence", text)
 
     def test_public_usage_note_command_prints_public_post(self) -> None:
         with redirect_stdout(StringIO()) as output:
