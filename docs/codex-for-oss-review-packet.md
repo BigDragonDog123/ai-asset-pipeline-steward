@@ -105,7 +105,7 @@ The repo is intentionally public-safe: no private paths, credentials, model weig
 
 Submit only when:
 
-- latest GitHub Actions on `main` is green;
+- `asset-pipeline-steward latest-ci .` confirms the latest `main` GitHub Actions push run is green;
 - `asset-pipeline-steward repo-scan .` passes;
 - `asset-pipeline-steward readiness .` has no unexpected blocker;
 - `asset-pipeline-steward codex-oss-status . --manual-ready` no longer reports growth mode;

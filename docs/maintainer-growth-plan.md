@@ -90,6 +90,7 @@ Stronger target before applying:
 asset-pipeline-steward evidence .
 asset-pipeline-steward readiness .
 asset-pipeline-steward application .
+asset-pipeline-steward latest-ci .
 asset-pipeline-steward codex-oss-status . --manual-ready
 asset-pipeline-steward submission-ready . --manual-ready
 ```

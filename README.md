@@ -55,6 +55,7 @@ asset-pipeline-steward schema
 asset-pipeline-steward repo-scan .
 asset-pipeline-steward readiness .
 asset-pipeline-steward evidence .
+asset-pipeline-steward latest-ci .
 asset-pipeline-steward first-feedback-playbook .
 asset-pipeline-steward feedback-response-playbook .
 asset-pipeline-steward public-usage-note .
@@ -80,6 +81,7 @@ python -m asset_pipeline_steward.cli schema
 python -m asset_pipeline_steward.cli repo-scan .
 python -m asset_pipeline_steward.cli readiness .
 python -m asset_pipeline_steward.cli evidence .
+python -m asset_pipeline_steward.cli latest-ci .
 python -m asset_pipeline_steward.cli first-feedback-playbook .
 python -m asset_pipeline_steward.cli feedback-response-playbook .
 python -m asset_pipeline_steward.cli public-usage-note .
@@ -154,6 +156,7 @@ Use synthetic fixtures when demonstrating behavior.
 
 Run `asset-pipeline-steward repo-scan .` before publishing or opening a pull request.
 Run `asset-pipeline-steward readiness .` before release or Codex for OSS application work.
+Run `asset-pipeline-steward latest-ci .` before final submission to verify the latest `main` GitHub Actions push run is green.
 Run `asset-pipeline-steward submission-ready .` before filling the official Codex for OSS form.
 Run `asset-pipeline-steward codex-oss-status . --manual-ready` to see whether the project should stay in growth mode or move to manual submission.
 Track public adoption and maintainer evidence in `docs/adoption-evidence.json`.

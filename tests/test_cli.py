@@ -8,6 +8,7 @@ from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
 from urllib.error import HTTPError
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
@@ -23,9 +24,11 @@ from asset_pipeline_steward.cli import (
     build_feedback_response_playbook,
     build_public_usage_note,
     build_submission_checks,
+    check_latest_main_ci,
     collect_public_evidence,
     find_feedback_candidates,
     format_application_report,
+    format_latest_ci_report,
     format_public_evidence_report,
     has_readiness_blockers,
     load_application_packet,
@@ -290,6 +293,98 @@ class ManifestValidationTests(unittest.TestCase):
 
         self.assertEqual({}, evidence)
         self.assertTrue(any(finding.severity == "blocker" for finding in findings))
+
+    def test_latest_main_ci_passes_when_latest_push_run_succeeds(self) -> None:
+        def fake_fetcher(url: str) -> object:
+            if url.endswith("/BigDragonDog123/ai-asset-pipeline-steward"):
+                return {
+                    "html_url": "https://github.com/BigDragonDog123/ai-asset-pipeline-steward",
+                    "default_branch": "main",
+                }
+            if url.endswith("/commits/main"):
+                return {
+                    "sha": "abc123",
+                    "html_url": (
+                        "https://github.com/BigDragonDog123/"
+                        "ai-asset-pipeline-steward/commit/abc123"
+                    ),
+                }
+            if "actions/runs" in url:
+                return {
+                    "workflow_runs": [
+                        {
+                            "head_sha": "abc123",
+                            "html_url": (
+                                "https://github.com/BigDragonDog123/"
+                                "ai-asset-pipeline-steward/actions/runs/42"
+                            ),
+                            "name": "CI",
+                            "status": "completed",
+                            "conclusion": "success",
+                        }
+                    ]
+                }
+            raise AssertionError(url)
+
+        status, findings = check_latest_main_ci(ROOT, fake_fetcher)
+
+        self.assertEqual([], findings)
+        self.assertEqual("abc123", status["head_sha"])
+        self.assertEqual("success", status["conclusion"])
+        self.assertIn("PASS latest main", format_latest_ci_report(status, findings))
+
+    def test_latest_main_ci_blocks_without_matching_run(self) -> None:
+        def fake_fetcher(url: str) -> object:
+            if url.endswith("/BigDragonDog123/ai-asset-pipeline-steward"):
+                return {"default_branch": "main"}
+            if url.endswith("/commits/main"):
+                return {"sha": "abc123"}
+            if "actions/runs" in url:
+                return {
+                    "workflow_runs": [
+                        {
+                            "head_sha": "older",
+                            "html_url": "https://github.com/example/actions/runs/1",
+                            "status": "completed",
+                            "conclusion": "success",
+                        }
+                    ]
+                }
+            raise AssertionError(url)
+
+        status, findings = check_latest_main_ci(ROOT, fake_fetcher)
+
+        self.assertEqual("abc123", status["head_sha"])
+        self.assertTrue(any(finding.severity == "blocker" for finding in findings))
+        self.assertIn("NOT READY", format_latest_ci_report(status, findings))
+
+    def test_latest_ci_command_uses_github_api_fetcher(self) -> None:
+        def fake_fetcher(url: str) -> object:
+            if url.endswith("/BigDragonDog123/ai-asset-pipeline-steward"):
+                return {"default_branch": "main"}
+            if url.endswith("/commits/main"):
+                return {"sha": "abc123"}
+            if "actions/runs" in url:
+                return {
+                    "workflow_runs": [
+                        {
+                            "head_sha": "abc123",
+                            "html_url": "https://github.com/example/actions/runs/2",
+                            "name": "CI",
+                            "status": "completed",
+                            "conclusion": "success",
+                        }
+                    ]
+                }
+            raise AssertionError(url)
+
+        with patch("asset_pipeline_steward.cli.fetch_github_json", fake_fetcher):
+            with redirect_stdout(StringIO()) as output:
+                exit_code = main(["latest-ci", str(ROOT)])
+
+        self.assertEqual(0, exit_code)
+        self.assertIn("# Latest Main CI", output.getvalue())
+        self.assertIn("Result: PASS", output.getvalue())
 
     def test_record_external_feedback_adds_non_maintainer_github_issue(self) -> None:
         def fake_fetcher(url: str) -> object:

@@ -1263,6 +1263,167 @@ def collect_public_evidence(
     return evidence, findings
 
 
+def check_latest_main_ci(
+    root: Path,
+    fetcher: Any | None = None,
+) -> tuple[dict[str, Any], list[Finding]]:
+    fetcher = fetcher or fetch_github_json
+    repository = infer_public_repository(root)
+    api_root = f"https://api.github.com/repos/{repository}"
+    findings: list[Finding] = []
+
+    try:
+        repo = fetcher(api_root)
+    except HTTPError as error:
+        return {}, [
+            Finding(
+                "blocker",
+                repository,
+                github_api_error_message("GitHub repository API", error),
+            )
+        ]
+    except (OSError, URLError, json.JSONDecodeError) as error:
+        return {}, [
+            Finding("blocker", repository, f"GitHub repository API failed: {error}")
+        ]
+
+    if not isinstance(repo, dict):
+        return {}, [
+            Finding("blocker", repository, "GitHub repository response was not an object")
+        ]
+
+    branch = string_value(repo.get("default_branch")) or "main"
+    result: dict[str, Any] = {
+        "repository": repository,
+        "repository_url": string_value(repo.get("html_url")),
+        "branch": branch,
+        "head_sha": "",
+        "head_url": "",
+        "workflow_run_url": "",
+        "workflow_name": "",
+        "status": "",
+        "conclusion": "",
+    }
+
+    try:
+        commit = fetcher(f"{api_root}/commits/{branch}")
+    except HTTPError as error:
+        return result, [
+            Finding("blocker", "latest-ci.commit", github_api_error_message("GitHub commit API", error))
+        ]
+    except (OSError, URLError, json.JSONDecodeError) as error:
+        return result, [
+            Finding("blocker", "latest-ci.commit", f"GitHub commit API failed: {error}")
+        ]
+
+    if not isinstance(commit, dict):
+        return result, [
+            Finding("blocker", "latest-ci.commit", "GitHub commit response was not an object")
+        ]
+
+    head_sha = string_value(commit.get("sha"))
+    result["head_sha"] = head_sha
+    result["head_url"] = string_value(commit.get("html_url"))
+    if not head_sha:
+        return result, [
+            Finding("blocker", "latest-ci.commit", "latest branch commit SHA is missing")
+        ]
+
+    try:
+        runs_payload = fetcher(
+            f"{api_root}/actions/runs?branch={branch}&event=push&per_page=10"
+        )
+    except HTTPError as error:
+        return result, [
+            Finding("blocker", "latest-ci.runs", github_api_error_message("GitHub Actions API", error))
+        ]
+    except (OSError, URLError, json.JSONDecodeError) as error:
+        return result, [
+            Finding("blocker", "latest-ci.runs", f"GitHub Actions API failed: {error}")
+        ]
+
+    workflow_runs: list[Any] = []
+    if isinstance(runs_payload, dict):
+        workflow_runs = list_or_empty(runs_payload.get("workflow_runs"))
+    if not workflow_runs:
+        return result, [
+            Finding("blocker", "latest-ci.runs", "no GitHub Actions push runs found")
+        ]
+
+    matching_run = next(
+        (
+            run
+            for run in workflow_runs
+            if isinstance(run, dict) and string_value(run.get("head_sha")) == head_sha
+        ),
+        None,
+    )
+    if not isinstance(matching_run, dict):
+        return result, [
+            Finding(
+                "blocker",
+                "latest-ci.runs",
+                "no GitHub Actions push run found for the latest branch commit",
+                head_sha,
+            )
+        ]
+
+    result.update(
+        {
+            "workflow_run_url": string_value(matching_run.get("html_url")),
+            "workflow_name": string_value(matching_run.get("name")),
+            "status": string_value(matching_run.get("status")),
+            "conclusion": string_value(matching_run.get("conclusion")),
+        }
+    )
+
+    if result["status"] != "completed":
+        findings.append(
+            Finding(
+                "blocker",
+                "latest-ci.status",
+                "latest branch workflow run is not completed",
+                result["status"],
+            )
+        )
+    elif result["conclusion"] != "success":
+        findings.append(
+            Finding(
+                "blocker",
+                "latest-ci.conclusion",
+                "latest branch workflow run did not succeed",
+                result["conclusion"],
+            )
+        )
+
+    return result, findings
+
+
+def format_latest_ci_report(status: dict[str, Any], findings: list[Finding]) -> str:
+    lines = ["# Latest Main CI", ""]
+    if status:
+        lines.extend(
+            [
+                f"- Repository: {status.get('repository', '')}",
+                f"- Branch: {status.get('branch', '')}",
+                f"- Head SHA: {status.get('head_sha', '')}",
+                f"- Head URL: {status.get('head_url', '')}",
+                f"- Workflow: {status.get('workflow_name', '')}",
+                f"- Workflow run: {status.get('workflow_run_url', '')}",
+                f"- Status: {status.get('status', '')}",
+                f"- Conclusion: {status.get('conclusion', '')}",
+                "",
+            ]
+        )
+    for finding in findings:
+        lines.append(f"- {finding.severity.upper()} {finding.path}: {finding.message}")
+    if not findings:
+        lines.append("Result: PASS latest main GitHub Actions run is green.")
+    else:
+        lines.append("Result: NOT READY until latest main GitHub Actions run is green.")
+    return "\n".join(lines)
+
+
 def unique_string_values(*groups: Any) -> list[str]:
     values: list[str] = []
     seen: set[str] = set()
@@ -2361,7 +2522,7 @@ def build_parser() -> argparse.ArgumentParser:
         "command_or_manifest",
         help=(
             "Manifest path, or command: validate/report/schema/repo-scan/readiness/"
-            "evidence/collect-evidence/feedback-candidates/record-feedback/"
+            "evidence/collect-evidence/latest-ci/feedback-candidates/record-feedback/"
             "application/submission-ready/starter-issues/reviewer-checklist/"
             "first-feedback-playbook/feedback-response-playbook/"
             "public-usage-note/codex-oss-status"
@@ -2477,6 +2638,21 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(payload, indent=2, sort_keys=True))
         else:
             print(format_public_evidence_report(evidence, findings))
+        return 1 if has_blockers(findings) else 0
+
+    if command == "latest-ci":
+        root = manifest_path or Path(".")
+        status, findings = check_latest_main_ci(root)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": not has_blockers(findings),
+                "latest_ci": status,
+                "findings": [asdict(finding) for finding in findings],
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(format_latest_ci_report(status, findings))
         return 1 if has_blockers(findings) else 0
 
     if command == "application":
@@ -2634,6 +2810,8 @@ def resolve_command(
     if command_or_manifest == "evidence":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "collect-evidence":
+        return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "latest-ci":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "feedback-candidates":
         return command_or_manifest, manifest or Path(".")

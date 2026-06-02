@@ -34,6 +34,7 @@ Run:
 asset-pipeline-steward evidence .
 asset-pipeline-steward readiness .
 asset-pipeline-steward application .
+asset-pipeline-steward latest-ci .
 asset-pipeline-steward codex-oss-status .
 asset-pipeline-steward submission-ready .
 ```
@@ -44,12 +45,13 @@ Submit only when:
 - the feedback URL was recorded with `asset-pipeline-steward record-feedback` or reviewed against the same public-safety rules;
 - current public GitHub metrics were refreshed by `record-feedback` or manually reviewed if GitHub API warnings appeared;
 - first name, last name, ChatGPT email, and OpenAI Organization ID are known;
-- the latest GitHub Actions run on `main` is green;
+- `asset-pipeline-steward latest-ci .` confirms the latest `main` GitHub Actions push run is green;
 - `docs/adoption-evidence.json` contains the current public evidence.
 
 After the external feedback URL is recorded and the personal fields are ready for manual entry, run:
 
 ```bash
+asset-pipeline-steward latest-ci .
 asset-pipeline-steward codex-oss-status . --manual-ready
 asset-pipeline-steward submission-ready . --manual-ready
 ```

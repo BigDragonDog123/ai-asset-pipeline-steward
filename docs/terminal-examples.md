@@ -81,6 +81,17 @@ asset-pipeline-steward collect-evidence .
 Expected output includes a JSON block with the public repository URL, recent CI run URLs, release URLs, issue URLs, pull request URLs, stars, and forks. Before the repository is public, this command reports a blocker.
 If GitHub returns a rate-limit `403`, set `GITHUB_TOKEN` to a token with public repository read access and rerun the command.
 
+## Check Latest Main CI
+
+Use this before final Codex for OSS form entry to verify that the latest default-branch commit has a successful GitHub Actions push run.
+
+```bash
+asset-pipeline-steward latest-ci .
+```
+
+Expected output includes the latest branch commit SHA, matching workflow run URL, run status, and conclusion. The command passes only when the matching workflow run is completed with a `success` conclusion.
+If GitHub returns a rate-limit `403`, set `GITHUB_TOKEN` to a token with public repository read access and rerun the command.
+
 ## Record External Feedback
 
 Scan the feedback tracker for non-maintainer comment candidates:
