@@ -1950,6 +1950,98 @@ def format_first_feedback_playbook(playbook: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def build_public_usage_note(root: Path) -> dict[str, Any]:
+    repo_url = public_repository_url(root)
+    review_landing = public_blob_url(root, "REVIEW.md")
+    terminal_examples = public_blob_url(root, "docs/terminal-examples.md")
+    end_to_end = public_blob_url(root, "docs/end-to-end-maintainer-loop.md")
+    feedback_form = f"{repo_url}/issues/new?template=feedback.yml"
+    return {
+        "repository_url": repo_url,
+        "goal": (
+            "Publish a public-safe usage note that invites concrete external feedback "
+            "without counting maintainer-authored text as adoption evidence."
+        ),
+        "short_note": (
+            "I published AI Asset Pipeline Steward, a small public-safe toolkit for turning "
+            "local AI asset workflows into repeatable maintainer records:\n"
+            f"{repo_url}\n\n"
+            "It validates synthetic/public-safe manifests, separates human review from "
+            "automated observations, and keeps batch or review handoffs resumable.\n\n"
+            "If this overlaps with your workflow, the fastest review path is here:\n"
+            f"{review_landing}\n\n"
+            "Useful feedback is one concrete blocker, unclear field, missing validation "
+            "rule, or reason it does not fit your workflow."
+        ),
+        "long_note": (
+            "AI Asset Pipeline Steward is a public-safe starter kit for maintainers who "
+            "need to turn local AI image, audio, video, dataset, benchmark, or review "
+            "queues into repeatable records.\n\n"
+            "The current alpha focuses on synthetic manifests, public-safety scanning, "
+            "model/workflow readiness, human-vs-automated review signals, decision gates, "
+            "and handoffs another maintainer or coding agent can resume.\n\n"
+            "Try the terminal examples or skim the end-to-end maintainer loop, then leave "
+            "one public feedback issue with a concrete adoption blocker or missing rule."
+        ),
+        "links": {
+            "review_landing": review_landing,
+            "terminal_examples": terminal_examples,
+            "end_to_end_loop": end_to_end,
+            "feedback_form": feedback_form,
+        },
+        "public_safety": [
+            "Do not include private paths, logs, credentials, model files, generated private media, or non-public samples.",
+            "Do not paste private DMs, screenshots, or contact details into the repository.",
+            "Treat this maintainer-authored note as outreach material, not external adoption evidence.",
+        ],
+        "after_posting": [
+            "Wait for a public response or feedback issue from someone other than the maintainer.",
+            "Run asset-pipeline-steward feedback-candidates .",
+            "Record only reviewed public-safe URLs with asset-pipeline-steward record-feedback <public-feedback-url>.",
+            "Turn one concrete critique into a visible issue, docs change, validation rule, or roadmap decision.",
+        ],
+    }
+
+
+def format_public_usage_note(note: dict[str, Any]) -> str:
+    lines = [
+        "# Public Usage Note",
+        "",
+        f"Repository: {note['repository_url']}",
+        "",
+        "## Goal",
+        "",
+        str(note["goal"]),
+        "",
+        "## Short Note",
+        "",
+        "```text",
+        str(note["short_note"]),
+        "```",
+        "",
+        "## Longer Note",
+        "",
+        "```text",
+        str(note["long_note"]),
+        "```",
+        "",
+        "## Links",
+        "",
+    ]
+    for label, url in note["links"].items():
+        lines.append(f"- {label}: {url}")
+
+    lines.extend(["", "## Public Safety", ""])
+    for item in note["public_safety"]:
+        lines.append(f"- {item}")
+
+    lines.extend(["", "## After Posting", ""])
+    for item in note["after_posting"]:
+        lines.append(f"- {item}")
+
+    return "\n".join(lines)
+
+
 def load_starter_issues(root: Path) -> tuple[list[dict[str, Any]], list[Finding]]:
     path = root / STARTER_ISSUES_FILE
     if not path.exists():
@@ -2138,7 +2230,7 @@ def build_parser() -> argparse.ArgumentParser:
             "Manifest path, or command: validate/report/schema/repo-scan/readiness/"
             "evidence/collect-evidence/feedback-candidates/record-feedback/"
             "application/submission-ready/starter-issues/reviewer-checklist/"
-            "first-feedback-playbook/codex-oss-status"
+            "first-feedback-playbook/public-usage-note/codex-oss-status"
         ),
     )
     parser.add_argument("manifest", nargs="?", help="Path, feedback URL, or issue URL")
@@ -2342,6 +2434,20 @@ def main(argv: list[str] | None = None) -> int:
             print(format_first_feedback_playbook(playbook))
         return 0
 
+    if command == "public-usage-note":
+        root = manifest_path or Path(".")
+        note = build_public_usage_note(root)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": True,
+                "usage_note": note,
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(format_public_usage_note(note))
+        return 0
+
     try:
         if manifest_path is None:
             raise ValueError("manifest path is required")
@@ -2396,6 +2502,8 @@ def resolve_command(
     if command_or_manifest == "reviewer-checklist":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "first-feedback-playbook":
+        return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "public-usage-note":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest in {"validate", "report"}:
         if manifest is None:

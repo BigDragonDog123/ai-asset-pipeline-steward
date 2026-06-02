@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added a `public-usage-note` command and matching public post draft for growth-mode outreach.
 - Added explicit feedback evidence recording consent to the public feedback form and outreach rules.
 - Added a root `REVIEW.md` landing page for first-time external reviewers.
 - Added a `codex-oss-status` command that summarizes Codex for OSS growth mode, evidence counts, blockers, warnings, and next actions.

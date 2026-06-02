@@ -26,6 +26,7 @@ The program says applications are reviewed on a rolling basis and looks for acti
 - Completed starter issues: #3 through #7
 - Merged maintenance PRs: #1 and #2
 - Usage examples: `docs/terminal-examples.md` and `examples/`
+- Public usage note: `docs/public-usage-note.md`
 - End-to-end walkthrough: `docs/end-to-end-maintainer-loop.md`
 - Review landing: `REVIEW.md`
 - Reviewer brief: `docs/reviewer-brief.md`

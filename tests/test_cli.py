@@ -20,6 +20,7 @@ from asset_pipeline_steward.cli import (
     build_evidence_report,
     build_maintenance_report,
     build_manifest_schema,
+    build_public_usage_note,
     build_submission_checks,
     collect_public_evidence,
     find_feedback_candidates,
@@ -679,6 +680,38 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("REVIEW.md", text)
         self.assertIn("may be recorded as external feedback evidence", text)
         self.assertIn("asset-pipeline-steward first-feedback-playbook .", text)
+
+    def test_public_usage_note_command_prints_public_post(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["public-usage-note", str(ROOT)])
+
+        self.assertEqual(0, exit_code)
+        text = output.getvalue()
+        self.assertIn("# Public Usage Note", text)
+        self.assertIn("Short Note", text)
+        self.assertIn("REVIEW.md", text)
+        self.assertIn("not external adoption evidence", text)
+        self.assertIn("record-feedback <public-feedback-url>", text)
+
+    def test_public_usage_note_command_prints_json(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["public-usage-note", str(ROOT), "--json"])
+
+        self.assertEqual(0, exit_code)
+        payload = json.loads(output.getvalue())
+        self.assertTrue(payload["ok"])
+        self.assertIn("short_note", payload["usage_note"])
+        self.assertIn("review_landing", payload["usage_note"]["links"])
+
+    def test_public_usage_note_doc_exists(self) -> None:
+        note = build_public_usage_note(ROOT)
+        text = (ROOT / "docs" / "public-usage-note.md").read_text(encoding="utf-8")
+
+        self.assertIn("# Public Usage Note", text)
+        self.assertIn(note["repository_url"], text)
+        self.assertIn("REVIEW.md", text)
+        self.assertIn("not external adoption evidence", text)
+        self.assertIn("asset-pipeline-steward public-usage-note .", text)
 
     def test_review_landing_doc_exists(self) -> None:
         text = (ROOT / "REVIEW.md").read_text(encoding="utf-8")

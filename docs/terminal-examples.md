@@ -50,6 +50,16 @@ asset-pipeline-steward first-feedback-playbook .
 
 Expected output includes reviewer profiles, the short request to send, public links, valid-feedback rules, and maintainer follow-up commands.
 
+## Print Public Usage Note
+
+Use this when preparing a public post that invites concrete feedback without counting maintainer-authored text as external adoption evidence.
+
+```bash
+asset-pipeline-steward public-usage-note .
+```
+
+Expected output includes a short note, a longer note, public links, public-safety rules, and after-posting steps for recording real external feedback.
+
 ## Collect Public GitHub Evidence
 
 Use this after the repository exists on GitHub:

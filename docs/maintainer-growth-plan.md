@@ -23,6 +23,7 @@ Do not rush a weak application just because the application packet is ready. Sub
 - Open growth task: issue #9 tracks the 30-day GitHub growth loop before Codex for OSS submission.
 - Feedback form: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml`
 - Share request: `docs/public-feedback-request.md`
+- Public usage note: `docs/public-usage-note.md`
 - First feedback playbook: `docs/first-feedback-playbook.md`
 - Outreach kit: `docs/feedback-outreach-kit.md`
 - Outreach tracker: `docs/outreach-tracker.md`
@@ -35,7 +36,7 @@ Do not rush a weak application just because the application packet is ready. Sub
 
 Verified on 2026-06-02:
 
-- `python -m pytest -q` passes with 53 tests and 5 subtests.
+- `python -m pytest -q` passes with 56 tests and 5 subtests.
 - `python -m asset_pipeline_steward.cli repo-scan .` passes public-safety checks.
 - `python -m asset_pipeline_steward.cli readiness .` passes required files, schemas, examples, repo scan, git branch, clean status, and remote checks.
 - `python -m asset_pipeline_steward.cli evidence .` still warns that `external_feedback_urls` is `0/1`, with 0 stars and 0 forks.
@@ -74,7 +75,7 @@ Stronger target before applying:
 2. Use `docs/first-feedback-playbook.md` to choose one reviewer profile and send the short request.
 3. Send one message from `docs/feedback-outreach-kit.md` to a likely reviewer if the playbook request needs a longer version.
 4. Track only public-safe reviewer status in `docs/outreach-tracker.md`; do not record private contact details.
-5. Publish one short public usage note that links to the repo, terminal examples, and feedback form.
+5. Publish one short public usage note from `docs/public-usage-note.md` or `asset-pipeline-steward public-usage-note .` that links to the repo, review landing, terminal examples, and feedback form.
 6. Scan with `asset-pipeline-steward feedback-candidates`, then record any real external feedback URL with `asset-pipeline-steward record-feedback`.
 7. Turn the first concrete critique into a visible issue or small PR.
 8. Ship one feedback-driven docs or validation improvement.
