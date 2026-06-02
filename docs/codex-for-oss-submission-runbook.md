@@ -100,7 +100,7 @@ Maybe, after public usage evidence exists
 Maximum 500 characters:
 
 ```text
-AI Asset Pipeline Steward turns repeated local AI-asset maintenance into a public-safe OSS workflow: manifest validation, repo scanning, synthetic fixtures, CI, release, and starter issues. It helps maintainers verify model/workflow readiness, separate human and VLM review signals, preserve handoffs, and extract private workflows into reusable public examples.
+AI Asset Pipeline Steward turns repeated local AI-asset maintenance into a public-safe OSS workflow: manifests, repo scans, synthetic fixtures, CI, release evidence, feedback intake, and final submission gates. It shows active maintainer work through issue triage, PR maintenance, an end-to-end review/handoff scenario, and tools for recording external adoption without leaking private data.
 ```
 
 ## API Credits Answer
@@ -108,7 +108,7 @@ AI Asset Pipeline Steward turns repeated local AI-asset maintenance into a publi
 Maximum 500 characters:
 
 ```text
-Use credits to build and test Codex maintainer automation: PR review for manifest/schema changes, issue triage, release checklist checks, evidence collection, synthetic fixture expansion, and security/public-safety scans. Credits would help verify real maintenance workflows instead of only static docs.
+Use credits to build Codex maintainer automation around real OSS workflows: review manifest/schema PRs, triage feedback issues, test release and submission gates, collect adoption evidence, expand synthetic fixtures, and run public-safety checks. Credits would let the project validate agent-assisted maintenance loops instead of only static documentation.
 ```
 
 ## Extra Context Answer
@@ -116,13 +116,13 @@ Use credits to build and test Codex maintainer automation: PR review for manifes
 Maximum 500 characters:
 
 ```text
-The repo is intentionally public-safe: no private paths, credentials, model weights, logs, caches, or non-public media. Current evidence includes passing CI, v0.1.0, starter issues, and usage examples; the next milestone is outside feedback and adoption.
+The repo is intentionally public-safe: no private paths, credentials, model weights, logs, caches, or non-public media. Current evidence includes green CI, v0.1.0, completed starter issues, merged maintenance PRs, an end-to-end maintainer-loop example, structured feedback intake, and strict gates that still block submission until external feedback is recorded.
 ```
 
 If a real external feedback URL has been recorded, replace the final clause with:
 
 ```text
-Current evidence includes passing CI, v0.1.0, completed starter issues, usage examples, and public external feedback recorded in docs/adoption-evidence.json.
+Current evidence includes green CI, v0.1.0, completed starter issues, merged maintenance PRs, the maintainer-loop example, structured feedback intake, and public external feedback recorded in docs/adoption-evidence.json.
 ```
 
 ## Supporting Evidence Links

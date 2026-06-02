@@ -65,7 +65,7 @@ Verified:
 Inferred:
 
 - A clean repository with tests, community files, agent skills, and a maintainer workflow is necessary but not sufficient.
-- The best near-term strategy is to build credible maintenance history before applying.
+- The best near-term strategy is to add at least one real external feedback or adoption signal before applying.
 
 Unknown:
 
@@ -76,11 +76,10 @@ Unknown:
 ## Next Milestones
 
 1. Gather external adoption evidence: stars, forks, feedback, a public comment, a downstream example, or integration into a real public workflow.
-2. Resolve or merge Dependabot PRs where safe, so the repo shows normal maintainer activity.
-3. Close issue #7 after the release checklist is fully reflected in the repo.
-4. Implement one small roadmap issue to create non-setup maintenance history after launch.
-5. Re-run `asset-pipeline-steward evidence .`, `asset-pipeline-steward readiness .`, `asset-pipeline-steward application .`, and `asset-pipeline-steward submission-ready . --manual-ready` before submitting.
-6. Fill manual form fields: first name, last name, ChatGPT account email, and OpenAI Organization ID.
+2. Use `asset-pipeline-steward feedback-candidates .` to check issue #8 for non-maintainer feedback.
+3. Record any real external feedback with `asset-pipeline-steward record-feedback <public-url>`.
+4. Re-run `asset-pipeline-steward evidence .`, `asset-pipeline-steward readiness .`, `asset-pipeline-steward application .`, and `asset-pipeline-steward submission-ready . --manual-ready` before submitting.
+5. Fill manual form fields: first name, last name, ChatGPT account email, and OpenAI Organization ID.
 
 ## Draft Application Notes
 
@@ -90,8 +89,8 @@ Repository role:
 
 Why the repository qualifies, draft under 500 characters:
 
-- "AI Asset Pipeline Steward turns repeated local AI-asset maintenance into a public-safe OSS workflow: manifest validation, repo scanning, synthetic fixtures, CI, release, and starter issues. It helps maintainers verify model/workflow readiness, separate human and VLM review signals, preserve handoffs, and extract private workflows into reusable public examples."
+- "AI Asset Pipeline Steward turns repeated local AI-asset maintenance into a public-safe OSS workflow: manifests, repo scans, synthetic fixtures, CI, release evidence, feedback intake, and final submission gates. It shows active maintainer work through issue triage, PR maintenance, an end-to-end review/handoff scenario, and tools for recording external adoption without leaking private data."
 
 API credit usage, draft under 500 characters:
 
-- "Use credits to build and test Codex maintainer automation: PR review for manifest/schema changes, issue triage, release checklist checks, evidence collection, synthetic fixture expansion, and security/public-safety scans. Credits would help verify real maintenance workflows instead of only static docs."
+- "Use credits to build Codex maintainer automation around real OSS workflows: review manifest/schema PRs, triage feedback issues, test release and submission gates, collect adoption evidence, expand synthetic fixtures, and run public-safety checks. Credits would let the project validate agent-assisted maintenance loops instead of only static documentation."
