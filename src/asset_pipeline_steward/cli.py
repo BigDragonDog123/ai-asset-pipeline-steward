@@ -1022,6 +1022,129 @@ def format_submission_report(checks: list[ReadinessCheck]) -> str:
     return "\n".join(lines)
 
 
+def build_codex_oss_status(root: Path, manual_ready: bool = False) -> dict[str, Any]:
+    root = root.resolve()
+    evidence, evidence_file_checks = load_adoption_evidence(root)
+    readiness_checks = build_readiness_checks(root)
+    submission_checks = build_submission_checks(root, manual_ready=manual_ready)
+
+    evidence = evidence or {}
+    external_feedback_urls = list_value(evidence.get("external_feedback_urls"))
+    blockers = [
+        {"name": check.name, "message": check.message}
+        for check in submission_checks
+        if check.status == "blocker"
+    ]
+    warnings = [
+        {"name": check.name, "message": check.message}
+        for check in submission_checks
+        if check.status == "warn"
+    ]
+    recommendation = "ready_for_manual_submission" if not blockers else "growth_mode"
+
+    if not external_feedback_urls:
+        next_actions = [
+            "Send the short request from docs/first-feedback-playbook.md to one real reviewer.",
+            "Ask for a public issue, public comment, forum post, or other reviewer-accessible URL.",
+            "Run asset-pipeline-steward feedback-candidates . and record real feedback with asset-pipeline-steward record-feedback <public-feedback-url>.",
+            "Make one visible maintainer response to the feedback, then rerun asset-pipeline-steward submission-ready . --manual-ready.",
+        ]
+    elif blockers:
+        next_actions = [
+            "Resolve the listed submission blockers.",
+            "Rerun asset-pipeline-steward readiness . and asset-pipeline-steward submission-ready . --manual-ready.",
+        ]
+    else:
+        next_actions = [
+            "Open the official Codex for Open Source form.",
+            "Fill personal fields manually; do not commit them to the repository.",
+            "Submit only after confirming the latest GitHub Actions run on main is green.",
+        ]
+
+    return {
+        "official_program": {
+            "timing": "rolling_review",
+            "fixed_public_deadline_observed": False,
+            "source_urls": [
+                "https://developers.openai.com/community/codex-for-oss",
+                "https://openai.com/form/codex-for-oss/",
+            ],
+        },
+        "repository_url": string_value(evidence.get("public_repository_url"))
+        or f"https://github.com/{DEFAULT_PUBLIC_REPOSITORY}",
+        "recommendation": recommendation,
+        "manual_ready": manual_ready,
+        "readiness_ok": not has_readiness_blockers(readiness_checks),
+        "submission_ready": not has_readiness_blockers(submission_checks),
+        "evidence_file_ok": not has_readiness_blockers(evidence_file_checks),
+        "evidence_counts": {
+            "external_feedback_urls": len(external_feedback_urls),
+            "release_urls": len(list_value(evidence.get("release_urls"))),
+            "ci_run_urls": len(list_value(evidence.get("ci_run_urls"))),
+            "issue_urls": len(list_value(evidence.get("issue_urls"))),
+            "pull_request_urls": len(list_value(evidence.get("pull_request_urls"))),
+            "usage_example_urls": len(list_value(evidence.get("usage_example_urls"))),
+            "stars": int_value(evidence.get("stars")),
+            "forks": int_value(evidence.get("forks")),
+        },
+        "blockers": blockers,
+        "warnings": warnings,
+        "next_actions": next_actions,
+    }
+
+
+def format_codex_oss_status(status: dict[str, Any]) -> str:
+    recommendation = string_value(status.get("recommendation"))
+    recommendation_label = (
+        "READY FOR MANUAL SUBMISSION"
+        if recommendation == "ready_for_manual_submission"
+        else "GROWTH MODE"
+    )
+    counts = status.get("evidence_counts")
+    counts = counts if isinstance(counts, dict) else {}
+    lines = [
+        "# Codex For OSS Status",
+        "",
+        f"Decision: {recommendation_label}",
+        f"Repository: {status['repository_url']}",
+        "Official timing: rolling review; no fixed public deadline recorded in the verified program snapshot.",
+        "",
+        "## Evidence Counts",
+        "",
+        f"- External feedback URLs: {counts.get('external_feedback_urls', 0)}",
+        f"- Release URLs: {counts.get('release_urls', 0)}",
+        f"- CI run URLs: {counts.get('ci_run_urls', 0)}",
+        f"- Issue URLs: {counts.get('issue_urls', 0)}",
+        f"- Pull request URLs: {counts.get('pull_request_urls', 0)}",
+        f"- Usage example URLs: {counts.get('usage_example_urls', 0)}",
+        f"- Stars: {counts.get('stars', 0)}",
+        f"- Forks: {counts.get('forks', 0)}",
+        "",
+        "## Blockers",
+        "",
+    ]
+    blockers = list_or_empty(status.get("blockers"))
+    if blockers:
+        for blocker in blockers:
+            lines.append(f"- {blocker['name']}: {blocker['message']}")
+    else:
+        lines.append("- none")
+
+    lines.extend(["", "## Warnings", ""])
+    warnings = list_or_empty(status.get("warnings"))
+    if warnings:
+        for warning in warnings:
+            lines.append(f"- {warning['name']}: {warning['message']}")
+    else:
+        lines.append("- none")
+
+    lines.extend(["", "## Next Actions", ""])
+    for action in list_or_empty(status.get("next_actions")):
+        lines.append(f"- {action}")
+
+    return "\n".join(lines)
+
+
 def infer_public_repository(root: Path) -> str:
     data, _checks = load_adoption_evidence(root)
     repo_url = string_value(data.get("public_repository_url")) if data else ""
@@ -2001,7 +2124,7 @@ def build_parser() -> argparse.ArgumentParser:
             "Manifest path, or command: validate/report/schema/repo-scan/readiness/"
             "evidence/collect-evidence/feedback-candidates/record-feedback/"
             "application/submission-ready/starter-issues/reviewer-checklist/"
-            "first-feedback-playbook"
+            "first-feedback-playbook/codex-oss-status"
         ),
     )
     parser.add_argument("manifest", nargs="?", help="Path, feedback URL, or issue URL")
@@ -2010,7 +2133,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--manual-ready",
         action="store_true",
-        help="For submission-ready only: confirm personal form fields are ready for manual entry",
+        help="For submission-ready and codex-oss-status: confirm personal form fields are ready for manual entry",
     )
     return parser
 
@@ -2148,6 +2271,20 @@ def main(argv: list[str] | None = None) -> int:
             print(format_submission_report(checks))
         return 1 if has_readiness_blockers(checks) else 0
 
+    if command == "codex-oss-status":
+        root = manifest_path or Path(".")
+        status = build_codex_oss_status(root, manual_ready=args.manual_ready)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": status["recommendation"] == "ready_for_manual_submission",
+                "status": status,
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(format_codex_oss_status(status))
+        return 0
+
     if command == "starter-issues":
         root = manifest_path or Path(".")
         issues, findings = load_starter_issues(root)
@@ -2237,6 +2374,8 @@ def resolve_command(
     if command_or_manifest == "application":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "submission-ready":
+        return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "codex-oss-status":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "starter-issues":
         return command_or_manifest, manifest or Path(".")

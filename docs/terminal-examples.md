@@ -111,6 +111,16 @@ asset-pipeline-steward submission-ready . --manual-ready
 
 Do not commit first name, last name, ChatGPT email, OpenAI Organization ID, or application confirmation emails.
 
+## Check Codex For OSS Growth Status
+
+Use this when you want the current application posture without reading every evidence document:
+
+```bash
+asset-pipeline-steward codex-oss-status . --manual-ready
+```
+
+Expected output reports whether the project is still in growth mode or ready for manual submission, summarizes recorded public evidence counts, lists blockers and warnings, and prints the next maintainer actions. This command is a status report; `submission-ready` remains the final gate.
+
 ## Open Codex For OSS Submission Links
 
 ```powershell

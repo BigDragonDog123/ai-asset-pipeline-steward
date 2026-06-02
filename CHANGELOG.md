@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added a `codex-oss-status` command that summarizes Codex for OSS growth mode, evidence counts, blockers, warnings, and next actions.
 - Added a synthetic handoff-resume manifest with progress, blockers, known unknowns, and next-action handoff fields.
 - Merged Dependabot maintenance updates for `actions/setup-python` v6 and `actions/checkout` v6.
 

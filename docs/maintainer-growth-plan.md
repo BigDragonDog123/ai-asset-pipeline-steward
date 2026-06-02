@@ -14,7 +14,7 @@ Do not rush a weak application just because the application packet is ready. Sub
 
 - Public repository: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward`
 - Release: `v0.1.0`
-- CI: passing on `main`; a recent verified public run is `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26829719474`
+- CI: recorded public runs are tracked in `docs/adoption-evidence.json`; verify the latest `main` run again immediately before submission.
 - Completed starter issues: issues #3 through #7
 - Usage examples: `docs/terminal-examples.md` and `examples/`
 - Adoption evidence file: `docs/adoption-evidence.json`
@@ -28,18 +28,20 @@ Do not rush a weak application just because the application packet is ready. Sub
 - Outreach tracker: `docs/outreach-tracker.md`
 - Reviewer brief: `docs/reviewer-brief.md`
 - Application review packet: `docs/codex-for-oss-review-packet.md`
+- Growth status command: `asset-pipeline-steward codex-oss-status . --manual-ready`
 - Repository discovery: README badges plus GitHub topics for public-safe AI asset pipeline maintenance.
 
 ## Current Gate Snapshot
 
 Verified on 2026-06-02:
 
-- `python -m pytest -q` passes with 44 tests and 5 subtests.
+- `python -m pytest -q` passes with 51 tests and 5 subtests.
 - `python -m asset_pipeline_steward.cli repo-scan .` passes public-safety checks.
 - `python -m asset_pipeline_steward.cli readiness .` passes required files, schemas, examples, repo scan, git branch, clean status, and remote checks.
 - `python -m asset_pipeline_steward.cli evidence .` still warns that `external_feedback_urls` is `0/1`, with 0 stars and 0 forks.
 - `python -m asset_pipeline_steward.cli feedback-candidates .` finds no non-maintainer feedback comments yet.
 - `python -m asset_pipeline_steward.cli submission-ready . --manual-ready` remains intentionally blocked only because no real public external feedback URL has been recorded.
+- `python -m asset_pipeline_steward.cli codex-oss-status . --manual-ready` reports growth mode and points the next action back to the first feedback playbook.
 
 This means the repo is technically prepared for review, but the application should stay in growth mode until a public non-maintainer feedback URL exists.
 
@@ -86,6 +88,7 @@ Stronger target before applying:
 asset-pipeline-steward evidence .
 asset-pipeline-steward readiness .
 asset-pipeline-steward application .
+asset-pipeline-steward codex-oss-status . --manual-ready
 asset-pipeline-steward submission-ready . --manual-ready
 ```
 

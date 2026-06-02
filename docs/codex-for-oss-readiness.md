@@ -49,6 +49,7 @@ Source:
 | Local readiness checks | Pass | `asset-pipeline-steward readiness .` passes without blockers on `main`. |
 | Adoption evidence tracking | Pass | `docs/adoption-evidence.json`, `asset-pipeline-steward evidence .`, and `asset-pipeline-steward collect-evidence .` track public repo URL, CI, release, issues, feedback, usage, stars, and forks. |
 | Application packet | Pass | `docs/codex-for-oss-application.json` and `asset-pipeline-steward application .` render draft form fields and check answer length limits. |
+| Growth status | Pass | `asset-pipeline-steward codex-oss-status . --manual-ready` summarizes whether the project is still in growth mode, recorded evidence counts, blockers, warnings, and next actions. |
 | Final submission gate | Early | `asset-pipeline-steward submission-ready .` blocks final submission until external feedback is recorded and personal form fields are confirmed for manual entry. |
 | Public repository | Pass | `https://github.com/BigDragonDog123/ai-asset-pipeline-steward` is public. |
 | GitHub connector authorization | Pass | Codex can fetch the repository by explicit full name and reports admin, maintain, push, triage, and pull permissions. |
@@ -79,7 +80,7 @@ Unknown:
 1. Gather external adoption evidence: stars, forks, feedback, a public comment, a downstream example, or integration into a real public workflow.
 2. Use `asset-pipeline-steward feedback-candidates .` to check issue #8 for non-maintainer feedback.
 3. Record any real external feedback with `asset-pipeline-steward record-feedback <public-url>`.
-4. Re-run `asset-pipeline-steward evidence .`, `asset-pipeline-steward readiness .`, `asset-pipeline-steward application .`, and `asset-pipeline-steward submission-ready . --manual-ready` before submitting.
+4. Re-run `asset-pipeline-steward evidence .`, `asset-pipeline-steward readiness .`, `asset-pipeline-steward application .`, `asset-pipeline-steward codex-oss-status . --manual-ready`, and `asset-pipeline-steward submission-ready . --manual-ready` before submitting.
 5. Fill manual form fields: first name, last name, ChatGPT account email, and OpenAI Organization ID.
 
 ## Draft Application Notes

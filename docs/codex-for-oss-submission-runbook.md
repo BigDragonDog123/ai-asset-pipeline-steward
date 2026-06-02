@@ -34,6 +34,7 @@ Run:
 asset-pipeline-steward evidence .
 asset-pipeline-steward readiness .
 asset-pipeline-steward application .
+asset-pipeline-steward codex-oss-status .
 asset-pipeline-steward submission-ready .
 ```
 
@@ -49,10 +50,11 @@ Submit only when:
 After the external feedback URL is recorded and the personal fields are ready for manual entry, run:
 
 ```bash
+asset-pipeline-steward codex-oss-status . --manual-ready
 asset-pipeline-steward submission-ready . --manual-ready
 ```
 
-The command should report ready before opening the final form submission flow.
+`codex-oss-status` should no longer report growth mode, and `submission-ready` should report ready before opening the final form submission flow.
 
 ## Manual Values
 

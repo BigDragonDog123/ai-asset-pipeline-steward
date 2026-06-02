@@ -15,6 +15,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from asset_pipeline_steward.cli import (
+    build_codex_oss_status,
     build_readiness_checks,
     build_evidence_report,
     build_maintenance_report,
@@ -545,6 +546,41 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertEqual(1, exit_code)
         self.assertIn("NOT READY", output.getvalue())
         self.assertIn("application.manual_fields", output.getvalue())
+
+    def test_codex_oss_status_reports_growth_mode(self) -> None:
+        status = build_codex_oss_status(ROOT, manual_ready=True)
+
+        self.assertEqual("growth_mode", status["recommendation"])
+        self.assertEqual(0, status["evidence_counts"]["external_feedback_urls"])
+        self.assertFalse(status["submission_ready"])
+        self.assertTrue(
+            any(
+                blocker["name"] == "evidence.external_feedback_urls"
+                for blocker in status["blockers"]
+            )
+        )
+        self.assertEqual("rolling_review", status["official_program"]["timing"])
+
+    def test_codex_oss_status_command_prints_next_actions(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["codex-oss-status", str(ROOT), "--manual-ready"])
+
+        self.assertEqual(0, exit_code)
+        text = output.getvalue()
+        self.assertIn("# Codex For OSS Status", text)
+        self.assertIn("Decision: GROWTH MODE", text)
+        self.assertIn("External feedback URLs: 0", text)
+        self.assertIn("first-feedback-playbook.md", text)
+
+    def test_codex_oss_status_command_prints_json(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["codex-oss-status", str(ROOT), "--manual-ready", "--json"])
+
+        self.assertEqual(0, exit_code)
+        payload = json.loads(output.getvalue())
+        self.assertFalse(payload["ok"])
+        self.assertEqual("growth_mode", payload["status"]["recommendation"])
+        self.assertEqual(0, payload["status"]["evidence_counts"]["external_feedback_urls"])
 
     def test_starter_issues_file_loads(self) -> None:
         issues, findings = load_starter_issues(ROOT)
