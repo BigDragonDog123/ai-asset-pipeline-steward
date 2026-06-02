@@ -12,6 +12,7 @@
     "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/releases/tag/v0.1.0"
   ],
   "issue_urls": [
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/9",
     "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/8",
     "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/7",
     "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/6",
@@ -35,6 +36,7 @@
     "Generated from public GitHub API data and reviewed on 2026-06-02 after commit 20ac473.",
     "Starter issues #3 through #7 have been completed with public comments and green CI evidence.",
     "Dependabot maintenance PRs #1 and #2 have been merged.",
+    "Issue #9 tracks the 30-day GitHub growth loop before Codex for OSS submission.",
     "Issue #8 tracks the remaining external feedback/adoption evidence gap.",
     "External feedback, stars, and forks are intentionally left as current public values.",
     "Do not include private user data, private logs, credentials, or non-public samples."

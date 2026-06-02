@@ -20,6 +20,7 @@ Do not rush a weak application just because the application packet is ready. Sub
 - Adoption evidence file: `docs/adoption-evidence.json`
 - Maintainer activity: starter issues completed, Dependabot PRs #1 and #2 merged, end-to-end maintainer-loop example added, and submission gates implemented.
 - Open adoption task: issue #8 tracks the first external feedback signal.
+- Open growth task: issue #9 tracks the 30-day GitHub growth loop before Codex for OSS submission.
 - Feedback form: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml`
 - Share request: `docs/public-feedback-request.md`
 - Outreach kit: `docs/feedback-outreach-kit.md`
