@@ -55,11 +55,18 @@ The important rule: the ChatGPT/Codex GitHub app must be installed and configure
    ```bash
    asset-pipeline-steward starter-issues .
    ```
-5. Create release `v0.1.0`.
-6. Run `asset-pipeline-steward collect-evidence .` and use the output as a reviewed starting point.
-7. Fill `docs/adoption-evidence.json` with the public repo URL, CI run URL, release URL, and starter issue URLs.
-8. Run `asset-pipeline-steward application .` and confirm the submission gate warnings are understood.
-9. Commit and push the updated adoption evidence file.
+5. Preview starter issue and release creation:
+   ```powershell
+   .\scripts\create-post-publish-github-items.ps1
+   ```
+6. If the preview is correct, set `GITHUB_TOKEN` to a token with Issues and Contents write access, then run:
+   ```powershell
+   .\scripts\create-post-publish-github-items.ps1 -Execute
+   ```
+7. Run `asset-pipeline-steward collect-evidence .` and use the output as a reviewed starting point.
+8. Fill `docs/adoption-evidence.json` with the public repo URL, CI run URL, release URL, and starter issue URLs.
+9. Run `asset-pipeline-steward application .` and confirm the submission gate warnings are understood.
+10. Commit and push the updated adoption evidence file.
 
 ## Do Not Publish Yet If
 

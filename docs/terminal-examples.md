@@ -49,6 +49,14 @@ asset-pipeline-steward application .
 
 Expected output includes draft Codex for OSS form fields, 500-character answer checks, manual fields still needed, and submission-gate warnings for missing public evidence.
 
+## Preview Post-Publish GitHub Writes
+
+```powershell
+.\scripts\create-post-publish-github-items.ps1
+```
+
+Expected output previews label, starter issue, and v0.1.0 release creation. Add `-Execute` only after the public repository exists and `GITHUB_TOKEN` is set.
+
 ## Render Starter Issues
 
 ```bash

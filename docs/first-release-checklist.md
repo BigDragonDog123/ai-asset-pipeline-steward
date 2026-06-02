@@ -57,6 +57,8 @@ This release uses only synthetic examples and does not include model files, priv
 ## After Release
 
 - Open the starter issues in docs/starter-issues.md.
+- Preview post-publish GitHub writes with `.\scripts\create-post-publish-github-items.ps1`.
+- Execute issue and release creation with `.\scripts\create-post-publish-github-items.ps1 -Execute` only after `GITHUB_TOKEN` is set.
 - Link the release in docs/codex-for-oss-readiness.md.
 - Run `asset-pipeline-steward collect-evidence .` to gather public GitHub URLs.
 - Record public URLs in docs/adoption-evidence.json.

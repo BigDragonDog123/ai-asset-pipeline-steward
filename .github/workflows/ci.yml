@@ -35,6 +35,12 @@ jobs:
       - name: Render Codex for OSS application packet
         run: asset-pipeline-steward application .
 
+      - name: Check PowerShell script syntax
+        shell: pwsh
+        run: |
+          [scriptblock]::Create((Get-Content -Raw scripts/publish-after-github-repo.ps1)) | Out-Null
+          [scriptblock]::Create((Get-Content -Raw scripts/create-post-publish-github-items.ps1)) | Out-Null
+
       - name: Render starter issues
         run: asset-pipeline-steward starter-issues .
 

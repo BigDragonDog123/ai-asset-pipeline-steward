@@ -16,6 +16,7 @@ Status: complete locally.
 - Codex for OSS application packet command.
 - Starter issue export command.
 - GitHub publishing and connector setup guidance.
+- Dry-run post-publish GitHub issue/release automation.
 - JSON Schema and schema command.
 - Maintenance report command.
 - Synthetic review, model-inventory, and review-queue manifests.

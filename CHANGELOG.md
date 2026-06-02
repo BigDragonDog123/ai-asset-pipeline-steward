@@ -12,6 +12,7 @@ Initial public scaffold prepared locally.
 - Added Codex for OSS application packet rendering.
 - Added starter issue export.
 - Added GitHub publishing and connector setup guidance.
+- Added dry-run post-publish GitHub issue/release automation.
 - Added JSON Schema output and a checked-in manifest schema.
 - Added maintainer report generation from a manifest.
 - Added synthetic review, model-inventory, and review-queue manifests.
