@@ -24,6 +24,7 @@ python -m asset_pipeline_steward.cli evidence .
 python -m asset_pipeline_steward.cli application .
 python -m asset_pipeline_steward.cli codex-oss-status .
 python -m asset_pipeline_steward.cli public-usage-note .
+python -m asset_pipeline_steward.cli feedback-response-playbook .
 python -m asset_pipeline_steward.cli starter-issues .
 python -m asset_pipeline_steward.cli examples/fixture_manifest.json
 ```

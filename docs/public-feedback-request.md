@@ -2,12 +2,13 @@
 
 AI Asset Pipeline Steward needs one or more public feedback links from people other than the maintainer. Use this page when asking someone to try the repo, skim the examples, or leave a short issue.
 
-For the shortest reviewer-facing path, use `REVIEW.md`. For the shortest public post draft, use `docs/public-usage-note.md`. For the shortest maintainer action plan, use `docs/first-feedback-playbook.md`. For longer English/Chinese messages, review paths, and evidence rules, use `docs/feedback-outreach-kit.md`. For a direct checklist, use `docs/reviewer-checklist.md`.
+For the shortest reviewer-facing path, use `REVIEW.md`. For the shortest public post draft, use `docs/public-usage-note.md`. For the shortest maintainer action plan, use `docs/first-feedback-playbook.md`. After feedback appears, use `docs/feedback-response-playbook.md` to turn it into visible maintenance evidence. For longer English/Chinese messages, review paths, and evidence rules, use `docs/feedback-outreach-kit.md`. For a direct checklist, use `docs/reviewer-checklist.md`.
 
 To print the concise first-feedback plan from the CLI, run:
 
 ```bash
 asset-pipeline-steward first-feedback-playbook .
+asset-pipeline-steward feedback-response-playbook .
 ```
 
 ## Short Request

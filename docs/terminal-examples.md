@@ -60,6 +60,16 @@ asset-pipeline-steward public-usage-note .
 
 Expected output includes a short note, a longer note, public links, public-safety rules, and after-posting steps for recording real external feedback.
 
+## Print Feedback Response Playbook
+
+Use this after a real public feedback URL appears and before treating it as Codex for OSS application evidence.
+
+```bash
+asset-pipeline-steward feedback-response-playbook .
+```
+
+Expected output includes public-safety rules, a response sequence, response options, a public reply template, and final gate commands. The goal is visible maintenance evidence: a recorded feedback URL plus a public maintainer response through an issue, docs change, validation rule, release note, or roadmap decision.
+
 ## Collect Public GitHub Evidence
 
 Use this after the repository exists on GitHub:

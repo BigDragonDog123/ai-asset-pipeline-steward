@@ -20,6 +20,7 @@ from asset_pipeline_steward.cli import (
     build_evidence_report,
     build_maintenance_report,
     build_manifest_schema,
+    build_feedback_response_playbook,
     build_public_usage_note,
     build_submission_checks,
     collect_public_evidence,
@@ -680,6 +681,40 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("REVIEW.md", text)
         self.assertIn("may be recorded as external feedback evidence", text)
         self.assertIn("asset-pipeline-steward first-feedback-playbook .", text)
+
+    def test_feedback_response_playbook_command_prints_maintenance_plan(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["feedback-response-playbook", str(ROOT)])
+
+        self.assertEqual(0, exit_code)
+        text = output.getvalue()
+        self.assertIn("# Feedback Response Playbook", text)
+        self.assertIn("visible maintenance evidence", text)
+        self.assertIn("record-feedback <public-feedback-url>", text)
+        self.assertIn("Public Reply Template", text)
+        self.assertIn("submission-ready . --manual-ready", text)
+
+    def test_feedback_response_playbook_command_prints_json(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["feedback-response-playbook", str(ROOT), "--json"])
+
+        self.assertEqual(0, exit_code)
+        payload = json.loads(output.getvalue())
+        self.assertTrue(payload["ok"])
+        self.assertIn("response_sequence", payload["playbook"])
+        self.assertIn("public_reply_template", payload["playbook"])
+
+    def test_feedback_response_playbook_doc_exists(self) -> None:
+        playbook = build_feedback_response_playbook(ROOT)
+        text = (ROOT / "docs" / "feedback-response-playbook.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("# Feedback Response Playbook", text)
+        self.assertIn(playbook["repository_url"], text)
+        self.assertIn("visible maintenance evidence", text)
+        self.assertIn("asset-pipeline-steward feedback-response-playbook .", text)
+        self.assertIn("record-feedback <public-feedback-url>", text)
 
     def test_public_usage_note_command_prints_public_post(self) -> None:
         with redirect_stdout(StringIO()) as output:

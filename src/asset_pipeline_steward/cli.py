@@ -1048,7 +1048,7 @@ def build_codex_oss_status(root: Path, manual_ready: bool = False) -> dict[str, 
             "Send the short request from docs/first-feedback-playbook.md to one real reviewer.",
             "Ask for a public issue, public comment, forum post, or other reviewer-accessible URL.",
             "Run asset-pipeline-steward feedback-candidates . and record real feedback with asset-pipeline-steward record-feedback <public-feedback-url>.",
-            "Make one visible maintainer response to the feedback, then rerun asset-pipeline-steward submission-ready . --manual-ready.",
+            "Use asset-pipeline-steward feedback-response-playbook . to make one visible maintainer response, then rerun asset-pipeline-steward submission-ready . --manual-ready.",
         ]
     elif blockers:
         next_actions = [
@@ -1899,6 +1899,7 @@ def build_first_feedback_playbook(root: Path) -> dict[str, Any]:
         "maintainer_follow_up": [
             "asset-pipeline-steward feedback-candidates .",
             "asset-pipeline-steward record-feedback <public-feedback-url>",
+            "asset-pipeline-steward feedback-response-playbook .",
             "asset-pipeline-steward evidence .",
             "asset-pipeline-steward submission-ready . --manual-ready",
         ],
@@ -1998,7 +1999,7 @@ def build_public_usage_note(root: Path) -> dict[str, Any]:
             "Wait for a public response or feedback issue from someone other than the maintainer.",
             "Run asset-pipeline-steward feedback-candidates .",
             "Record only reviewed public-safe URLs with asset-pipeline-steward record-feedback <public-feedback-url>.",
-            "Turn one concrete critique into a visible issue, docs change, validation rule, or roadmap decision.",
+            "Run asset-pipeline-steward feedback-response-playbook . and turn one concrete critique into a visible issue, docs change, validation rule, release note, or roadmap decision.",
         ],
     }
 
@@ -2038,6 +2039,138 @@ def format_public_usage_note(note: dict[str, Any]) -> str:
     lines.extend(["", "## After Posting", ""])
     for item in note["after_posting"]:
         lines.append(f"- {item}")
+
+    return "\n".join(lines)
+
+
+def build_feedback_response_playbook(root: Path) -> dict[str, Any]:
+    repo_url = public_repository_url(root)
+    evidence_file = public_blob_url(root, "docs/adoption-evidence.json")
+    growth_plan = public_blob_url(root, "docs/maintainer-growth-plan.md")
+    submission_runbook = public_blob_url(root, "docs/codex-for-oss-submission-runbook.md")
+    return {
+        "repository_url": repo_url,
+        "goal": (
+            "Turn one real public, non-maintainer feedback URL into visible "
+            "maintenance evidence before Codex for OSS submission."
+        ),
+        "response_rules": [
+            "Do not quote or record private paths, credentials, logs, model files, or non-public media.",
+            "Do not count maintainer-authored text as external feedback.",
+            "Record the feedback URL only after checking that it is public-safe and reviewer-accessible.",
+            "Respond publicly with either a shipped change, a linked issue, or a clear roadmap decision.",
+            "Keep the response small enough that tests and repo-scan can verify it before submission.",
+        ],
+        "response_sequence": [
+            "Screen the feedback for public-safety problems before quoting or linking it.",
+            "Record the URL with asset-pipeline-steward record-feedback <public-feedback-url>.",
+            "Classify the critique as docs clarification, validation rule, CLI ergonomics, roadmap decision, or out-of-scope.",
+            "Open or update one public issue that links the feedback URL and states the maintainer decision.",
+            "Ship the smallest docs, validation, test, or roadmap change that addresses the critique.",
+            "Reply publicly with what changed, what will change later, or why the feedback is out of scope.",
+            "Rerun evidence, readiness, codex-oss-status, and submission-ready before the official form.",
+        ],
+        "response_options": [
+            {
+                "type": "Docs clarification",
+                "use_when": "the reviewer was blocked by unclear instructions or missing examples",
+                "evidence": "docs diff, test if applicable, and public maintainer reply",
+            },
+            {
+                "type": "Validation rule",
+                "use_when": "the reviewer found a manifest field or safety rule that should be enforced",
+                "evidence": "validator change, focused test, and public maintainer reply",
+            },
+            {
+                "type": "CLI ergonomics",
+                "use_when": "the reviewer found command output, next actions, or error recovery unclear",
+                "evidence": "CLI output change, test, terminal example update, and public maintainer reply",
+            },
+            {
+                "type": "Roadmap decision",
+                "use_when": "the feedback is valid but too large for the current release",
+                "evidence": "roadmap or issue update with scope, reason, and next milestone",
+            },
+            {
+                "type": "Out-of-scope",
+                "use_when": "the request would require private assets, large model files, or unsafe publishing",
+                "evidence": "public reply explaining the boundary and any safe alternative",
+            },
+        ],
+        "public_reply_template": (
+            "Thanks for the concrete feedback. I recorded this as external feedback "
+            "evidence because it is public-safe and not maintainer-authored.\n\n"
+            "Maintainer response:\n"
+            "- Decision: <docs clarification | validation rule | CLI ergonomics | roadmap decision | out-of-scope>\n"
+            "- Action: <link issue, docs change, PR, release note, or roadmap item>\n"
+            "- Verification: <tests/checks run>\n\n"
+            "I avoided private paths, logs, credentials, model files, and non-public media."
+        ),
+        "commands": [
+            "asset-pipeline-steward feedback-candidates .",
+            "asset-pipeline-steward record-feedback <public-feedback-url>",
+            "asset-pipeline-steward evidence .",
+            "asset-pipeline-steward readiness .",
+            "asset-pipeline-steward codex-oss-status . --manual-ready",
+            "asset-pipeline-steward submission-ready . --manual-ready",
+        ],
+        "links": {
+            "evidence_file": evidence_file,
+            "growth_plan": growth_plan,
+            "submission_runbook": submission_runbook,
+        },
+    }
+
+
+def format_feedback_response_playbook(playbook: dict[str, Any]) -> str:
+    lines = [
+        "# Feedback Response Playbook",
+        "",
+        f"Repository: {playbook['repository_url']}",
+        "",
+        "## Goal",
+        "",
+        str(playbook["goal"]),
+        "",
+        "## Response Rules",
+        "",
+    ]
+    for rule in playbook["response_rules"]:
+        lines.append(f"- {rule}")
+
+    lines.extend(["", "## Response Sequence", ""])
+    for index, step in enumerate(playbook["response_sequence"], start=1):
+        lines.append(f"{index}. {step}")
+
+    lines.extend(["", "## Response Options", ""])
+    for option in playbook["response_options"]:
+        lines.extend(
+            [
+                f"### {option['type']}",
+                "",
+                f"- Use when: {option['use_when']}",
+                f"- Evidence: {option['evidence']}",
+                "",
+            ]
+        )
+
+    lines.extend(
+        [
+            "## Public Reply Template",
+            "",
+            "```text",
+            str(playbook["public_reply_template"]),
+            "```",
+            "",
+            "## Commands",
+            "",
+            "```bash",
+        ]
+    )
+    lines.extend(playbook["commands"])
+    lines.extend(["```", "", "## Links", ""])
+    for label, url in playbook["links"].items():
+        lines.append(f"- {label}: {url}")
 
     return "\n".join(lines)
 
@@ -2230,7 +2363,8 @@ def build_parser() -> argparse.ArgumentParser:
             "Manifest path, or command: validate/report/schema/repo-scan/readiness/"
             "evidence/collect-evidence/feedback-candidates/record-feedback/"
             "application/submission-ready/starter-issues/reviewer-checklist/"
-            "first-feedback-playbook/public-usage-note/codex-oss-status"
+            "first-feedback-playbook/feedback-response-playbook/"
+            "public-usage-note/codex-oss-status"
         ),
     )
     parser.add_argument("manifest", nargs="?", help="Path, feedback URL, or issue URL")
@@ -2434,6 +2568,20 @@ def main(argv: list[str] | None = None) -> int:
             print(format_first_feedback_playbook(playbook))
         return 0
 
+    if command == "feedback-response-playbook":
+        root = manifest_path or Path(".")
+        playbook = build_feedback_response_playbook(root)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": True,
+                "playbook": playbook,
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(format_feedback_response_playbook(playbook))
+        return 0
+
     if command == "public-usage-note":
         root = manifest_path or Path(".")
         note = build_public_usage_note(root)
@@ -2502,6 +2650,8 @@ def resolve_command(
     if command_or_manifest == "reviewer-checklist":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "first-feedback-playbook":
+        return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "feedback-response-playbook":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "public-usage-note":
         return command_or_manifest, manifest or Path(".")

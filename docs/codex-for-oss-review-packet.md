@@ -32,6 +32,7 @@ The program says applications are reviewed on a rolling basis and looks for acti
 - Reviewer brief: `docs/reviewer-brief.md`
 - Feedback request: `docs/public-feedback-request.md`
 - First feedback playbook: `docs/first-feedback-playbook.md`
+- Feedback response playbook: `docs/feedback-response-playbook.md`
 - Outreach kit: `docs/feedback-outreach-kit.md`
 - Outreach tracker: `docs/outreach-tracker.md`
 - Growth status command: `asset-pipeline-steward codex-oss-status . --manual-ready`

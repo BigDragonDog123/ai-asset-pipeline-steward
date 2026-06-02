@@ -50,7 +50,7 @@ Try the terminal examples or skim the end-to-end maintainer loop, then leave one
 1. Wait for a public response or feedback issue from someone other than the maintainer.
 2. Run `asset-pipeline-steward feedback-candidates .`.
 3. Record only reviewed public-safe URLs with `asset-pipeline-steward record-feedback <public-feedback-url>`.
-4. Turn one concrete critique into a visible issue, docs change, validation rule, or roadmap decision.
+4. Run `asset-pipeline-steward feedback-response-playbook .` and turn one concrete critique into a visible issue, docs change, validation rule, release note, or roadmap decision.
 
 The same note can be printed from a clone:
 

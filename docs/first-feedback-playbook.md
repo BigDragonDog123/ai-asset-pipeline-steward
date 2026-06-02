@@ -77,6 +77,7 @@ After public feedback appears:
 ```bash
 asset-pipeline-steward feedback-candidates .
 asset-pipeline-steward record-feedback <public-feedback-url>
+asset-pipeline-steward feedback-response-playbook .
 asset-pipeline-steward evidence .
 asset-pipeline-steward submission-ready . --manual-ready
 ```

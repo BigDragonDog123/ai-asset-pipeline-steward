@@ -25,6 +25,7 @@ Do not rush a weak application just because the application packet is ready. Sub
 - Share request: `docs/public-feedback-request.md`
 - Public usage note: `docs/public-usage-note.md`
 - First feedback playbook: `docs/first-feedback-playbook.md`
+- Feedback response playbook: `docs/feedback-response-playbook.md`
 - Outreach kit: `docs/feedback-outreach-kit.md`
 - Outreach tracker: `docs/outreach-tracker.md`
 - Reviewer brief: `docs/reviewer-brief.md`
@@ -77,7 +78,7 @@ Stronger target before applying:
 4. Track only public-safe reviewer status in `docs/outreach-tracker.md`; do not record private contact details.
 5. Publish one short public usage note from `docs/public-usage-note.md` or `asset-pipeline-steward public-usage-note .` that links to the repo, review landing, terminal examples, and feedback form.
 6. Scan with `asset-pipeline-steward feedback-candidates`, then record any real external feedback URL with `asset-pipeline-steward record-feedback`.
-7. Turn the first concrete critique into a visible issue or small PR.
+7. Use `docs/feedback-response-playbook.md` or `asset-pipeline-steward feedback-response-playbook .` to turn the first concrete critique into a visible issue, docs change, validation rule, release note, or roadmap decision.
 8. Ship one feedback-driven docs or validation improvement.
 9. Consider a small `v0.1.1` release only after feedback produces a meaningful improvement.
 10. Close issue #8 after the external feedback URL is recorded and evidence passes.
