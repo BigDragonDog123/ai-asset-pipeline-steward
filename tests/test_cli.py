@@ -908,6 +908,8 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("Comment Draft", text)
         self.assertIn("not external adoption evidence", text)
         self.assertIn("feedback-status-update", text)
+        self.assertIn("blocker-only reviews", text)
+        self.assertIn("next-human-action . --manual-ready", text)
 
     def test_feedback_status_update_command_prints_json(self) -> None:
         with redirect_stdout(StringIO()) as output:
@@ -929,6 +931,8 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn(update["issue_url"], text)
         self.assertIn("asset-pipeline-steward feedback-status-update .", text)
         self.assertIn("not external adoption evidence", text)
+        self.assertIn("blocker-only reviews", text)
+        self.assertIn("next-human-action . --manual-ready", text)
 
     def test_public_usage_note_command_prints_public_post(self) -> None:
         with redirect_stdout(StringIO()) as output:

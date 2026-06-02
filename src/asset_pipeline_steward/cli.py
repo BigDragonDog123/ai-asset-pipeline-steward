@@ -2620,6 +2620,7 @@ def build_feedback_status_update(root: Path) -> dict[str, Any]:
         "Maintainer status update for the Codex for OSS growth path.\n\n"
         "Current status:\n"
         "- Still waiting for a real public feedback URL from someone other than the maintainer.\n"
+        "- The feedback form now accepts blocker-only reviews: the adoption blocker remains required, while `What seemed useful` is optional.\n"
         "- Maintainer-authored comments, docs, and command updates count as maintenance activity only, not external adoption evidence.\n"
         "- Public GitHub API checks may require `GITHUB_TOKEN` when unauthenticated requests are rate-limited.\n\n"
         "Reviewer entrypoints:\n"
@@ -2628,6 +2629,10 @@ def build_feedback_status_update(root: Path) -> dict[str, Any]:
         f"- Feedback response playbook: {response_playbook}\n"
         f"- Terminal examples: {terminal_examples}\n"
         f"- Feedback form: {feedback_form}\n\n"
+        "Maintainer command to print the current copy-paste reviewer message:\n\n"
+        "```bash\n"
+        "asset-pipeline-steward next-human-action . --manual-ready\n"
+        "```\n\n"
         "Maintainer commands after feedback appears:\n\n"
         "```bash\n"
         "asset-pipeline-steward feedback-candidates .\n"
@@ -2650,6 +2655,7 @@ def build_feedback_status_update(root: Path) -> dict[str, Any]:
             f"Open {issue_url}",
             "Paste the comment draft as a maintainer update.",
             "Do not record the maintainer-authored comment as external feedback evidence.",
+            "Use asset-pipeline-steward next-human-action . --manual-ready to send the current reviewer request.",
             "Wait for a public non-maintainer feedback URL before running record-feedback.",
             "Reprint this draft with asset-pipeline-steward feedback-status-update .",
         ],

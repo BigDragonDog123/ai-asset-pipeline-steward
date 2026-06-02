@@ -15,6 +15,7 @@ Maintainer status update for the Codex for OSS growth path.
 
 Current status:
 - Still waiting for a real public feedback URL from someone other than the maintainer.
+- The feedback form now accepts blocker-only reviews: the adoption blocker remains required, while `What seemed useful` is optional.
 - Maintainer-authored comments, docs, and command updates count as maintenance activity only, not external adoption evidence.
 - Public GitHub API checks may require `GITHUB_TOKEN` when unauthenticated requests are rate-limited.
 
@@ -24,6 +25,12 @@ Reviewer entrypoints:
 - Feedback response playbook: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/feedback-response-playbook.md
 - Terminal examples: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/terminal-examples.md
 - Feedback form: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml
+
+Maintainer command to print the current copy-paste reviewer message:
+
+```bash
+asset-pipeline-steward next-human-action . --manual-ready
+```
 
 Maintainer commands after feedback appears:
 
@@ -43,8 +50,9 @@ This update is intentionally not recorded in `external_feedback_urls`.
 1. Open `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/8`.
 2. Paste the comment draft as a maintainer update.
 3. Do not record the maintainer-authored comment as external feedback evidence.
-4. Wait for a public non-maintainer feedback URL before running `record-feedback`.
-5. Reprint this draft with `asset-pipeline-steward feedback-status-update .`.
+4. Use `asset-pipeline-steward next-human-action . --manual-ready` to send the current reviewer request.
+5. Wait for a public non-maintainer feedback URL before running `record-feedback`.
+6. Reprint this draft with `asset-pipeline-steward feedback-status-update .`.
 
 The same draft can be printed from a clone:
 
