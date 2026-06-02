@@ -65,6 +65,22 @@ asset-pipeline-steward application .
 
 Expected output includes draft Codex for OSS form fields, 500-character answer checks, manual fields still needed, and submission-gate warnings for missing public evidence.
 
+## Check Final Submission Gate
+
+```bash
+asset-pipeline-steward submission-ready .
+```
+
+Expected output reports whether the repository is ready for official-form submission. It treats missing external feedback and unconfirmed manual personal fields as blockers.
+
+After a real external feedback URL is recorded and the personal fields are ready for manual entry in the official form, run:
+
+```bash
+asset-pipeline-steward submission-ready . --manual-ready
+```
+
+Do not commit first name, last name, ChatGPT email, OpenAI Organization ID, or application confirmation emails.
+
 ## Open Codex For OSS Submission Links
 
 ```powershell

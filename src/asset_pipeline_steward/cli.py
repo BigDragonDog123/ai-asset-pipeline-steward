@@ -938,6 +938,89 @@ def format_application_report(
     return "\n".join(lines).rstrip()
 
 
+def build_submission_checks(
+    root: Path,
+    manual_ready: bool = False,
+    check_git: bool = True,
+) -> list[ReadinessCheck]:
+    checks = build_readiness_checks(root, check_git=check_git)
+    submission_checks: list[ReadinessCheck] = []
+
+    for check in checks:
+        if check.name == "evidence.external_feedback_urls" and check.status != "pass":
+            submission_checks.append(
+                ReadinessCheck(
+                    "blocker",
+                    check.name,
+                    "at least one real public external feedback URL is required before submission",
+                )
+            )
+        else:
+            submission_checks.append(check)
+
+    packet, findings = load_application_packet(root)
+    if findings:
+        for finding in findings:
+            submission_checks.append(
+                ReadinessCheck(
+                    "blocker",
+                    finding.path,
+                    finding.message,
+                )
+            )
+    else:
+        submission_checks.append(
+            ReadinessCheck("pass", APPLICATION_FILE, "application packet is valid")
+        )
+
+    manual_fields = list_value(packet.get("manual_fields")) if packet else []
+    if manual_fields:
+        if manual_ready:
+            submission_checks.append(
+                ReadinessCheck(
+                    "pass",
+                    "application.manual_fields",
+                    "manual personal fields are confirmed for official form entry only",
+                )
+            )
+        else:
+            submission_checks.append(
+                ReadinessCheck(
+                    "blocker",
+                    "application.manual_fields",
+                    (
+                        "manual personal fields are not confirmed; use --manual-ready "
+                        "only after first name, last name, ChatGPT email, and OpenAI "
+                        "Organization ID are ready for the official form"
+                    ),
+                )
+            )
+
+    return submission_checks
+
+
+def format_submission_report(checks: list[ReadinessCheck]) -> str:
+    lines = ["# Codex For OSS Submission Gate"]
+    for check in checks:
+        lines.append(f"- {check.status.upper()} {check.name}: {check.message}")
+    if has_readiness_blockers(checks):
+        lines.extend(
+            [
+                "",
+                "Result: NOT READY to submit.",
+            ]
+        )
+    else:
+        lines.extend(
+            [
+                "",
+                "Result: READY for manual official-form submission.",
+                "Do not commit personal form values to this repository.",
+            ]
+        )
+    return "\n".join(lines)
+
+
 def infer_public_repository(root: Path) -> str:
     data, _checks = load_adoption_evidence(root)
     repo_url = string_value(data.get("public_repository_url")) if data else ""
@@ -1562,12 +1645,18 @@ def build_parser() -> argparse.ArgumentParser:
         "command_or_manifest",
         help=(
             "Manifest path, or command: validate/report/schema/repo-scan/readiness/"
-            "evidence/collect-evidence/record-feedback/application/starter-issues"
+            "evidence/collect-evidence/record-feedback/application/submission-ready/"
+            "starter-issues"
         ),
     )
     parser.add_argument("manifest", nargs="?", help="Path to manifest JSON or feedback URL")
     parser.add_argument("extra", nargs="?", help="Feedback URL for record-feedback")
     parser.add_argument("--json", action="store_true", help="Print JSON report")
+    parser.add_argument(
+        "--manual-ready",
+        action="store_true",
+        help="For submission-ready only: confirm personal form fields are ready for manual entry",
+    )
     return parser
 
 
@@ -1674,6 +1763,21 @@ def main(argv: list[str] | None = None) -> int:
             print(format_application_report(packet, findings, evidence_checks))
         return 1 if has_blockers(findings) else 0
 
+    if command == "submission-ready":
+        root = manifest_path or Path(".")
+        checks = build_submission_checks(root, manual_ready=args.manual_ready)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": not has_readiness_blockers(checks),
+                "manual_ready": args.manual_ready,
+                "checks": [asdict(check) for check in checks],
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(format_submission_report(checks))
+        return 1 if has_readiness_blockers(checks) else 0
+
     if command == "starter-issues":
         root = manifest_path or Path(".")
         issues, findings = load_starter_issues(root)
@@ -1731,6 +1835,8 @@ def resolve_command(
     if command_or_manifest == "record-feedback":
         raise SystemExit("record-feedback requires a feedback URL")
     if command_or_manifest == "application":
+        return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "submission-ready":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "starter-issues":
         return command_or_manifest, manifest or Path(".")

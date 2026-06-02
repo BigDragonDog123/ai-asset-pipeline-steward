@@ -32,6 +32,7 @@ Run:
 asset-pipeline-steward evidence .
 asset-pipeline-steward readiness .
 asset-pipeline-steward application .
+asset-pipeline-steward submission-ready .
 ```
 
 Submit only when:
@@ -42,6 +43,14 @@ Submit only when:
 - first name, last name, ChatGPT email, and OpenAI Organization ID are known;
 - the latest GitHub Actions run on `main` is green;
 - `docs/adoption-evidence.json` contains the current public evidence.
+
+After the external feedback URL is recorded and the personal fields are ready for manual entry, run:
+
+```bash
+asset-pipeline-steward submission-ready . --manual-ready
+```
+
+The command should report ready before opening the final form submission flow.
 
 ## Manual Values
 

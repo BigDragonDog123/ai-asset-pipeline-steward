@@ -19,6 +19,7 @@ from asset_pipeline_steward.cli import (
     build_evidence_report,
     build_maintenance_report,
     build_manifest_schema,
+    build_submission_checks,
     collect_public_evidence,
     format_application_report,
     format_public_evidence_report,
@@ -440,6 +441,52 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIsNotNone(packet)
         self.assertTrue(any(finding.severity == "blocker" for finding in findings))
         self.assertIn("answer is", format_application_report(packet, findings, []))
+
+    def test_submission_checks_block_until_feedback_and_manual_fields_ready(self) -> None:
+        checks = build_submission_checks(ROOT, manual_ready=False)
+
+        self.assertTrue(has_readiness_blockers(checks))
+        self.assertTrue(
+            any(
+                check.name == "evidence.external_feedback_urls"
+                and check.status == "blocker"
+                for check in checks
+            )
+        )
+        self.assertTrue(
+            any(
+                check.name == "application.manual_fields"
+                and check.status == "blocker"
+                for check in checks
+            )
+        )
+
+    def test_submission_checks_manual_ready_only_clears_manual_blocker(self) -> None:
+        checks = build_submission_checks(ROOT, manual_ready=True)
+
+        self.assertTrue(has_readiness_blockers(checks))
+        self.assertTrue(
+            any(
+                check.name == "application.manual_fields"
+                and check.status == "pass"
+                for check in checks
+            )
+        )
+        self.assertTrue(
+            any(
+                check.name == "evidence.external_feedback_urls"
+                and check.status == "blocker"
+                for check in checks
+            )
+        )
+
+    def test_submission_ready_command_reports_not_ready(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["submission-ready", str(ROOT)])
+
+        self.assertEqual(1, exit_code)
+        self.assertIn("NOT READY", output.getvalue())
+        self.assertIn("application.manual_fields", output.getvalue())
 
     def test_starter_issues_file_loads(self) -> None:
         issues, findings = load_starter_issues(ROOT)

@@ -100,5 +100,6 @@ Submit only when:
 - latest GitHub Actions on `main` is green;
 - `asset-pipeline-steward repo-scan .` passes;
 - `asset-pipeline-steward readiness .` has no unexpected blocker;
+- `asset-pipeline-steward submission-ready . --manual-ready` passes immediately before form entry;
 - a real external feedback URL is recorded, or the weaker application is intentional;
 - personal fields are filled in the official form only, not committed to this repository.

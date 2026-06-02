@@ -49,6 +49,7 @@ Source:
 | Local readiness checks | Pass | `asset-pipeline-steward readiness .` passes without blockers on `main`. |
 | Adoption evidence tracking | Pass | `docs/adoption-evidence.json`, `asset-pipeline-steward evidence .`, and `asset-pipeline-steward collect-evidence .` track public repo URL, CI, release, issues, feedback, usage, stars, and forks. |
 | Application packet | Pass | `docs/codex-for-oss-application.json` and `asset-pipeline-steward application .` render draft form fields and check answer length limits. |
+| Final submission gate | Early | `asset-pipeline-steward submission-ready .` blocks final submission until external feedback is recorded and personal form fields are confirmed for manual entry. |
 | Public repository | Pass | `https://github.com/BigDragonDog123/ai-asset-pipeline-steward` is public. |
 | GitHub connector authorization | Partial | Codex can fetch the repository by explicit full name, but GitHub App installation listing still reports no visible installations. |
 | Public adoption | Early | Public evidence includes a release, CI, starter issues, usage examples, and Dependabot PRs. Stars, forks, downloads, and external feedback are still at early-stage values. |
@@ -78,7 +79,7 @@ Unknown:
 2. Resolve or merge Dependabot PRs where safe, so the repo shows normal maintainer activity.
 3. Close issue #7 after the release checklist is fully reflected in the repo.
 4. Implement one small roadmap issue to create non-setup maintenance history after launch.
-5. Re-run `asset-pipeline-steward evidence .`, `asset-pipeline-steward readiness .`, and `asset-pipeline-steward application .` before submitting.
+5. Re-run `asset-pipeline-steward evidence .`, `asset-pipeline-steward readiness .`, `asset-pipeline-steward application .`, and `asset-pipeline-steward submission-ready . --manual-ready` before submitting.
 6. Fill manual form fields: first name, last name, ChatGPT account email, and OpenAI Organization ID.
 
 ## Draft Application Notes
