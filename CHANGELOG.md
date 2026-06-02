@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Made the external feedback form lower-friction by keeping blocker details required while making the "useful" field optional.
 - Updated empty feedback-candidate output to point maintainers to the `next-human-action` reviewer message.
 - Extended `next-human-action` with a copy-paste reviewer message when external feedback is still missing.
 - Added a `next-human-action` command that prints the single current manual step for Codex for OSS growth or submission.

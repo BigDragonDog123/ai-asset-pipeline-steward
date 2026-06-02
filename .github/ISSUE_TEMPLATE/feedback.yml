@@ -43,9 +43,9 @@ body:
     id: useful
     attributes:
       label: What seemed useful
-      description: Which part could help with real maintenance work?
+      description: Which part could help with real maintenance work? Optional; a blocker-only review is still useful.
     validations:
-      required: true
+      required: false
   - type: textarea
     id: adoption_blocker
     attributes:

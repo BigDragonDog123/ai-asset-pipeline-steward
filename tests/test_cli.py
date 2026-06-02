@@ -983,6 +983,22 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("external feedback evidence", text)
         self.assertIn("required: true", text)
 
+    def test_feedback_template_keeps_useful_field_optional(self) -> None:
+        text = (ROOT / ".github" / "ISSUE_TEMPLATE" / "feedback.yml").read_text(
+            encoding="utf-8"
+        )
+
+        useful_section = text.split("id: useful", maxsplit=1)[1].split(
+            "id: adoption_blocker", maxsplit=1
+        )[0]
+        adoption_blocker_section = text.split(
+            "id: adoption_blocker", maxsplit=1
+        )[1].split("id: confusing", maxsplit=1)[0]
+
+        self.assertIn("blocker-only review is still useful", useful_section)
+        self.assertIn("required: false", useful_section)
+        self.assertIn("required: true", adoption_blocker_section)
+
     def test_outreach_tracker_doc_avoids_private_contact_data(self) -> None:
         text = (ROOT / "docs" / "outreach-tracker.md").read_text(encoding="utf-8")
 

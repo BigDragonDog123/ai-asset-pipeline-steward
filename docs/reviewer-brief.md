@@ -56,7 +56,7 @@ Useful public feedback can be short. Good examples:
 
 For direct review paths, use `docs/reviewer-checklist.md`. If you have more time or need shareable messages, use `docs/feedback-outreach-kit.md`.
 
-The feedback form asks for the review path, what was tried, what seemed useful, and one concrete adoption blocker. That shape is intentional: specific critique is more useful than general approval.
+The feedback form asks for the review path, what was tried, and one concrete adoption blocker. "What seemed useful" is optional; a blocker-only review is still useful when it is specific and public-safe.
 
 ## Public Safety
 
