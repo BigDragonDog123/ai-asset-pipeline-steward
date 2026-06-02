@@ -90,12 +90,88 @@ def validate_manifest(data: dict[str, Any]) -> list[Finding]:
         if value is not None and not isinstance(value, list):
             findings.append(Finding("blocker", key, "field must be a list"))
 
+    workflows = data.get("workflows")
+    if isinstance(workflows, list):
+        findings.extend(validate_workflows(workflows))
+
+    review_signals = data.get("review_signals")
+    if isinstance(review_signals, list):
+        findings.extend(validate_review_signals(review_signals))
+
     decision_gate = data.get("decision_gate")
     if decision_gate is not None and not isinstance(decision_gate, dict):
         findings.append(Finding("blocker", "decision_gate", "field must be an object"))
+    elif isinstance(decision_gate, dict):
+        findings.extend(validate_decision_gate(decision_gate))
 
     findings.extend(scan_public_safety(data))
     return findings
+
+
+def validate_workflows(workflows: list[Any]) -> Iterable[Finding]:
+    for index, workflow in enumerate(workflows):
+        path = f"workflows[{index}]"
+        if not isinstance(workflow, dict):
+            yield Finding("blocker", path, "workflow must be an object")
+            continue
+
+        name = workflow.get("name")
+        if not isinstance(name, str) or not name.strip():
+            yield Finding("blocker", f"{path}.name", "workflow name is required")
+
+        steps = workflow.get("steps")
+        if not isinstance(steps, list) or not steps:
+            yield Finding("blocker", f"{path}.steps", "workflow steps must be a non-empty list")
+
+        preflight = workflow.get("preflight")
+        if not isinstance(preflight, list) or not preflight:
+            yield Finding(
+                "blocker",
+                f"{path}.preflight",
+                "workflow preflight must be a non-empty list",
+            )
+
+
+def validate_review_signals(review_signals: list[Any]) -> Iterable[Finding]:
+    roles: set[str] = set()
+    for index, signal in enumerate(review_signals):
+        path = f"review_signals[{index}]"
+        if not isinstance(signal, dict):
+            yield Finding("blocker", path, "review signal must be an object")
+            continue
+
+        name = signal.get("name")
+        role = signal.get("role")
+        if not isinstance(name, str) or not name.strip():
+            yield Finding("blocker", f"{path}.name", "review signal name is required")
+        if not isinstance(role, str) or not role.strip():
+            yield Finding("blocker", f"{path}.role", "review signal role is required")
+        else:
+            roles.add(role.strip())
+
+    if review_signals and "ground-truth" not in roles:
+        yield Finding(
+            "blocker",
+            "review_signals",
+            "at least one review signal must have role 'ground-truth'",
+        )
+    if review_signals and "supporting-evidence" not in roles:
+        yield Finding(
+            "blocker",
+            "review_signals",
+            "at least one review signal must have role 'supporting-evidence'",
+        )
+
+
+def validate_decision_gate(decision_gate: dict[str, Any]) -> Iterable[Finding]:
+    for key in ("status", "next_action"):
+        value = decision_gate.get(key)
+        if not isinstance(value, str) or not value.strip():
+            yield Finding(
+                "blocker",
+                f"decision_gate.{key}",
+                "decision gate field is required",
+            )
 
 
 def scan_public_safety(data: Any) -> Iterable[Finding]:

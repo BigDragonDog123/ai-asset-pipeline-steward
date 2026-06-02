@@ -23,7 +23,7 @@ This is an alpha repository scaffold. It is intentionally small:
 
 - a manifest validator for public-safe asset pipeline fixtures;
 - a maintenance report command for handoffs and release notes;
-- a synthetic example manifest;
+- synthetic review and model-inventory example manifests;
 - a repo-local Codex skill at `.agents/skills/ai-asset-pipeline-steward`;
 - GitHub community health files and CI;
 - documentation for Codex for OSS readiness.
@@ -34,6 +34,7 @@ This is an alpha repository scaffold. It is intentionally small:
 python -m pip install -e .
 asset-pipeline-steward examples/fixture_manifest.json
 asset-pipeline-steward report examples/fixture_manifest.json
+asset-pipeline-steward examples/model_inventory_manifest.json
 python -m unittest discover -s tests
 ```
 
@@ -56,6 +57,19 @@ A public-safe manifest should include:
 - `decision_gate`: what is ready, what is blocked, and what happens next.
 
 See `examples/fixture_manifest.json` for a minimal example.
+
+See `examples/model_inventory_manifest.json` for a public-safe model inventory and smoke-gate example.
+
+## Validation Rules
+
+The validator checks both public safety and basic maintainability:
+
+- top-level manifest sections are present;
+- project name, description, and status are not empty;
+- workflow entries declare `name`, non-empty `steps`, and non-empty `preflight`;
+- review signals include both `ground-truth` and `supporting-evidence` roles;
+- decision gates include `status` and `next_action`;
+- private paths, sensitive markers, and model weight file paths are blocked.
 
 ## Codex Skill
 

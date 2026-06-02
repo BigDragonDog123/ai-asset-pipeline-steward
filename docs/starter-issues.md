@@ -2,34 +2,35 @@
 
 Create these issues after the repository is public. They are designed to produce visible, useful maintenance activity instead of empty project noise.
 
-## 1. Add public-safe model inventory manifest example
+## 1. Add public-safe review queue manifest example
 
 Labels: `enhancement`, `documentation`
 
 Body:
 
 ```text
-Add a synthetic manifest example that demonstrates model inventory without including model weights or private paths.
+Add a synthetic manifest example that demonstrates a review queue without private outputs or copyrighted samples.
 
 Acceptance criteria:
 - Example manifest lives under examples/.
-- It includes at least two external-reference-only models.
+- It includes at least three queued synthetic assets.
+- It keeps human review and automated observations separate.
 - It passes asset-pipeline-steward validation.
 - README or terminal examples link to it.
 ```
 
-## 2. Add smoke-gate validation rules
+## 2. Add handoff completeness validation rules
 
 Labels: `enhancement`
 
 Body:
 
 ```text
-Extend validation so workflow entries can declare smoke-gate requirements before a batch scales.
+Extend validation so manifests can declare handoff-ready fields before a maintainer resumes work.
 
 Acceptance criteria:
-- Validator warns or blocks missing smoke-gate fields.
-- Tests cover valid and invalid smoke-gate examples.
+- Validator checks goal, current status, next action, blockers, and known unknowns.
+- Tests cover valid and invalid handoff examples.
 - docs/terminal-examples.md shows the new behavior.
 ```
 

@@ -26,5 +26,11 @@ jobs:
       - name: Validate example manifest
         run: asset-pipeline-steward examples/fixture_manifest.json
 
+      - name: Validate model inventory manifest
+        run: asset-pipeline-steward examples/model_inventory_manifest.json
+
       - name: Render maintainer report
         run: asset-pipeline-steward report examples/fixture_manifest.json
+
+      - name: Render model inventory report
+        run: asset-pipeline-steward report examples/model_inventory_manifest.json

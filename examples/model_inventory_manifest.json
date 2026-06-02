@@ -1,0 +1,60 @@
+{
+  "project": {
+    "name": "synthetic-model-inventory",
+    "description": "A public-safe example for tracking model references before a benchmark.",
+    "status": "inventory-ready",
+    "maintainer_intent": "Demonstrate model inventory, smoke-gate preflight, and review separation with synthetic metadata."
+  },
+  "assets": [
+    {
+      "id": "prompt-set-001",
+      "kind": "synthetic-prompt-set",
+      "path": "examples/synthetic/prompt-set-001.json",
+      "source": "synthetic",
+      "review_state": "not-started"
+    }
+  ],
+  "models": [
+    {
+      "name": "example-generator-a",
+      "source": "external-reference-only",
+      "weights_included": false,
+      "verification": "metadata-reviewed"
+    },
+    {
+      "name": "example-generator-b",
+      "source": "external-reference-only",
+      "weights_included": false,
+      "verification": "metadata-reviewed"
+    }
+  ],
+  "workflows": [
+    {
+      "name": "model-inventory-preflight",
+      "steps": ["collect-model-metadata", "verify-no-weights", "smoke-gate"],
+      "preflight": ["manifest-valid", "weights-not-included", "public-safe-paths-only"]
+    },
+    {
+      "name": "benchmark-smoke-gate",
+      "steps": ["single-model-probe", "single-output-review", "decision-gate"],
+      "preflight": ["one-output-per-model", "human-review-required", "automated-observation-secondary"]
+    }
+  ],
+  "review_signals": [
+    {
+      "name": "maintainer-rating",
+      "role": "ground-truth",
+      "scale": "pass-fail"
+    },
+    {
+      "name": "automated-artifact-notes",
+      "role": "supporting-evidence",
+      "scale": "structured-notes"
+    }
+  ],
+  "decision_gate": {
+    "status": "ready",
+    "next_action": "Run a one-output smoke gate for each external model reference.",
+    "known_unknowns": ["No model quality claims are made before the smoke gate runs."]
+  }
+}

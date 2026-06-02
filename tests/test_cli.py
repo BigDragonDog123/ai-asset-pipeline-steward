@@ -47,6 +47,36 @@ class ManifestValidationTests(unittest.TestCase):
             any("model weight" in finding.message for finding in findings)
         )
 
+    def test_workflow_requires_preflight(self) -> None:
+        manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")
+        manifest["workflows"][0].pop("preflight")
+
+        findings = validate_manifest(manifest)
+
+        self.assertTrue(any("preflight" in finding.path for finding in findings))
+
+    def test_review_signals_require_ground_truth_and_supporting_evidence(self) -> None:
+        manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")
+        manifest["review_signals"] = [
+            {
+                "name": "automated-observation",
+                "role": "supporting-evidence",
+                "scale": "structured-notes",
+            }
+        ]
+
+        findings = validate_manifest(manifest)
+
+        self.assertTrue(any("ground-truth" in finding.message for finding in findings))
+
+    def test_decision_gate_requires_next_action(self) -> None:
+        manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")
+        manifest["decision_gate"].pop("next_action")
+
+        findings = validate_manifest(manifest)
+
+        self.assertTrue(any("next_action" in finding.path for finding in findings))
+
     def test_cli_returns_nonzero_for_unsafe_manifest(self) -> None:
         manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")
         manifest["project"]["description"] = "contains token marker"
