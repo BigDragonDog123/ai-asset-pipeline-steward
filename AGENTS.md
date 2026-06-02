@@ -24,6 +24,7 @@ python -m asset_pipeline_steward.cli evidence .
 python -m asset_pipeline_steward.cli latest-ci .
 python -m asset_pipeline_steward.cli application .
 python -m asset_pipeline_steward.cli codex-oss-status .
+python -m asset_pipeline_steward.cli next-human-action .
 python -m asset_pipeline_steward.cli public-usage-note .
 python -m asset_pipeline_steward.cli reviewer-request .
 python -m asset_pipeline_steward.cli feedback-response-playbook .

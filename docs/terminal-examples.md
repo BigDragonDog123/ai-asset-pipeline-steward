@@ -172,6 +172,16 @@ asset-pipeline-steward codex-oss-status . --manual-ready
 
 Expected output reports whether the project is still in growth mode or ready for manual submission, summarizes recorded public evidence counts, lists blockers and warnings, and prints the next maintainer actions. This command is a status report; `submission-ready` remains the final gate.
 
+## Print The Next Human Action
+
+Use this when a maintainer wants the single current manual step before applying:
+
+```bash
+asset-pipeline-steward next-human-action . --manual-ready
+```
+
+Expected output reports the current phase, the primary human action, why it matters, the commands to run next, public links, and actions not to take. Before external feedback exists, it tells the maintainer to send the reviewer request and explicitly warns not to submit the official form yet.
+
 ## Open Codex For OSS Submission Links
 
 ```powershell

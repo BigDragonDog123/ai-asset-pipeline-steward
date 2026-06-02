@@ -1146,6 +1146,150 @@ def format_codex_oss_status(status: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def build_next_human_action(root: Path, manual_ready: bool = False) -> dict[str, Any]:
+    root = root.resolve()
+    status = build_codex_oss_status(root, manual_ready=manual_ready)
+    counts = status.get("evidence_counts")
+    counts = counts if isinstance(counts, dict) else {}
+    external_feedback_count = int_value(counts.get("external_feedback_urls"))
+    repo_url = string_value(status.get("repository_url")) or public_repository_url(root)
+
+    if external_feedback_count == 0:
+        phase = "collect_external_feedback"
+        primary_action = (
+            "Send the reviewer request to one real non-maintainer reviewer and ask "
+            "for one public feedback issue or comment."
+        )
+        why = (
+            "The final submission gate is still blocked until at least one public, "
+            "non-maintainer feedback URL is recorded."
+        )
+        manual_steps = [
+            "Run asset-pipeline-steward reviewer-request .",
+            "Copy the Chinese Short DM or English Short DM to one real reviewer.",
+            "Ask for one concrete blocker, unclear field, missing validation rule, or fit concern.",
+            "Ask the reviewer to use the public feedback form and avoid private paths, logs, credentials, model files, and non-public media.",
+            "After feedback appears, run asset-pipeline-steward feedback-candidates .",
+            "Record only reviewed public-safe feedback with asset-pipeline-steward record-feedback <public-feedback-url>.",
+        ]
+        commands = [
+            "asset-pipeline-steward reviewer-request .",
+            "asset-pipeline-steward feedback-candidates .",
+            "asset-pipeline-steward record-feedback <public-feedback-url>",
+            "asset-pipeline-steward feedback-response-playbook .",
+            "asset-pipeline-steward submission-ready . --manual-ready",
+        ]
+        do_not = [
+            "Do not submit the official Codex for OSS form yet.",
+            "Do not record maintainer-authored comments as external feedback.",
+            "Do not paste private DMs, screenshots, logs, credentials, or contact details into the repository.",
+        ]
+    elif status["recommendation"] != "ready_for_manual_submission":
+        phase = "clear_submission_blockers"
+        primary_action = "Resolve the remaining submission blockers before opening the official form."
+        why = "External feedback exists, but at least one readiness or manual-field blocker remains."
+        manual_steps = [
+            "Review the blockers printed by asset-pipeline-steward codex-oss-status . --manual-ready.",
+            "Turn the feedback into one visible maintainer response with asset-pipeline-steward feedback-response-playbook .",
+            "Rerun readiness and submission-ready after the response is shipped.",
+        ]
+        commands = [
+            "asset-pipeline-steward feedback-response-playbook .",
+            "asset-pipeline-steward readiness .",
+            "asset-pipeline-steward codex-oss-status . --manual-ready",
+            "asset-pipeline-steward submission-ready . --manual-ready",
+        ]
+        do_not = [
+            "Do not submit while blockers remain.",
+            "Do not commit personal form fields or confirmation emails.",
+        ]
+    else:
+        phase = "ready_for_manual_submission"
+        primary_action = "Verify latest CI, then fill the official form manually."
+        why = "The local submission gate is clear; final personal fields still belong only in the official form."
+        manual_steps = [
+            "Run asset-pipeline-steward latest-ci . and confirm the latest main run is successful.",
+            "Open the official Codex for OSS form.",
+            "Fill first name, last name, ChatGPT email, and OpenAI Organization ID manually.",
+            "Submit only after reviewing the public evidence packet one last time.",
+        ]
+        commands = [
+            "asset-pipeline-steward latest-ci .",
+            "asset-pipeline-steward submission-ready . --manual-ready",
+            "asset-pipeline-steward application .",
+        ]
+        do_not = [
+            "Do not commit personal form fields, Organization ID, or application confirmation emails.",
+        ]
+
+    return {
+        "repository_url": repo_url,
+        "phase": phase,
+        "primary_action": primary_action,
+        "why": why,
+        "evidence_counts": counts,
+        "blockers": list_or_empty(status.get("blockers")),
+        "manual_steps": manual_steps,
+        "commands": commands,
+        "links": {
+            "review_landing": public_blob_url(root, "REVIEW.md"),
+            "reviewer_request_pack": public_blob_url(root, "docs/reviewer-request-pack.md"),
+            "feedback_form": f"{repo_url}/issues/new?template=feedback.yml",
+            "feedback_issue": f"{repo_url}/issues/8",
+            "submission_runbook": public_blob_url(root, "docs/codex-for-oss-submission-runbook.md"),
+        },
+        "do_not": do_not,
+    }
+
+
+def format_next_human_action(action: dict[str, Any]) -> str:
+    counts = action.get("evidence_counts")
+    counts = counts if isinstance(counts, dict) else {}
+    lines = [
+        "# Next Human Action",
+        "",
+        f"Repository: {action['repository_url']}",
+        f"Phase: {action['phase']}",
+        "",
+        "## Primary Action",
+        "",
+        str(action["primary_action"]),
+        "",
+        "## Why",
+        "",
+        str(action["why"]),
+        "",
+        "## Evidence Counts",
+        "",
+        f"- External feedback URLs: {counts.get('external_feedback_urls', 0)}",
+        f"- Stars: {counts.get('stars', 0)}",
+        f"- Forks: {counts.get('forks', 0)}",
+        "",
+        "## Manual Steps",
+        "",
+    ]
+    for index, step in enumerate(list_or_empty(action.get("manual_steps")), start=1):
+        lines.append(f"{index}. {step}")
+
+    lines.extend(["", "## Commands", "", "```bash"])
+    lines.extend(list_or_empty(action.get("commands")))
+    lines.extend(["```", "", "## Links", ""])
+    for label, url in action["links"].items():
+        lines.append(f"- {label}: {url}")
+
+    lines.extend(["", "## Do Not", ""])
+    for item in list_or_empty(action.get("do_not")):
+        lines.append(f"- {item}")
+
+    blockers = list_or_empty(action.get("blockers"))
+    if blockers:
+        lines.extend(["", "## Current Blockers", ""])
+        for blocker in blockers:
+            lines.append(f"- {blocker['name']}: {blocker['message']}")
+
+    return "\n".join(lines)
+
+
 def infer_public_repository(root: Path) -> str:
     data, _checks = load_adoption_evidence(root)
     repo_url = string_value(data.get("public_repository_url")) if data else ""
@@ -2725,7 +2869,8 @@ def build_parser() -> argparse.ArgumentParser:
             "evidence/collect-evidence/latest-ci/feedback-candidates/record-feedback/"
             "application/submission-ready/starter-issues/reviewer-checklist/"
             "first-feedback-playbook/reviewer-request/feedback-response-playbook/"
-            "feedback-status-update/public-usage-note/codex-oss-status"
+            "feedback-status-update/public-usage-note/codex-oss-status/"
+            "next-human-action"
         ),
     )
     parser.add_argument("manifest", nargs="?", help="Path, feedback URL, or issue URL")
@@ -2901,6 +3046,20 @@ def main(argv: list[str] | None = None) -> int:
             print(format_codex_oss_status(status))
         return 0
 
+    if command == "next-human-action":
+        root = manifest_path or Path(".")
+        action = build_next_human_action(root, manual_ready=args.manual_ready)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": action["phase"] == "ready_for_manual_submission",
+                "next_human_action": action,
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(format_next_human_action(action))
+        return 0
+
     if command == "starter-issues":
         root = manifest_path or Path(".")
         issues, findings = load_starter_issues(root)
@@ -3050,6 +3209,8 @@ def resolve_command(
     if command_or_manifest == "submission-ready":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "codex-oss-status":
+        return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "next-human-action":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "starter-issues":
         return command_or_manifest, manifest or Path(".")

@@ -23,6 +23,7 @@ from asset_pipeline_steward.cli import (
     build_manifest_schema,
     build_feedback_response_playbook,
     build_feedback_status_update,
+    build_next_human_action,
     build_public_usage_note,
     build_reviewer_request,
     build_submission_checks,
@@ -680,6 +681,39 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertFalse(payload["ok"])
         self.assertEqual("growth_mode", payload["status"]["recommendation"])
         self.assertEqual(0, payload["status"]["evidence_counts"]["external_feedback_urls"])
+
+    def test_next_human_action_points_to_external_feedback(self) -> None:
+        action = build_next_human_action(ROOT, manual_ready=True)
+
+        self.assertEqual("collect_external_feedback", action["phase"])
+        self.assertIn("non-maintainer reviewer", action["primary_action"])
+        self.assertIn("reviewer-request", "\n".join(action["commands"]))
+        self.assertTrue(
+            any("Do not submit" in item for item in action["do_not"])
+        )
+
+    def test_next_human_action_command_prints_current_manual_step(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["next-human-action", str(ROOT), "--manual-ready"])
+
+        self.assertEqual(0, exit_code)
+        text = output.getvalue()
+        self.assertIn("# Next Human Action", text)
+        self.assertIn("Phase: collect_external_feedback", text)
+        self.assertIn("asset-pipeline-steward reviewer-request .", text)
+        self.assertIn("Do not submit the official Codex for OSS form yet.", text)
+
+    def test_next_human_action_command_prints_json(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["next-human-action", str(ROOT), "--manual-ready", "--json"])
+
+        self.assertEqual(0, exit_code)
+        payload = json.loads(output.getvalue())
+        self.assertFalse(payload["ok"])
+        self.assertEqual(
+            "collect_external_feedback",
+            payload["next_human_action"]["phase"],
+        )
 
     def test_starter_issues_file_loads(self) -> None:
         issues, findings = load_starter_issues(ROOT)
