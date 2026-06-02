@@ -39,14 +39,20 @@ Useful links:
 
 After a public feedback link exists:
 
-1. Record it:
+1. Scan for non-maintainer feedback candidates:
+
+```bash
+asset-pipeline-steward feedback-candidates .
+```
+
+2. Record the reviewed URL:
 
 ```bash
 asset-pipeline-steward record-feedback https://example.com/public-feedback-url
 ```
 
-2. If the command prints a warning, manually review current public GitHub metrics before submitting.
-3. Re-run:
+3. If the command prints a warning, manually review current public GitHub metrics before submitting.
+4. Re-run:
 
 ```bash
 asset-pipeline-steward evidence .
@@ -54,4 +60,4 @@ asset-pipeline-steward readiness .
 asset-pipeline-steward application .
 ```
 
-4. Close issue #8 once external feedback passes the evidence check.
+5. Close issue #8 once external feedback passes the evidence check.

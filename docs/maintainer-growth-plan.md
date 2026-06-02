@@ -33,7 +33,7 @@ This plan tracks the next credible public signals for AI Asset Pipeline Steward.
 1. Ask one real user or maintainer to try the reviewer brief and leave public feedback through the feedback form.
 2. Send one message from `docs/feedback-outreach-kit.md` to a likely reviewer.
 3. Publish one short public usage note that links to the repo, terminal examples, and feedback form.
-4. Record any real external feedback URL with `asset-pipeline-steward record-feedback`.
+4. Scan with `asset-pipeline-steward feedback-candidates`, then record any real external feedback URL with `asset-pipeline-steward record-feedback`.
 5. Close issue #8 after the external feedback URL is recorded.
 6. Review `docs/codex-for-oss-review-packet.md` to confirm the current evidence and remaining weaknesses.
 7. Use `docs/codex-for-oss-submission-runbook.md` for final form entry.

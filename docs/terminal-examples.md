@@ -43,6 +43,14 @@ If GitHub returns a rate-limit `403`, set `GITHUB_TOKEN` to a token with public 
 
 ## Record External Feedback
 
+Scan the feedback tracker for non-maintainer comment candidates:
+
+```bash
+asset-pipeline-steward feedback-candidates .
+```
+
+Expected behavior: prints public candidate URLs from issue #8 comments when someone other than the maintainer has commented. Maintainer comments are ignored.
+
 Use this after someone other than the maintainer leaves a public feedback link:
 
 ```bash

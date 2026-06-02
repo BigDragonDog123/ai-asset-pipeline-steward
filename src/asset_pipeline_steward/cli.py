@@ -1240,6 +1240,97 @@ def github_feedback_api_url(feedback_url: str) -> str | None:
     return None
 
 
+def parse_github_issue_url(issue_url: str) -> tuple[str, str, int] | None:
+    parsed = urlparse(issue_url)
+    if parsed.scheme not in {"http", "https"} or parsed.netloc.lower() != "github.com":
+        return None
+    parts = [part for part in parsed.path.strip("/").split("/") if part]
+    if len(parts) < 4 or parts[2] != "issues" or not parts[3].isdigit():
+        return None
+    return parts[0], parts[1], int(parts[3])
+
+
+def infer_feedback_tracker_url(root: Path) -> str:
+    data, _checks = load_adoption_evidence(root)
+    if data:
+        for url in list_value(data.get("issue_urls")):
+            if isinstance(url, str) and "/issues/8" in url:
+                return url
+        for url in list_value(data.get("issue_urls")):
+            if isinstance(url, str) and "/issues/" in url:
+                return url
+    repository = infer_public_repository(root)
+    return f"https://github.com/{repository}/issues/8"
+
+
+def find_feedback_candidates(
+    root: Path,
+    issue_url: str | None = None,
+    fetcher: Any = fetch_github_json,
+) -> tuple[list[dict[str, str]], list[Finding]]:
+    root = root.resolve()
+    tracker_url = issue_url.strip() if issue_url else infer_feedback_tracker_url(root)
+    parsed = parse_github_issue_url(tracker_url)
+    if parsed is None:
+        return [], [
+            Finding(
+                "blocker",
+                "feedback_tracker_url",
+                "feedback candidate scan requires a GitHub issue URL",
+                tracker_url,
+            )
+        ]
+
+    owner, repo, issue_number = parsed
+    maintainer_login = infer_public_repository(root).split("/", 1)[0]
+    api_url = (
+        f"https://api.github.com/repos/{owner}/{repo}/issues/"
+        f"{issue_number}/comments?per_page=100"
+    )
+    try:
+        payload = fetcher(api_url)
+    except HTTPError as error:
+        return [], [
+            Finding(
+                "blocker",
+                "feedback_candidates",
+                f"GitHub comments API failed: HTTP {error.code}",
+            )
+        ]
+    except (OSError, URLError, json.JSONDecodeError) as error:
+        return [], [
+            Finding("blocker", "feedback_candidates", f"GitHub comments API failed: {error}")
+        ]
+
+    if not isinstance(payload, list):
+        return [], [
+            Finding(
+                "blocker",
+                "feedback_candidates",
+                "GitHub comments response was not a list",
+            )
+        ]
+
+    candidates: list[dict[str, str]] = []
+    for item in payload:
+        if not isinstance(item, dict):
+            continue
+        user = item.get("user")
+        login = string_value(user.get("login")) if isinstance(user, dict) else ""
+        url = string_value(item.get("html_url"))
+        body = string_value(item.get("body"))
+        if not login or not url or login.lower() == maintainer_login.lower():
+            continue
+        if has_blockers(validate_external_feedback_url(url)):
+            continue
+        excerpt = body.replace("\r", " ").replace("\n", " ").strip()
+        if len(excerpt) > 140:
+            excerpt = excerpt[:137].rstrip() + "..."
+        candidates.append({"url": url, "author": login, "excerpt": excerpt})
+
+    return candidates, []
+
+
 def check_external_feedback_author(
     feedback_url: str,
     maintainer_login: str,
@@ -1459,6 +1550,42 @@ def format_record_feedback_report(
     return "\n".join(lines)
 
 
+def format_feedback_candidates_report(
+    candidates: list[dict[str, str]], findings: list[Finding]
+) -> str:
+    lines = ["# External Feedback Candidates", ""]
+    for finding in findings:
+        lines.append(f"- {finding.severity.upper()} {finding.path}: {finding.message}")
+    if findings:
+        return "\n".join(lines)
+    if not candidates:
+        lines.append("- No non-maintainer feedback comments found yet.")
+        lines.extend(
+            [
+                "",
+                "Next action: share `docs/feedback-outreach-kit.md` and wait for a real reviewer.",
+            ]
+        )
+        return "\n".join(lines)
+
+    for candidate in candidates:
+        lines.append(f"- {candidate['url']}")
+        lines.append(f"  - author: {candidate['author']}")
+        if candidate.get("excerpt"):
+            lines.append(f"  - excerpt: {candidate['excerpt']}")
+    lines.extend(
+        [
+            "",
+            "Record a reviewed candidate with:",
+            "",
+            "```bash",
+            "asset-pipeline-steward record-feedback <candidate-url>",
+            "```",
+        ]
+    )
+    return "\n".join(lines)
+
+
 def load_starter_issues(root: Path) -> tuple[list[dict[str, Any]], list[Finding]]:
     path = root / STARTER_ISSUES_FILE
     if not path.exists():
@@ -1645,12 +1772,12 @@ def build_parser() -> argparse.ArgumentParser:
         "command_or_manifest",
         help=(
             "Manifest path, or command: validate/report/schema/repo-scan/readiness/"
-            "evidence/collect-evidence/record-feedback/application/submission-ready/"
-            "starter-issues"
+            "evidence/collect-evidence/feedback-candidates/record-feedback/"
+            "application/submission-ready/starter-issues"
         ),
     )
-    parser.add_argument("manifest", nargs="?", help="Path to manifest JSON or feedback URL")
-    parser.add_argument("extra", nargs="?", help="Feedback URL for record-feedback")
+    parser.add_argument("manifest", nargs="?", help="Path, feedback URL, or issue URL")
+    parser.add_argument("extra", nargs="?", help="Feedback URL or issue URL")
     parser.add_argument("--json", action="store_true", help="Print JSON report")
     parser.add_argument(
         "--manual-ready",
@@ -1677,6 +1804,21 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(payload, indent=2, sort_keys=True))
         else:
             print(format_record_feedback_report(evidence, findings, feedback_url))
+        return 1 if has_blockers(findings) else 0
+
+    if args.command_or_manifest == "feedback-candidates":
+        root, issue_url = resolve_feedback_candidates_args(args.manifest, args.extra)
+        candidates, findings = find_feedback_candidates(root, issue_url)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": not has_blockers(findings),
+                "candidates": candidates,
+                "findings": [asdict(finding) for finding in findings],
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(format_feedback_candidates_report(candidates, findings))
         return 1 if has_blockers(findings) else 0
 
     if args.extra is not None:
@@ -1832,6 +1974,8 @@ def resolve_command(
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "collect-evidence":
         return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "feedback-candidates":
+        return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "record-feedback":
         raise SystemExit("record-feedback requires a feedback URL")
     if command_or_manifest == "application":
@@ -1859,6 +2003,18 @@ def resolve_record_feedback_args(
             return Path("."), manifest_or_url
         raise SystemExit("record-feedback requires a feedback URL")
     return Path(manifest_or_url), feedback_url
+
+
+def resolve_feedback_candidates_args(
+    manifest_or_issue_url: str | None, issue_url: str | None
+) -> tuple[Path, str | None]:
+    if manifest_or_issue_url is None:
+        return Path("."), None
+    if issue_url is None:
+        if manifest_or_issue_url.startswith(("http://", "https://")):
+            return Path("."), manifest_or_issue_url
+        return Path(manifest_or_issue_url), None
+    return Path(manifest_or_issue_url), issue_url
 
 
 if __name__ == "__main__":

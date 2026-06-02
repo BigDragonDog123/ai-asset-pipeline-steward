@@ -21,6 +21,7 @@ from asset_pipeline_steward.cli import (
     build_manifest_schema,
     build_submission_checks,
     collect_public_evidence,
+    find_feedback_candidates,
     format_application_report,
     format_public_evidence_report,
     has_readiness_blockers,
@@ -396,6 +397,49 @@ class ManifestValidationTests(unittest.TestCase):
             self.assertNotIn(url, evidence["external_feedback_urls"])
             written = json.loads(evidence_path.read_text(encoding="utf-8"))
             self.assertEqual([], written["external_feedback_urls"])
+
+    def test_feedback_candidates_include_non_maintainer_comments(self) -> None:
+        def fake_fetcher(url: str) -> object:
+            self.assertIn("/issues/8/comments", url)
+            return [
+                {
+                    "html_url": (
+                        "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/"
+                        "issues/8#issuecomment-1"
+                    ),
+                    "body": "The quickstart worked, but the handoff fields were unclear.",
+                    "user": {"login": "external-reviewer"},
+                },
+                {
+                    "html_url": (
+                        "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/"
+                        "issues/8#issuecomment-2"
+                    ),
+                    "body": "Maintainer status note.",
+                    "user": {"login": "BigDragonDog123"},
+                },
+            ]
+
+        candidates, findings = find_feedback_candidates(
+            ROOT,
+            "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/8",
+            fake_fetcher,
+        )
+
+        self.assertEqual([], findings)
+        self.assertEqual(1, len(candidates))
+        self.assertEqual("external-reviewer", candidates[0]["author"])
+        self.assertIn("issuecomment-1", candidates[0]["url"])
+
+    def test_feedback_candidates_reject_non_github_issue_url(self) -> None:
+        candidates, findings = find_feedback_candidates(
+            ROOT,
+            "https://example.com/not-a-github-issue",
+            lambda _url: [],
+        )
+
+        self.assertEqual([], candidates)
+        self.assertTrue(any(finding.severity == "blocker" for finding in findings))
 
     def test_record_feedback_command_requires_feedback_url(self) -> None:
         with self.assertRaises(SystemExit):

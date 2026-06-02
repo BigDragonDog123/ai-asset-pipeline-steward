@@ -129,14 +129,20 @@ A feedback link counts when all are true:
 
 ## After Feedback Arrives
 
-1. Record the public URL:
+1. Scan for public feedback candidates:
+
+```bash
+asset-pipeline-steward feedback-candidates .
+```
+
+2. Record the reviewed public URL:
 
 ```bash
 asset-pipeline-steward record-feedback https://example.com/public-feedback-url
 ```
 
-2. The command also refreshes public GitHub metrics when the API is available. If it prints a warning, manually review stars, forks, CI, release, issue, and PR evidence before submitting.
-3. Re-run:
+3. The command also refreshes public GitHub metrics when the API is available. If it prints a warning, manually review stars, forks, CI, release, issue, and PR evidence before submitting.
+4. Re-run:
 
 ```bash
 asset-pipeline-steward evidence .
@@ -145,5 +151,5 @@ asset-pipeline-steward application .
 python -m pytest -q
 ```
 
-4. Commit and push the evidence update.
-5. Close issue #8 only after `asset-pipeline-steward evidence .` reports external feedback as passing.
+5. Commit and push the evidence update.
+6. Close issue #8 only after `asset-pipeline-steward evidence .` reports external feedback as passing.
