@@ -30,7 +30,8 @@ This plan tracks the next credible public signals for AI Asset Pipeline Steward.
 2. Publish one short public usage note that links to the repo, terminal examples, and feedback form.
 3. Add any real external feedback URL to `docs/adoption-evidence.json`.
 4. Close issue #8 after the external feedback URL is recorded.
-5. Re-run:
+5. Use `docs/codex-for-oss-submission-runbook.md` for final form entry.
+6. Re-run:
 
 ```bash
 asset-pipeline-steward evidence .

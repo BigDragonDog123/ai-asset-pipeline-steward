@@ -49,6 +49,14 @@ asset-pipeline-steward application .
 
 Expected output includes draft Codex for OSS form fields, 500-character answer checks, manual fields still needed, and submission-gate warnings for missing public evidence.
 
+## Open Codex For OSS Submission Links
+
+```powershell
+.\scripts\open-codex-for-oss-application.ps1
+```
+
+Expected behavior: opens the official Codex for OSS form, OpenAI Organization ID settings, the GitHub repository, issue #8, and the feedback form. It does not write personal data or submit the form.
+
 ## Preview Post-Publish GitHub Writes
 
 ```powershell
