@@ -45,7 +45,7 @@ Source:
 | Reusable Codex skill | Pass | `.agents/skills/ai-asset-pipeline-steward/SKILL.md` exists for repo-scoped use. |
 | Runnable code | Pass | `asset-pipeline-steward` validates public-safe manifests and renders maintainer reports. |
 | Tests | Pass | `tests/test_cli.py` covers manifest validation, schema output, repo-scan, readiness checks, unsafe path/model cases, evidence collection, and application packet rendering. |
-| Community health files | Pass | README, license, contribution, security, conduct, issue/PR templates, CI, Dependabot, roadmap, changelog, and `AGENTS.md` are public. |
+| Community health files | Pass | README, review landing, license, contribution, security, conduct, issue/PR templates, CI, Dependabot, roadmap, changelog, and `AGENTS.md` are public. |
 | Local readiness checks | Pass | `asset-pipeline-steward readiness .` passes without blockers on `main`. |
 | Adoption evidence tracking | Pass | `docs/adoption-evidence.json`, `asset-pipeline-steward evidence .`, and `asset-pipeline-steward collect-evidence .` track public repo URL, CI, release, issues, feedback, usage, stars, and forks. |
 | Application packet | Pass | `docs/codex-for-oss-application.json` and `asset-pipeline-steward application .` render draft form fields and check answer length limits. |

@@ -27,6 +27,7 @@ The program says applications are reviewed on a rolling basis and looks for acti
 - Merged maintenance PRs: #1 and #2
 - Usage examples: `docs/terminal-examples.md` and `examples/`
 - End-to-end walkthrough: `docs/end-to-end-maintainer-loop.md`
+- Review landing: `REVIEW.md`
 - Reviewer brief: `docs/reviewer-brief.md`
 - Feedback request: `docs/public-feedback-request.md`
 - First feedback playbook: `docs/first-feedback-playbook.md`

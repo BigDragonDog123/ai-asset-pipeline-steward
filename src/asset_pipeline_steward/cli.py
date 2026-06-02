@@ -88,6 +88,7 @@ TEXT_FILE_EXTENSIONS = {
 
 COMMUNITY_HEALTH_FILES = (
     "README.md",
+    "REVIEW.md",
     "LICENSE",
     "CONTRIBUTING.md",
     "CODE_OF_CONDUCT.md",
@@ -1735,13 +1736,15 @@ def public_blob_url(root: Path, path: str) -> str:
 def build_reviewer_checklist(root: Path) -> dict[str, Any]:
     repo_url = public_repository_url(root)
     feedback_form = f"{repo_url}/issues/new?template=feedback.yml"
+    review_landing = public_blob_url(root, "REVIEW.md")
     return {
         "repository_url": repo_url,
         "review_paths": [
             {
                 "name": "10-minute skim",
                 "steps": [
-                    f"Read {public_blob_url(root, 'docs/reviewer-brief.md')}",
+                    f"Read {review_landing}",
+                    f"Skim {public_blob_url(root, 'docs/reviewer-brief.md')}",
                     f"Skim {public_blob_url(root, 'examples/handoff_resume_manifest.json')}",
                     "Leave one concrete feedback issue",
                 ],
@@ -1828,6 +1831,7 @@ def format_reviewer_checklist(checklist: dict[str, Any]) -> str:
 def build_first_feedback_playbook(root: Path) -> dict[str, Any]:
     repo_url = public_repository_url(root)
     feedback_form = f"{repo_url}/issues/new?template=feedback.yml"
+    review_landing = public_blob_url(root, "REVIEW.md")
     reviewer_brief = public_blob_url(root, "docs/reviewer-brief.md")
     reviewer_checklist = public_blob_url(root, "docs/reviewer-checklist.md")
     outreach_kit = public_blob_url(root, "docs/feedback-outreach-kit.md")
@@ -1861,11 +1865,12 @@ def build_first_feedback_playbook(root: Path) -> dict[str, Any]:
             f"{repo_url}\n\n"
             "Could you give it a 10-minute skim and leave one public feedback issue? "
             "The useful answer is one concrete adoption blocker, unclear field, or missing rule.\n\n"
-            f"Start here: {reviewer_brief}\n"
+            f"Start here: {review_landing}\n"
             f"Feedback form: {feedback_form}\n\n"
             "Please do not include private paths, logs, credentials, model files, or non-public media."
         ),
         "public_links": {
+            "review_landing": review_landing,
             "reviewer_brief": reviewer_brief,
             "reviewer_checklist": reviewer_checklist,
             "outreach_kit": outreach_kit,

@@ -614,6 +614,7 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("10-minute skim", text)
         self.assertIn("20-minute quickstart", text)
         self.assertIn("40-minute maintainer review", text)
+        self.assertIn("REVIEW.md", text)
         self.assertIn("issues/new?template=feedback.yml", text)
         self.assertIn("record-feedback <public-feedback-url>", text)
 
@@ -646,6 +647,7 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("Reviewer Profiles", text)
         self.assertIn("Short Request", text)
         self.assertIn("issues/new?template=feedback.yml", text)
+        self.assertIn("REVIEW.md", text)
         self.assertIn("GITHUB_TOKEN", text)
         self.assertIn("feedback-candidates .", text)
         self.assertIn("record-feedback <public-feedback-url>", text)
@@ -671,6 +673,16 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("Reviewer Profiles", text)
         self.assertIn("Short Request", text)
         self.assertIn("asset-pipeline-steward first-feedback-playbook .", text)
+
+    def test_review_landing_doc_exists(self) -> None:
+        text = (ROOT / "REVIEW.md").read_text(encoding="utf-8")
+
+        self.assertIn("# Review This Project", text)
+        self.assertIn("10-Minute Review", text)
+        self.assertIn("20-Minute Review", text)
+        self.assertIn("40-Minute Maintainer Review", text)
+        self.assertIn("issues/new?template=feedback.yml", text)
+        self.assertIn("Do not include private paths", text)
 
     def test_outreach_tracker_doc_avoids_private_contact_data(self) -> None:
         text = (ROOT / "docs" / "outreach-tracker.md").read_text(encoding="utf-8")

@@ -16,6 +16,8 @@ It focuses on:
 
 ## What To Try First
 
+For the shortest path, start with `REVIEW.md`.
+
 From a fresh clone:
 
 ```bash

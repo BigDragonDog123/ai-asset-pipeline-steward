@@ -2,7 +2,7 @@
 
 AI Asset Pipeline Steward needs one or more public feedback links from people other than the maintainer. Use this page when asking someone to try the repo, skim the examples, or leave a short issue.
 
-For the shortest action plan, use `docs/first-feedback-playbook.md`. For longer English/Chinese messages, review paths, and evidence rules, use `docs/feedback-outreach-kit.md`. For a direct checklist, use `docs/reviewer-checklist.md`.
+For the shortest reviewer-facing path, use `REVIEW.md`. For the shortest maintainer action plan, use `docs/first-feedback-playbook.md`. For longer English/Chinese messages, review paths, and evidence rules, use `docs/feedback-outreach-kit.md`. For a direct checklist, use `docs/reviewer-checklist.md`.
 
 To print the concise first-feedback plan from the CLI, run:
 
@@ -35,6 +35,7 @@ The repo is intentionally public-safe. It does not include model weights, privat
 I would value external feedback on whether the manifest checks, report output, and handoff examples are understandable enough for another maintainer to use. The feedback form asks for one concrete adoption blocker or missing rule.
 
 Useful links:
+- Review landing: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/REVIEW.md
 - Quickstart: https://github.com/BigDragonDog123/ai-asset-pipeline-steward#quickstart
 - Reviewer checklist: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/reviewer-checklist.md
 - Terminal examples: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/terminal-examples.md

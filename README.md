@@ -23,6 +23,7 @@ This repository turns that repeated maintenance pattern into a small package, a 
 
 ## For Reviewers
 
+- Start with `REVIEW.md` for the shortest public review path.
 - Use `docs/first-feedback-playbook.md` if you are helping collect the first public feedback signal.
 - Start with `docs/reviewer-checklist.md`.
 - Use `docs/reviewer-brief.md` for more context.
@@ -40,6 +41,7 @@ This is an alpha repository scaffold. It is intentionally small:
 - synthetic review, model-inventory, review-queue, handoff-resume, and end-to-end maintainer-loop example manifests;
 - a repo-local Codex skill at `.agents/skills/ai-asset-pipeline-steward`;
 - GitHub community health files and CI;
+- a root `REVIEW.md` entrypoint for first external reviewers;
 - a command for recording external feedback links without committing private data;
 - documentation for Codex for OSS readiness.
 
