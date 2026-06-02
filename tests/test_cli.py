@@ -15,6 +15,7 @@ if str(SRC) not in sys.path:
 
 from asset_pipeline_steward.cli import (
     build_readiness_checks,
+    build_evidence_report,
     build_maintenance_report,
     build_manifest_schema,
     has_readiness_blockers,
@@ -157,6 +158,7 @@ class ManifestValidationTests(unittest.TestCase):
 
         self.assertFalse(has_readiness_blockers(checks))
         self.assertTrue(any(check.name == "repo-scan" for check in checks))
+        self.assertTrue(any(check.name == "docs/adoption-evidence.json" for check in checks))
 
     def test_readiness_detects_missing_required_file(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -174,6 +176,23 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn(exit_code, {0, 1})
         self.assertIn("checks", payload)
         self.assertTrue(any(check["name"] == "repo-scan" for check in payload["checks"]))
+
+    def test_evidence_report_reads_evidence_file(self) -> None:
+        checks, report = build_evidence_report(ROOT)
+
+        self.assertFalse(has_readiness_blockers(checks))
+        self.assertIn("# Adoption Evidence", report)
+        self.assertTrue(any(check.name == "evidence.release_urls" for check in checks))
+
+    def test_evidence_command_prints_json(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["evidence", str(ROOT), "--json"])
+
+        payload = json.loads(output.getvalue())
+
+        self.assertEqual(0, exit_code)
+        self.assertIn("checks", payload)
+        self.assertTrue(any(check["name"] == "evidence.issue_urls" for check in payload["checks"]))
 
     def test_cli_returns_nonzero_for_unsafe_manifest(self) -> None:
         manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")

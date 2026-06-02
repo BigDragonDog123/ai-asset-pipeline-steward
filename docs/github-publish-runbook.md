@@ -51,6 +51,8 @@ gh repo create BigDragonDog123/ai-asset-pipeline-steward --public --source=. --r
    - Add first release notes.
    - Draft Codex for OSS application after public activity.
 5. Create release `v0.1.0`.
+6. Fill `docs/adoption-evidence.json` with the public repo URL, CI run URL, release URL, and starter issue URLs.
+7. Commit and push the updated adoption evidence file.
 
 ## Do Not Publish Yet If
 

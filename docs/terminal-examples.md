@@ -22,6 +22,14 @@ asset-pipeline-steward readiness .
 
 Expected output includes local pass checks plus a warning that public GitHub repository, CI run, release, and adoption evidence must be verified after push.
 
+## Report Adoption Evidence Gaps
+
+```bash
+asset-pipeline-steward evidence .
+```
+
+Expected output before public launch includes warnings for missing public repo URL, release, CI run, issues, feedback, usage examples, stars, and forks.
+
 ## Print The Manifest Schema
 
 ```bash

@@ -65,3 +65,9 @@ The project is being built from repeated local maintenance workflows, but the pu
 - Issue/PR activity.
 - Usage signal: stars, forks, feedback, external example, or integration.
 - Clear maintainer history over time.
+
+Track these in `docs/adoption-evidence.json` and review them with:
+
+```bash
+asset-pipeline-steward evidence .
+```

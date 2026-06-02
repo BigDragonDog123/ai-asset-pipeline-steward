@@ -19,6 +19,7 @@ python -m pip install -e .
 asset-pipeline-steward schema
 asset-pipeline-steward repo-scan .
 asset-pipeline-steward readiness .
+asset-pipeline-steward evidence .
 asset-pipeline-steward examples/fixture_manifest.json
 asset-pipeline-steward examples/model_inventory_manifest.json
 asset-pipeline-steward examples/review_queue_manifest.json
@@ -56,4 +57,5 @@ This release uses only synthetic examples and does not include model files, priv
 
 - Open the starter issues in docs/starter-issues.md.
 - Link the release in docs/codex-for-oss-readiness.md.
+- Record public URLs in docs/adoption-evidence.json.
 - Wait for at least some public activity before submitting the Codex for OSS form.

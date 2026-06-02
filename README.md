@@ -35,6 +35,7 @@ python -m pip install -e .
 asset-pipeline-steward schema
 asset-pipeline-steward repo-scan .
 asset-pipeline-steward readiness .
+asset-pipeline-steward evidence .
 asset-pipeline-steward examples/fixture_manifest.json
 asset-pipeline-steward report examples/fixture_manifest.json
 asset-pipeline-steward examples/model_inventory_manifest.json
@@ -48,6 +49,7 @@ You can also run the validator without installing:
 python -m asset_pipeline_steward.cli schema
 python -m asset_pipeline_steward.cli repo-scan .
 python -m asset_pipeline_steward.cli readiness .
+python -m asset_pipeline_steward.cli evidence .
 python -m asset_pipeline_steward.cli examples/fixture_manifest.json
 python -m asset_pipeline_steward.cli report examples/fixture_manifest.json
 ```
@@ -109,6 +111,7 @@ Use synthetic fixtures when demonstrating behavior.
 
 Run `asset-pipeline-steward repo-scan .` before publishing or opening a pull request.
 Run `asset-pipeline-steward readiness .` before release or Codex for OSS application work.
+Track public adoption and maintainer evidence in `docs/adoption-evidence.json`.
 
 ## Codex For OSS Readiness
 

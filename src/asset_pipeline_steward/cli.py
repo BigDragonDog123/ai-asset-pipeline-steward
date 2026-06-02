@@ -103,6 +103,7 @@ EXAMPLE_MANIFESTS = (
 )
 
 SCHEMA_FILE = "schemas/asset-pipeline-manifest.schema.json"
+ADOPTION_EVIDENCE_FILE = "docs/adoption-evidence.json"
 
 HIGH_CONFIDENCE_CONTENT_PATTERNS = (
     ("OpenAI-style API key", re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b")),
@@ -575,6 +576,7 @@ def build_readiness_checks(root: Path, check_git: bool = True) -> list[Readiness
     checks.extend(check_schema_file(root))
     checks.extend(check_example_manifests(root))
     checks.extend(check_repo_scan(root))
+    checks.extend(check_adoption_evidence(root))
     if check_git:
         checks.extend(check_git_state(root))
 
@@ -658,6 +660,69 @@ def check_repo_scan(root: Path) -> list[ReadinessCheck]:
     return [ReadinessCheck("pass", "repo-scan", "repository scan passes")]
 
 
+def load_adoption_evidence(root: Path) -> tuple[dict[str, Any] | None, list[ReadinessCheck]]:
+    path = root / ADOPTION_EVIDENCE_FILE
+    if not path.exists():
+        return None, [ReadinessCheck("blocker", ADOPTION_EVIDENCE_FILE, "adoption evidence file is missing")]
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return None, [ReadinessCheck("blocker", ADOPTION_EVIDENCE_FILE, f"adoption evidence file is invalid: {error}")]
+    if not isinstance(data, dict):
+        return None, [ReadinessCheck("blocker", ADOPTION_EVIDENCE_FILE, "adoption evidence root must be an object")]
+    return data, []
+
+
+def check_adoption_evidence(root: Path) -> list[ReadinessCheck]:
+    data, checks = load_adoption_evidence(root)
+    if data is None:
+        return checks
+
+    checks.append(ReadinessCheck("pass", ADOPTION_EVIDENCE_FILE, "adoption evidence file exists"))
+
+    repo_url = string_value(data.get("public_repository_url"))
+    if "github.com" in repo_url:
+        checks.append(ReadinessCheck("pass", "evidence.public_repository_url", repo_url))
+    else:
+        checks.append(ReadinessCheck("warn", "evidence.public_repository_url", "public GitHub URL is not recorded yet"))
+
+    evidence_expectations = (
+        ("release_urls", 1, "release URL"),
+        ("ci_run_urls", 1, "GitHub CI run URL"),
+        ("issue_urls", 3, "roadmap issue URL"),
+        ("external_feedback_urls", 1, "external feedback URL"),
+        ("usage_example_urls", 1, "usage example URL"),
+    )
+    for key, minimum, label in evidence_expectations:
+        values = list_value(data.get(key))
+        status = "pass" if len(values) >= minimum else "warn"
+        checks.append(
+            ReadinessCheck(
+                status,
+                f"evidence.{key}",
+                f"{len(values)}/{minimum} {label}(s) recorded",
+            )
+        )
+
+    stars = int_value(data.get("stars"))
+    forks = int_value(data.get("forks"))
+    checks.append(ReadinessCheck("pass" if stars > 0 else "warn", "evidence.stars", f"{stars} star(s) recorded"))
+    checks.append(ReadinessCheck("pass" if forks > 0 else "warn", "evidence.forks", f"{forks} fork(s) recorded"))
+    return checks
+
+
+def string_value(value: Any) -> str:
+    return value.strip() if isinstance(value, str) else ""
+
+
+def list_value(value: Any) -> list[Any]:
+    return value if isinstance(value, list) else []
+
+
+def int_value(value: Any) -> int:
+    return value if isinstance(value, int) else 0
+
+
 def check_git_state(root: Path) -> list[ReadinessCheck]:
     checks: list[ReadinessCheck] = []
 
@@ -719,6 +784,14 @@ def format_readiness_report(checks: list[ReadinessCheck]) -> str:
     for check in checks:
         lines.append(f"- {check.status.upper()} {check.name}: {check.message}")
     return "\n".join(lines)
+
+
+def build_evidence_report(root: Path) -> tuple[list[ReadinessCheck], str]:
+    checks = check_adoption_evidence(root.resolve())
+    lines = ["# Adoption Evidence"]
+    for check in checks:
+        lines.append(f"- {check.status.upper()} {check.name}: {check.message}")
+    return checks, "\n".join(lines)
 
 
 def build_maintenance_report(
@@ -851,7 +924,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "command_or_manifest",
-        help="Manifest path, or command: validate/report/schema/repo-scan/readiness",
+        help="Manifest path, or command: validate/report/schema/repo-scan/readiness/evidence",
     )
     parser.add_argument("manifest", nargs="?", type=Path, help="Path to manifest JSON")
     parser.add_argument("--json", action="store_true", help="Print JSON report")
@@ -895,6 +968,20 @@ def main(argv: list[str] | None = None) -> int:
             print(format_readiness_report(checks))
         return 1 if has_readiness_blockers(checks) else 0
 
+    if command == "evidence":
+        root = manifest_path or Path(".")
+        checks, report = build_evidence_report(root)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": not has_readiness_blockers(checks),
+                "checks": [asdict(check) for check in checks],
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(report)
+        return 1 if has_readiness_blockers(checks) else 0
+
     try:
         if manifest_path is None:
             raise ValueError("manifest path is required")
@@ -929,6 +1016,8 @@ def resolve_command(
     if command_or_manifest == "repo-scan":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "readiness":
+        return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "evidence":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest in {"validate", "report"}:
         if manifest is None:

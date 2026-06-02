@@ -12,6 +12,7 @@ The command checks:
 - checked-in schema matches CLI-generated schema;
 - all example manifests validate;
 - repository public-safety scan passes;
+- adoption evidence file exists and records public proof where available;
 - git worktree exists, branch is `main`, worktree is clean, and `origin` is configured.
 
 It also emits a warning that cannot be satisfied locally: the public GitHub repository, hosted CI run, release, and adoption evidence still need to be verified after push.
@@ -23,3 +24,5 @@ asset-pipeline-steward readiness . --json
 ```
 
 Use JSON output for automation or release scripts.
+
+Use `asset-pipeline-steward evidence .` for a focused view of public adoption and maintainer evidence gaps.

@@ -29,6 +29,9 @@ jobs:
       - name: Check local OSS readiness
         run: asset-pipeline-steward readiness .
 
+      - name: Report adoption evidence gaps
+        run: asset-pipeline-steward evidence .
+
       - name: Run tests
         run: python -m unittest discover -s tests
 

@@ -1,0 +1,17 @@
+{
+  "status_date": "2026-06-02",
+  "public_repository_url": "",
+  "ci_run_urls": [],
+  "release_urls": [],
+  "issue_urls": [],
+  "pull_request_urls": [],
+  "external_feedback_urls": [],
+  "usage_example_urls": [],
+  "stars": 0,
+  "forks": 0,
+  "notes": [
+    "Fill this file after the repository is public.",
+    "Use URLs that a reviewer can open without private access.",
+    "Do not include private user data, private logs, credentials, or non-public samples."
+  ]
+}
