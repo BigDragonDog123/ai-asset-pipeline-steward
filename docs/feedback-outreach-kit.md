@@ -14,7 +14,7 @@ Prioritize people who already understand one of these workflows:
 - maintaining open-source tools with issue triage, releases, and CI;
 - using coding agents to resume long-running project work.
 
-Avoid asking for generic praise. Ask for one concrete usability gap, confusing field, missing validation rule, or reason the workflow does not fit.
+Avoid asking for generic praise. Ask for one concrete usability gap, confusing field, missing validation rule, adoption blocker, or reason the workflow does not fit.
 
 ## Review Paths
 
@@ -45,7 +45,7 @@ Avoid asking for generic praise. Ask for one concrete usability gap, confusing f
 I published a small public-safe toolkit for AI asset pipeline maintenance:
 https://github.com/BigDragonDog123/ai-asset-pipeline-steward
 
-Could you give it a 10-minute skim and leave one public feedback issue if anything is confusing or missing?
+Could you give it a 10-minute skim and leave one public feedback issue? The form asks for one concrete adoption blocker or missing rule, not generic praise.
 
 Best starting point:
 https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/reviewer-brief.md
@@ -69,7 +69,7 @@ Useful review paths:
 - 20-minute quickstart: run repo-scan, readiness, and one report command
 - 40-minute maintainer review: compare the manifest shape against a real workflow without sharing private data
 
-I would value one concrete critique: unclear field, missing validation rule, weak report output, or reason this does not fit your workflow.
+I would value one concrete critique: unclear field, missing validation rule, weak report output, adoption blocker, or reason this does not fit your workflow.
 
 Reviewer brief:
 https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/reviewer-brief.md
@@ -84,7 +84,7 @@ https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template
 我做了一个公开安全的小工具，用来把本地 AI 素材/模型评测/人工审核这类流程，整理成可复现、可交接、可公开的维护记录：
 https://github.com/BigDragonDog123/ai-asset-pipeline-steward
 
-你方便花 10 分钟看一下 reviewer brief 或 example，然后留一个公开 feedback issue 吗？不用夸，最好指出哪里不清楚、缺哪个字段/校验规则、或者为什么不适合你的流程。
+你方便花 10 分钟看一下 reviewer brief 或 example，然后留一个公开 feedback issue 吗？不用夸，最好指出哪里不清楚、缺哪个字段/校验规则、有什么采用阻碍，或者为什么不适合你的流程。
 
 Reviewer brief:
 https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/reviewer-brief.md
@@ -108,7 +108,7 @@ https://github.com/BigDragonDog123/ai-asset-pipeline-steward
 - 20 分钟：跑 quickstart
 - 40 分钟：拿它和你自己的真实维护流程对照，但不要公开私人数据
 
-最有用的是具体批评：哪里不清楚、缺什么字段、缺什么校验规则、report 哪里不好用、为什么不适合你的流程。
+最有用的是具体批评：哪里不清楚、缺什么字段、缺什么校验规则、report 哪里不好用、有什么采用阻碍、为什么不适合你的流程。
 
 Reviewer brief:
 https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/reviewer-brief.md

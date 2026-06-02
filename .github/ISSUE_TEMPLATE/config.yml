@@ -6,3 +6,6 @@ contact_links:
   - name: Public feedback request
     url: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/public-feedback-request.md
     about: Use this shareable request when asking someone to review the project.
+  - name: End-to-end maintainer loop
+    url: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/end-to-end-maintainer-loop.md
+    about: Use this walkthrough for a structured 20 to 40 minute review.

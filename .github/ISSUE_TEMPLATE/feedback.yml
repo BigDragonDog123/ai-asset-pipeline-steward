@@ -1,8 +1,14 @@
 name: Feedback
-description: Share public feedback after trying or reviewing the toolkit.
+description: Share structured public feedback after trying or reviewing the toolkit.
 title: "[Feedback]: "
 labels: ["feedback"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reviewing AI Asset Pipeline Steward. Public feedback is most useful when it includes one concrete workflow fit, confusing point, missing rule, or adoption blocker.
+
+        Please do not include private paths, logs, credentials, model files, generated private media, or non-public samples.
   - type: textarea
     id: context
     attributes:
@@ -11,12 +17,24 @@ body:
       placeholder: "Example: I maintain a small image-generation review queue and wanted safer handoffs."
     validations:
       required: true
+  - type: dropdown
+    id: review_path
+    attributes:
+      label: Review path
+      description: Which review path did you use?
+      options:
+        - 10-minute skim
+        - 20-minute quickstart
+        - 40-minute maintainer review
+        - Other
+    validations:
+      required: true
   - type: textarea
     id: tried
     attributes:
       label: What you tried or reviewed
       description: Link or name the command, example manifest, doc, or skill section you looked at.
-      placeholder: "Example: README quickstart, docs/terminal-examples.md, examples/handoff_resume_manifest.json"
+      placeholder: "Example: README quickstart, docs/end-to-end-maintainer-loop.md, examples/end_to_end_maintainer_loop_manifest.json"
     validations:
       required: true
   - type: textarea
@@ -24,6 +42,14 @@ body:
     attributes:
       label: What seemed useful
       description: Which part could help with real maintenance work?
+    validations:
+      required: true
+  - type: textarea
+    id: adoption_blocker
+    attributes:
+      label: What would block adoption?
+      description: Name one missing field, validation rule, report section, workflow fit issue, or other blocker.
+      placeholder: "Example: I would need a way to record reviewer disagreement before this fit my workflow."
     validations:
       required: true
   - type: textarea
@@ -38,5 +64,7 @@ body:
     attributes:
       label: Public safety
       options:
+        - label: I am not the repository maintainer.
+          required: true
         - label: This feedback uses only public-safe examples and does not include private paths, credentials, logs, model files, or non-public media.
           required: true

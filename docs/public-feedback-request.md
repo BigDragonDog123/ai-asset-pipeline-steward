@@ -26,7 +26,7 @@ https://github.com/BigDragonDog123/ai-asset-pipeline-steward
 
 The repo is intentionally public-safe. It does not include model weights, private paths, logs, credentials, or non-public media. The examples are synthetic fixtures for review queues, model inventory, and resumable handoffs.
 
-I would value external feedback on whether the manifest checks, report output, and handoff examples are understandable enough for another maintainer to use.
+I would value external feedback on whether the manifest checks, report output, and handoff examples are understandable enough for another maintainer to use. The feedback form asks for one concrete adoption blocker or missing rule.
 
 Useful links:
 - Quickstart: https://github.com/BigDragonDog123/ai-asset-pipeline-steward#quickstart

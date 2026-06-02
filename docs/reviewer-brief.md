@@ -54,6 +54,8 @@ Useful public feedback can be short. Good examples:
 
 If you have more time, use `docs/feedback-outreach-kit.md` for 10-minute, 20-minute, and 40-minute review paths.
 
+The feedback form asks for the review path, what was tried, what seemed useful, and one concrete adoption blocker. That shape is intentional: specific critique is more useful than general approval.
+
 ## Public Safety
 
 Do not include:
