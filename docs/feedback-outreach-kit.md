@@ -165,3 +165,7 @@ python -m pytest -q
 
 5. Commit and push the evidence update.
 6. Close issue #8 only after `asset-pipeline-steward evidence .` reports external feedback as passing.
+
+## Track Outreach Safely
+
+Use `docs/outreach-tracker.md` for reviewer slots and status. Do not put private names, emails, handles, DMs, screenshots, or private comments in the repository. Only record public feedback URLs after they are reviewer-accessible and public-safe.

@@ -153,6 +153,7 @@ https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template
 
 See `docs/public-feedback-request.md` for a short request that can be shared with reviewers.
 Use `docs/feedback-outreach-kit.md` for ready-to-send reviewer requests and evidence rules.
+Use `docs/outreach-tracker.md` to track reviewer slots without storing private contact data.
 See `docs/reviewer-checklist.md` for a direct 10-minute, 20-minute, or 40-minute review path.
 See `docs/reviewer-brief.md` for a one-page guide to what reviewers should try first.
 

@@ -64,3 +64,5 @@ asset-pipeline-steward application .
 ```
 
 5. Close issue #8 once external feedback passes the evidence check.
+
+Use `docs/outreach-tracker.md` to track reviewer slots and status without storing private contact details.

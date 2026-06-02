@@ -586,6 +586,14 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("40-Minute Maintainer Review", text)
         self.assertIn("issues/new?template=feedback.yml", text)
 
+    def test_outreach_tracker_doc_avoids_private_contact_data(self) -> None:
+        text = (ROOT / "docs" / "outreach-tracker.md").read_text(encoding="utf-8")
+
+        self.assertIn("# Outreach Tracker", text)
+        self.assertIn("Do not record names", text)
+        self.assertIn("Reviewer Slots", text)
+        self.assertIn("external_feedback_urls", text)
+
     def test_cli_returns_nonzero_for_unsafe_manifest(self) -> None:
         manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")
         manifest["project"]["description"] = "contains token marker"
