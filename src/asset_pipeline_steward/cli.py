@@ -98,6 +98,7 @@ COMMUNITY_HEALTH_FILES = (
     ".github/ISSUE_TEMPLATE/bug_report.yml",
     ".github/ISSUE_TEMPLATE/feature_request.yml",
     ".github/ISSUE_TEMPLATE/feedback.yml",
+    ".github/ISSUE_TEMPLATE/config.yml",
     ".github/workflows/ci.yml",
     ".github/dependabot.yml",
 )

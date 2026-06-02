@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Reviewer brief
+    url: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/reviewer-brief.md
+    about: Start here if you are reviewing the project for the first time.
+  - name: Public feedback request
+    url: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/public-feedback-request.md
+    about: Use this shareable request when asking someone to review the project.

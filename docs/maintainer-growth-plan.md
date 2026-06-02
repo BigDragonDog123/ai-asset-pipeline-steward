@@ -17,6 +17,7 @@ This plan tracks the next credible public signals for AI Asset Pipeline Steward.
 - Feedback form: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml`
 - Share request: `docs/public-feedback-request.md`
 - Reviewer brief: `docs/reviewer-brief.md`
+- Repository discovery: README badges plus GitHub topics for public-safe AI asset pipeline maintenance.
 
 ## Signal Rules
 

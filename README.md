@@ -1,5 +1,9 @@
 # AI Asset Pipeline Steward
 
+[![CI](https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/workflows/ci.yml/badge.svg)](https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/BigDragonDog123/ai-asset-pipeline-steward?sort=semver)](https://github.com/BigDragonDog123/ai-asset-pipeline-steward/releases)
+[![License](https://img.shields.io/github/license/BigDragonDog123/ai-asset-pipeline-steward)](LICENSE)
+
 AI Asset Pipeline Steward is a public-safe starter kit for maintaining AI-generated asset workflows without turning every experiment into an unrepeatable local script.
 
 The project focuses on the boring parts that decide whether a creative or model-evaluation pipeline can be trusted:
@@ -16,6 +20,12 @@ The project focuses on the boring parts that decide whether a creative or model-
 Many AI asset workflows start as local folders, one-off scripts, and ad-hoc reviews. That works for experiments, but it breaks down when the maintainer needs to compare models, rerun batches, explain review decisions, publish a clean repository, or let an agent continue the work safely.
 
 This repository turns that repeated maintenance pattern into a small package, a repo-scoped Codex skill, and public documentation.
+
+## For Reviewers
+
+- Start with `docs/reviewer-brief.md`.
+- Run the quickstart or skim `docs/terminal-examples.md`.
+- Leave public feedback with the feedback issue form.
 
 ## Current Status
 
