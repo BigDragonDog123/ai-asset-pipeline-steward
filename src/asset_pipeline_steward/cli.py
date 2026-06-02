@@ -50,6 +50,12 @@ MODEL_WEIGHT_EXTENSIONS = (
 )
 
 
+SCHEMA_ID = (
+    "https://raw.githubusercontent.com/BigDragonDog123/"
+    "ai-asset-pipeline-steward/main/schemas/asset-pipeline-manifest.schema.json"
+)
+
+
 @dataclass(frozen=True)
 class Finding:
     severity: str
@@ -64,6 +70,157 @@ def load_manifest(path: Path) -> dict[str, Any]:
     if not isinstance(data, dict):
         raise ValueError("manifest root must be a JSON object")
     return data
+
+
+def build_manifest_schema() -> dict[str, Any]:
+    return {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": SCHEMA_ID,
+        "title": "AI Asset Pipeline Steward Manifest",
+        "type": "object",
+        "required": list(REQUIRED_TOP_LEVEL_KEYS),
+        "properties": {
+            "project": {
+                "type": "object",
+                "required": ["name", "description", "status"],
+                "properties": {
+                    "name": {"type": "string", "minLength": 1},
+                    "description": {"type": "string", "minLength": 1},
+                    "status": {"type": "string", "minLength": 1},
+                    "maintainer_intent": {"type": "string"},
+                },
+                "additionalProperties": True,
+            },
+            "assets": {
+                "type": "array",
+                "items": {"$ref": "#/$defs/asset"},
+            },
+            "models": {
+                "type": "array",
+                "items": {"$ref": "#/$defs/model"},
+            },
+            "workflows": {
+                "type": "array",
+                "items": {"$ref": "#/$defs/workflow"},
+            },
+            "review_signals": {
+                "type": "array",
+                "items": {"$ref": "#/$defs/review_signal"},
+                "allOf": [
+                    {
+                        "contains": {
+                            "type": "object",
+                            "properties": {"role": {"const": "ground-truth"}},
+                            "required": ["role"],
+                        }
+                    },
+                    {
+                        "contains": {
+                            "type": "object",
+                            "properties": {"role": {"const": "supporting-evidence"}},
+                            "required": ["role"],
+                        }
+                    },
+                ],
+            },
+            "decision_gate": {"$ref": "#/$defs/decision_gate"},
+            "handoff": {"$ref": "#/$defs/handoff"},
+        },
+        "$defs": {
+            "asset": {
+                "type": "object",
+                "required": ["id", "kind", "path", "source", "review_state"],
+                "properties": {
+                    "id": {"type": "string", "minLength": 1},
+                    "kind": {"type": "string", "minLength": 1},
+                    "path": {"type": "string", "minLength": 1},
+                    "source": {"type": "string", "minLength": 1},
+                    "review_state": {"type": "string", "minLength": 1},
+                },
+                "additionalProperties": True,
+            },
+            "model": {
+                "type": "object",
+                "required": ["name", "source", "weights_included", "verification"],
+                "properties": {
+                    "name": {"type": "string", "minLength": 1},
+                    "source": {"type": "string", "minLength": 1},
+                    "weights_included": {"type": "boolean"},
+                    "verification": {"type": "string", "minLength": 1},
+                },
+                "additionalProperties": True,
+            },
+            "workflow": {
+                "type": "object",
+                "required": ["name", "steps", "preflight"],
+                "properties": {
+                    "name": {"type": "string", "minLength": 1},
+                    "steps": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {"type": "string", "minLength": 1},
+                    },
+                    "preflight": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {"type": "string", "minLength": 1},
+                    },
+                },
+                "additionalProperties": True,
+            },
+            "review_signal": {
+                "type": "object",
+                "required": ["name", "role"],
+                "properties": {
+                    "name": {"type": "string", "minLength": 1},
+                    "role": {
+                        "type": "string",
+                        "enum": ["ground-truth", "supporting-evidence"],
+                    },
+                    "scale": {"type": "string"},
+                },
+                "additionalProperties": True,
+            },
+            "decision_gate": {
+                "type": "object",
+                "required": ["status", "next_action"],
+                "properties": {
+                    "status": {"type": "string", "minLength": 1},
+                    "next_action": {"type": "string", "minLength": 1},
+                    "known_unknowns": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                    },
+                },
+                "additionalProperties": True,
+            },
+            "handoff": {
+                "type": "object",
+                "required": [
+                    "goal",
+                    "current_status",
+                    "next_action",
+                    "blockers",
+                    "known_unknowns",
+                ],
+                "properties": {
+                    "goal": {"type": "string", "minLength": 1},
+                    "current_status": {"type": "string", "minLength": 1},
+                    "next_action": {"type": "string", "minLength": 1},
+                    "blockers": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                    },
+                    "known_unknowns": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                    },
+                },
+                "additionalProperties": True,
+            },
+        },
+        "additionalProperties": True,
+    }
 
 
 def validate_manifest(data: dict[str, Any]) -> list[Finding]:
@@ -373,7 +530,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Validate a public-safe AI asset pipeline manifest."
     )
-    parser.add_argument("command_or_manifest", help="Manifest path, or command: validate/report")
+    parser.add_argument(
+        "command_or_manifest",
+        help="Manifest path, or command: validate/report/schema",
+    )
     parser.add_argument("manifest", nargs="?", type=Path, help="Path to manifest JSON")
     parser.add_argument("--json", action="store_true", help="Print JSON report")
     return parser
@@ -384,7 +544,13 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     command, manifest_path = resolve_command(args.command_or_manifest, args.manifest)
 
+    if command == "schema":
+        print(json.dumps(build_manifest_schema(), indent=2, sort_keys=True))
+        return 0
+
     try:
+        if manifest_path is None:
+            raise ValueError("manifest path is required")
         manifest = load_manifest(manifest_path)
         findings = validate_manifest(manifest)
     except (OSError, json.JSONDecodeError, ValueError) as error:
@@ -406,7 +572,13 @@ def main(argv: list[str] | None = None) -> int:
     return 1 if has_blockers(findings) else 0
 
 
-def resolve_command(command_or_manifest: str, manifest: Path | None) -> tuple[str, Path]:
+def resolve_command(
+    command_or_manifest: str, manifest: Path | None
+) -> tuple[str, Path | None]:
+    if command_or_manifest == "schema":
+        if manifest is not None:
+            raise SystemExit("schema does not accept a manifest path")
+        return command_or_manifest, None
     if command_or_manifest in {"validate", "report"}:
         if manifest is None:
             raise SystemExit(f"{command_or_manifest} requires a manifest path")

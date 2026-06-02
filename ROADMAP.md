@@ -9,6 +9,7 @@ Status: complete locally.
 - README, license, contributing guide, security policy, code of conduct.
 - Repo-scoped Codex skill.
 - Manifest validator.
+- JSON Schema and schema command.
 - Maintenance report command.
 - Synthetic review, model-inventory, and review-queue manifests.
 - Unit tests and CI.

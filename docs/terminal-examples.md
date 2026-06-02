@@ -2,6 +2,25 @@
 
 These examples use only the synthetic fixture manifest.
 
+## Print The Manifest Schema
+
+```bash
+asset-pipeline-steward schema
+```
+
+Expected output:
+
+```text
+{
+  "$defs": {
+    ...
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI Asset Pipeline Steward Manifest",
+  "type": "object"
+}
+```
+
 ## Validate A Manifest
 
 ```bash

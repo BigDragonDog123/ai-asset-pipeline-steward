@@ -15,6 +15,7 @@ if str(SRC) not in sys.path:
 
 from asset_pipeline_steward.cli import (
     build_maintenance_report,
+    build_manifest_schema,
     load_manifest,
     main,
     validate_manifest,
@@ -99,6 +100,22 @@ class ManifestValidationTests(unittest.TestCase):
         findings = validate_manifest(manifest)
 
         self.assertEqual([], findings)
+
+    def test_schema_file_matches_generated_schema(self) -> None:
+        schema_path = ROOT / "schemas" / "asset-pipeline-manifest.schema.json"
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+
+        self.assertEqual(build_manifest_schema(), schema)
+
+    def test_schema_command_prints_json_schema(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["schema"])
+
+        schema = json.loads(output.getvalue())
+
+        self.assertEqual(0, exit_code)
+        self.assertEqual("AI Asset Pipeline Steward Manifest", schema["title"])
+        self.assertIn("handoff", schema["required"])
 
     def test_cli_returns_nonzero_for_unsafe_manifest(self) -> None:
         manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")

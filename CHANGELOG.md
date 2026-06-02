@@ -5,6 +5,7 @@
 Initial public scaffold prepared locally.
 
 - Added public-safe manifest validation.
+- Added JSON Schema output and a checked-in manifest schema.
 - Added maintainer report generation from a manifest.
 - Added synthetic review, model-inventory, and review-queue manifests.
 - Added maintainability checks for workflow preflight, review-signal roles, decision gates, and handoffs.

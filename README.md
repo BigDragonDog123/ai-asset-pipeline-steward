@@ -32,6 +32,7 @@ This is an alpha repository scaffold. It is intentionally small:
 
 ```bash
 python -m pip install -e .
+asset-pipeline-steward schema
 asset-pipeline-steward examples/fixture_manifest.json
 asset-pipeline-steward report examples/fixture_manifest.json
 asset-pipeline-steward examples/model_inventory_manifest.json
@@ -42,6 +43,7 @@ python -m unittest discover -s tests
 You can also run the validator without installing:
 
 ```bash
+python -m asset_pipeline_steward.cli schema
 python -m asset_pipeline_steward.cli examples/fixture_manifest.json
 python -m asset_pipeline_steward.cli report examples/fixture_manifest.json
 ```
@@ -75,6 +77,8 @@ The validator checks both public safety and basic maintainability:
 - decision gates include `status` and `next_action`;
 - handoffs include `goal`, `current_status`, `next_action`, `blockers`, and `known_unknowns`;
 - private paths, sensitive markers, and model weight file paths are blocked.
+
+The JSON Schema lives at `schemas/asset-pipeline-manifest.schema.json` and can also be printed with `asset-pipeline-steward schema`.
 
 ## Codex Skill
 

@@ -1,0 +1,280 @@
+{
+  "$defs": {
+    "asset": {
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "kind": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "path": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "review_state": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "source": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "path",
+        "source",
+        "review_state"
+      ],
+      "type": "object"
+    },
+    "decision_gate": {
+      "additionalProperties": true,
+      "properties": {
+        "known_unknowns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "next_action": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "next_action"
+      ],
+      "type": "object"
+    },
+    "handoff": {
+      "additionalProperties": true,
+      "properties": {
+        "blockers": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "current_status": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "goal": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "known_unknowns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "next_action": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "goal",
+        "current_status",
+        "next_action",
+        "blockers",
+        "known_unknowns"
+      ],
+      "type": "object"
+    },
+    "model": {
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "source": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "verification": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "weights_included": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "source",
+        "weights_included",
+        "verification"
+      ],
+      "type": "object"
+    },
+    "review_signal": {
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "ground-truth",
+            "supporting-evidence"
+          ],
+          "type": "string"
+        },
+        "scale": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "role"
+      ],
+      "type": "object"
+    },
+    "workflow": {
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "preflight": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "steps": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "steps",
+        "preflight"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://raw.githubusercontent.com/BigDragonDog123/ai-asset-pipeline-steward/main/schemas/asset-pipeline-manifest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "assets": {
+      "items": {
+        "$ref": "#/$defs/asset"
+      },
+      "type": "array"
+    },
+    "decision_gate": {
+      "$ref": "#/$defs/decision_gate"
+    },
+    "handoff": {
+      "$ref": "#/$defs/handoff"
+    },
+    "models": {
+      "items": {
+        "$ref": "#/$defs/model"
+      },
+      "type": "array"
+    },
+    "project": {
+      "additionalProperties": true,
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "maintainer_intent": {
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "description",
+        "status"
+      ],
+      "type": "object"
+    },
+    "review_signals": {
+      "allOf": [
+        {
+          "contains": {
+            "properties": {
+              "role": {
+                "const": "ground-truth"
+              }
+            },
+            "required": [
+              "role"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "role": {
+                "const": "supporting-evidence"
+              }
+            },
+            "required": [
+              "role"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "items": {
+        "$ref": "#/$defs/review_signal"
+      },
+      "type": "array"
+    },
+    "workflows": {
+      "items": {
+        "$ref": "#/$defs/workflow"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "project",
+    "assets",
+    "models",
+    "workflows",
+    "review_signals",
+    "decision_gate",
+    "handoff"
+  ],
+  "title": "AI Asset Pipeline Steward Manifest",
+  "type": "object"
+}
