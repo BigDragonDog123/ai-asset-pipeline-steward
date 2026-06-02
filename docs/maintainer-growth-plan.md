@@ -13,6 +13,7 @@ This plan tracks the next credible public signals for AI Asset Pipeline Steward.
 - Usage examples: `docs/terminal-examples.md` and `examples/`
 - Adoption evidence file: `docs/adoption-evidence.json`
 - Maintainer activity: issue #3 completed; Dependabot PRs #1 and #2 merged.
+- Open adoption task: issue #8 tracks the first external feedback signal.
 
 ## Signal Rules
 
@@ -26,7 +27,7 @@ This plan tracks the next credible public signals for AI Asset Pipeline Steward.
 1. Ask one real user or maintainer to try the quickstart and leave public feedback.
 2. Publish one short public usage note that links to the repo and terminal examples.
 3. Add any real external feedback URL to `docs/adoption-evidence.json`.
-4. Implement or close one more starter issue after external feedback.
+4. Close issue #8 after the external feedback URL is recorded.
 5. Re-run:
 
 ```bash

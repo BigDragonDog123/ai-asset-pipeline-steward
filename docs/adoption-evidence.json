@@ -2,6 +2,7 @@
   "status_date": "2026-06-02",
   "public_repository_url": "https://github.com/BigDragonDog123/ai-asset-pipeline-steward",
   "ci_run_urls": [
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26814612226",
     "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26813483162",
     "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26813317660",
     "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26813315010",
@@ -12,6 +13,7 @@
     "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/releases/tag/v0.1.0"
   ],
   "issue_urls": [
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/8",
     "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/7",
     "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/6",
     "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/5",
@@ -31,6 +33,9 @@
   "forks": 0,
   "notes": [
     "Generated from public GitHub API data and reviewed on 2026-06-02.",
+    "Starter issues #3 through #7 have been completed with public comments and green CI evidence.",
+    "Dependabot maintenance PRs #1 and #2 have been merged.",
+    "Issue #8 tracks the remaining external feedback/adoption evidence gap.",
     "External feedback, stars, and forks are intentionally left as current public values.",
     "Do not include private user data, private logs, credentials, or non-public samples."
   ]
