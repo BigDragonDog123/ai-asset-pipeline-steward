@@ -9,26 +9,25 @@ This runbook turns the local repository into a public GitHub repository.
 - Suggested repository name: `ai-asset-pipeline-steward`
 - Suggested visibility: public
 - Suggested owner: `BigDragonDog123`
+- Current external blocker: GitHub connector can identify `BigDragonDog123`, but no GitHub App installations or repositories are visible yet.
 
 ## Option A: GitHub Website
 
-1. Open https://github.com/new
+1. Open https://github.com/new.
 2. Repository name: `ai-asset-pipeline-steward`
 3. Visibility: Public
 4. Do not add README, license, or `.gitignore` in the GitHub form. They already exist locally.
 5. Create repository.
 6. In this local folder, run:
 
-```bash
-git remote add origin https://github.com/BigDragonDog123/ai-asset-pipeline-steward.git
-git push -u origin main
+```powershell
+.\scripts\publish-after-github-repo.ps1 -Push
 ```
 
-If `origin` already exists, use:
+If you only want the script to open the prefilled GitHub creation page:
 
-```bash
-git remote set-url origin https://github.com/BigDragonDog123/ai-asset-pipeline-steward.git
-git push -u origin main
+```powershell
+.\scripts\publish-after-github-repo.ps1 -OpenGitHubCreatePage
 ```
 
 ## Option B: GitHub CLI
@@ -38,6 +37,14 @@ If GitHub CLI is installed and authenticated:
 ```bash
 gh repo create BigDragonDog123/ai-asset-pipeline-steward --public --source=. --remote=origin --push
 ```
+
+`gh` is not currently installed on this machine, so Option A is the current path.
+
+## ChatGPT/Codex GitHub Authorization
+
+After the repository exists, follow `docs/github-connector-setup.md`.
+
+The important rule: the ChatGPT/Codex GitHub app must be installed and configured to access `BigDragonDog123/ai-asset-pipeline-steward`. Otherwise Codex cannot inspect the public repo through the connector even if the GitHub page exists.
 
 ## After Push
 

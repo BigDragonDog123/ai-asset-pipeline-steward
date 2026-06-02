@@ -17,6 +17,9 @@ The command checks:
 
 It also emits a warning that cannot be satisfied locally: the public GitHub repository, hosted CI run, release, and adoption evidence still need to be verified after push.
 
+If the local checks pass but GitHub still shows no repository, follow `docs/github-publish-runbook.md`.
+If the repository exists but Codex cannot see it through the GitHub connector, follow `docs/github-connector-setup.md`.
+
 ## JSON Output
 
 ```bash

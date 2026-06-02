@@ -120,3 +120,4 @@ Track public adoption and maintainer evidence in `docs/adoption-evidence.json`.
 This project is being prepared as a candidate open-source direction. OpenAI's Codex for Open Source program asks for a public GitHub profile, a public repository, maintainer role, and evidence of usage, ecosystem importance, or active maintenance. This repository currently provides the structure and a plausible maintenance workflow, but it still needs public adoption evidence before a strong application.
 
 See `docs/codex-for-oss-readiness.md`.
+Use `docs/github-publish-runbook.md` and `docs/github-connector-setup.md` for the GitHub publishing and ChatGPT/Codex connector steps.

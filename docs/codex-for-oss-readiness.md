@@ -49,6 +49,7 @@ Source:
 | Local readiness checks | In progress | `asset-pipeline-steward readiness .` checks community files, schema, examples, repo-scan, git branch/status, and origin remote. |
 | Adoption evidence tracking | In progress | `docs/adoption-evidence.json` and `asset-pipeline-steward evidence .` track public repo URL, CI, release, issues, feedback, usage, stars, and forks. |
 | Public repository | Missing | The workspace has not yet been pushed to GitHub. |
+| GitHub connector authorization | Missing | Codex detects user `BigDragonDog123`, but no GitHub App installations or repositories are visible to the connector. |
 | Public adoption | Missing | No stars, downloads, releases, external users, or issue/PR history yet. |
 | Maintainer activity evidence | Missing | Needs commits, releases, issues, changelog, roadmap, and real maintenance history. |
 
@@ -72,15 +73,16 @@ Unknown:
 
 ## Next Milestones
 
-1. Initialize git, commit the scaffold, and push a public repository.
+1. Create the public GitHub repository and push `main`.
 2. Add a short roadmap and first release.
 3. Turn at least one local repeated workflow into a public-safe example manifest or tutorial.
 4. Add screenshots or terminal examples that show the validator and skill in action.
-5. Run `asset-pipeline-steward readiness .` after the repo is pushed.
-6. Fill `docs/adoption-evidence.json` with public URLs as CI, releases, issues, and usage appear.
-7. Use issues to track roadmap items and maintenance tasks.
-8. Gather adoption evidence: stars, forks, external feedback, usage examples, or integration into a real public workflow.
-9. Draft the Codex for OSS application only after the public repo has credible activity.
+5. Install/configure the ChatGPT/Codex GitHub app so Codex can see the repository.
+6. Run `asset-pipeline-steward readiness .` after the repo is pushed.
+7. Fill `docs/adoption-evidence.json` with public URLs as CI, releases, issues, and usage appear.
+8. Use issues to track roadmap items and maintenance tasks.
+9. Gather adoption evidence: stars, forks, external feedback, usage examples, or integration into a real public workflow.
+10. Draft the Codex for OSS application only after the public repo has credible activity.
 
 ## Draft Application Notes
 

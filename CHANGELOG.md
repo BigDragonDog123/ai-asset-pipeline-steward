@@ -9,6 +9,7 @@ Initial public scaffold prepared locally.
 - Added local Codex for OSS readiness checks.
 - Added adoption evidence tracking.
 - Added starter issue export.
+- Added GitHub publishing and connector setup guidance.
 - Added JSON Schema output and a checked-in manifest schema.
 - Added maintainer report generation from a manifest.
 - Added synthetic review, model-inventory, and review-queue manifests.
