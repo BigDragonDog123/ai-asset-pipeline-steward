@@ -27,6 +27,12 @@ Then return to this local folder and run:
 .\scripts\publish-after-github-repo.ps1 -Push
 ```
 
+If you prefer token-based setup, set `GITHUB_TOKEN` to a token that can create repositories and run:
+
+```powershell
+.\scripts\publish-after-github-repo.ps1 -CreateRepo -Push
+```
+
 ## Connect GitHub To ChatGPT/Codex
 
 OpenAI's GitHub connection flow is:

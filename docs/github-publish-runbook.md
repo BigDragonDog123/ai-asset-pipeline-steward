@@ -30,7 +30,17 @@ If you only want the script to open the prefilled GitHub creation page:
 .\scripts\publish-after-github-repo.ps1 -OpenGitHubCreatePage
 ```
 
-## Option B: GitHub CLI
+## Option B: GitHub API Token
+
+If `GITHUB_TOKEN` is set to a GitHub token that can create repositories:
+
+```powershell
+.\scripts\publish-after-github-repo.ps1 -CreateRepo -Push
+```
+
+The script creates a public repository for the authenticated GitHub user, enables issues, keeps wiki/projects off, and does not initialize files on GitHub.
+
+## Option C: GitHub CLI
 
 If GitHub CLI is installed and authenticated:
 
@@ -38,7 +48,7 @@ If GitHub CLI is installed and authenticated:
 gh repo create BigDragonDog123/ai-asset-pipeline-steward --public --source=. --remote=origin --push
 ```
 
-`gh` is not currently installed on this machine, so Option A is the current path.
+`gh` is not currently installed on this machine, so Option A or B is the current path.
 
 ## ChatGPT/Codex GitHub Authorization
 

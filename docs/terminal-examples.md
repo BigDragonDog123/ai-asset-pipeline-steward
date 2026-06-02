@@ -57,6 +57,14 @@ Expected output includes draft Codex for OSS form fields, 500-character answer c
 
 Expected output previews label, starter issue, and v0.1.0 release creation. Add `-Execute` only after the public repository exists and `GITHUB_TOKEN` is set.
 
+## Create Repository With Token
+
+```powershell
+.\scripts\publish-after-github-repo.ps1 -CreateRepo -Push
+```
+
+Expected behavior: after `GITHUB_TOKEN` is set to a token that can create repositories, the script creates the public GitHub repository, confirms `origin`, and pushes `main`.
+
 ## Render Starter Issues
 
 ```bash
