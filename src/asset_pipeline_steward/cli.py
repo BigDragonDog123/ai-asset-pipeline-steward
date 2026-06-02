@@ -2012,7 +2012,10 @@ def format_feedback_candidates_report(
         lines.extend(
             [
                 "",
-                "Next action: share `docs/feedback-outreach-kit.md` and wait for a real reviewer.",
+                (
+                    "Next action: run `asset-pipeline-steward next-human-action . --manual-ready` "
+                    "and send the copy-paste reviewer message to one real reviewer."
+                ),
             ]
         )
         return "\n".join(lines)

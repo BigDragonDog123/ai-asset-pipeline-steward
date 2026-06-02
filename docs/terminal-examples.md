@@ -121,6 +121,7 @@ asset-pipeline-steward feedback-candidates .
 ```
 
 Expected behavior: prints public candidate URLs from issue #8 comments when someone other than the maintainer has commented. Maintainer comments are ignored.
+When no non-maintainer feedback is found, the command points back to `asset-pipeline-steward next-human-action . --manual-ready` so the maintainer can send the copy-paste reviewer message.
 If GitHub returns a rate-limit `403`, set `GITHUB_TOKEN` to a token with public repository read access and rerun the command.
 
 Use this after someone other than the maintainer leaves a public feedback link:

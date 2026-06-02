@@ -31,6 +31,7 @@ from asset_pipeline_steward.cli import (
     collect_public_evidence,
     find_feedback_candidates,
     format_application_report,
+    format_feedback_candidates_report,
     format_latest_ci_report,
     format_public_evidence_report,
     has_readiness_blockers,
@@ -531,6 +532,13 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertEqual(1, len(candidates))
         self.assertEqual("external-reviewer", candidates[0]["author"])
         self.assertIn("issuecomment-1", candidates[0]["url"])
+
+    def test_feedback_candidates_report_points_to_next_human_action(self) -> None:
+        text = format_feedback_candidates_report([], [])
+
+        self.assertIn("No non-maintainer feedback comments found yet", text)
+        self.assertIn("next-human-action . --manual-ready", text)
+        self.assertIn("copy-paste reviewer message", text)
 
     def test_feedback_candidates_reject_non_github_issue_url(self) -> None:
         candidates, findings = find_feedback_candidates(
