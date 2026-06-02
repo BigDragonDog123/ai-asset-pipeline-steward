@@ -29,6 +29,7 @@ I would value external feedback on whether the manifest checks, report output, a
 Useful links:
 - Quickstart: https://github.com/BigDragonDog123/ai-asset-pipeline-steward#quickstart
 - Terminal examples: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/terminal-examples.md
+- Reviewer brief: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/reviewer-brief.md
 - Feedback form: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml
 ```
 

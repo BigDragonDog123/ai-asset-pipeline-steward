@@ -119,6 +119,7 @@ Current evidence includes passing CI, v0.1.0, completed starter issues, usage ex
 - Feedback task: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/8`
 - Terminal examples: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/terminal-examples.md`
 - Public feedback request: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/public-feedback-request.md`
+- Reviewer brief: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/reviewer-brief.md`
 
 ## After Submission
 

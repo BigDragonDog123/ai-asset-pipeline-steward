@@ -16,6 +16,7 @@ This plan tracks the next credible public signals for AI Asset Pipeline Steward.
 - Open adoption task: issue #8 tracks the first external feedback signal.
 - Feedback form: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml`
 - Share request: `docs/public-feedback-request.md`
+- Reviewer brief: `docs/reviewer-brief.md`
 
 ## Signal Rules
 
@@ -26,7 +27,7 @@ This plan tracks the next credible public signals for AI Asset Pipeline Steward.
 
 ## Next Seven Days
 
-1. Ask one real user or maintainer to try the quickstart and leave public feedback through the feedback form.
+1. Ask one real user or maintainer to try the reviewer brief and leave public feedback through the feedback form.
 2. Publish one short public usage note that links to the repo, terminal examples, and feedback form.
 3. Add any real external feedback URL to `docs/adoption-evidence.json`.
 4. Close issue #8 after the external feedback URL is recorded.
