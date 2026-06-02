@@ -45,11 +45,9 @@ gh repo create BigDragonDog123/ai-asset-pipeline-steward --public --source=. --r
 2. Check the Community Standards page.
 3. Confirm CI runs on `main`.
 4. Create these starter issues:
-   - Add public-safe model inventory manifest example.
-   - Add smoke-gate validation rules.
-   - Add review-signal report command.
-   - Add first release notes.
-   - Draft Codex for OSS application after public activity.
+   ```bash
+   asset-pipeline-steward starter-issues .
+   ```
 5. Create release `v0.1.0`.
 6. Fill `docs/adoption-evidence.json` with the public repo URL, CI run URL, release URL, and starter issue URLs.
 7. Commit and push the updated adoption evidence file.

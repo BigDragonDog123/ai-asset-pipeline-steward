@@ -19,6 +19,7 @@ from asset_pipeline_steward.cli import (
     build_maintenance_report,
     build_manifest_schema,
     has_readiness_blockers,
+    load_starter_issues,
     load_manifest,
     main,
     scan_repository,
@@ -193,6 +194,28 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertEqual(0, exit_code)
         self.assertIn("checks", payload)
         self.assertTrue(any(check["name"] == "evidence.issue_urls" for check in payload["checks"]))
+
+    def test_starter_issues_file_loads(self) -> None:
+        issues, findings = load_starter_issues(ROOT)
+
+        self.assertEqual([], findings)
+        self.assertGreaterEqual(len(issues), 5)
+        self.assertIn("title", issues[0])
+
+    def test_starter_issues_command_prints_markdown(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["starter-issues", str(ROOT)])
+
+        self.assertEqual(0, exit_code)
+        self.assertIn("# Starter Issues", output.getvalue())
+        self.assertIn("Prepare v0.1.0 release", output.getvalue())
+
+    def test_starter_issues_missing_file_blocks(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            issues, findings = load_starter_issues(Path(tmpdir))
+
+        self.assertEqual([], issues)
+        self.assertTrue(any(finding.severity == "blocker" for finding in findings))
 
     def test_cli_returns_nonzero_for_unsafe_manifest(self) -> None:
         manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")

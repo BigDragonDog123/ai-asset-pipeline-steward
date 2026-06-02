@@ -32,6 +32,9 @@ jobs:
       - name: Report adoption evidence gaps
         run: asset-pipeline-steward evidence .
 
+      - name: Render starter issues
+        run: asset-pipeline-steward starter-issues .
+
       - name: Run tests
         run: python -m unittest discover -s tests
 

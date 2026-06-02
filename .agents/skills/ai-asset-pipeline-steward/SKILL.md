@@ -39,6 +39,24 @@ Do not use this for:
 5. Every substantial run ends with a handoff that a new session can continue.
 6. Public/open-source outputs must be scrubbed of private paths, copyrighted samples, restricted content, credentials, and large model files.
 
+## Evidence-First Overlay
+
+Before choosing parameters, scripts, models, workflows, review methods, or open-source packaging, run a compact evidence pass:
+
+```text
+Official source -> Mature practice -> Local evidence -> Decision -> Verification
+```
+
+Use this overlay as follows:
+
+- Official source: model cards, release notes, workflow docs, API docs, schema docs, and first-party examples.
+- Mature practice: maintainer examples, active open-source implementations, issue/PR discussions, and benchmark reports.
+- Local evidence: manifests, previous reports, ratings, logs, handoffs, scripts, tests, and current dirty-worktree state.
+- Decision: state whether the next action is `Adopt`, `Extend`, `Compose`, or `Build`.
+- Verification: name the smoke test, CLI check, report, or review pass that will prove the step worked.
+
+Do not invent parameters, review criteria, repository structure, or publishing claims when official or mature examples can be checked. If evidence is missing, mark the item `Unknown` and choose a reversible probe.
+
 ## Workflow
 
 ### 1. Inventory
@@ -57,7 +75,7 @@ Classify each item as public-safe, private-local, sensitive, generated output, o
 Before running generation, verify:
 
 - Model family and architecture.
-- Official or locally proven sampler, scheduler, CFG, steps, resolution, and prompt format.
+- Official, maintainer-proven, or locally proven sampler, scheduler, CFG, steps, resolution, and prompt format.
 - Required workflow nodes and model dependencies.
 - Download completion and integrity.
 - Whether a previous report already found a parameter mismatch or broken workflow.

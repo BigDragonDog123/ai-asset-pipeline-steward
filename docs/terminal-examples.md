@@ -30,6 +30,14 @@ asset-pipeline-steward evidence .
 
 Expected output before public launch includes warnings for missing public repo URL, release, CI run, issues, feedback, usage examples, stars, and forks.
 
+## Render Starter Issues
+
+```bash
+asset-pipeline-steward starter-issues .
+```
+
+Expected output includes five issue drafts with titles, labels, and acceptance criteria.
+
 ## Print The Manifest Schema
 
 ```bash

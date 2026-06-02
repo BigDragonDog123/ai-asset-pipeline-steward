@@ -2,6 +2,18 @@
 
 Create these issues after the repository is public. They are designed to produce visible, useful maintenance activity instead of empty project noise.
 
+Machine-readable source:
+
+```text
+docs/starter-issues.json
+```
+
+Render them with:
+
+```bash
+asset-pipeline-steward starter-issues .
+```
+
 ## 1. Add handoff-heavy batch resume manifest example
 
 Labels: `enhancement`, `documentation`

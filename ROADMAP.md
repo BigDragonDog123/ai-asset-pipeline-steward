@@ -12,6 +12,7 @@ Status: complete locally.
 - Repository public-safety scan command.
 - Local Codex for OSS readiness command.
 - Adoption evidence tracking command.
+- Starter issue export command.
 - JSON Schema and schema command.
 - Maintenance report command.
 - Synthetic review, model-inventory, and review-queue manifests.

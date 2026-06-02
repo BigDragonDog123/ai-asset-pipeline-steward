@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Add handoff-heavy batch resume manifest example",
+    "labels": ["enhancement", "documentation"],
+    "body": "Add a synthetic manifest example that demonstrates resuming a paused batch without private outputs or copyrighted samples.\n\nAcceptance criteria:\n- Example manifest lives under examples/.\n- It includes progress, blocker, known-unknown, and next-action handoff fields.\n- It keeps synthetic assets and public-safe paths only.\n- It passes asset-pipeline-steward validation.\n- README or terminal examples link to it."
+  },
+  {
+    "title": "Add handoff completeness validation rules",
+    "labels": ["enhancement"],
+    "body": "Extend validation so manifests can declare handoff-ready fields before a maintainer resumes work.\n\nAcceptance criteria:\n- Validator checks goal, current status, next action, blockers, and known unknowns.\n- Tests cover valid and invalid handoff examples.\n- docs/terminal-examples.md shows the new behavior."
+  },
+  {
+    "title": "Extend maintainer report with handoff sections",
+    "labels": ["enhancement"],
+    "body": "Extend asset-pipeline-steward report so it can render a handoff-ready summary.\n\nAcceptance criteria:\n- Report includes goal, current status, next action, blockers, and known unknowns.\n- Tests cover the new report sections.\n- Output remains readable in plain terminal logs."
+  },
+  {
+    "title": "Add public extraction tutorial",
+    "labels": ["documentation"],
+    "body": "Write a tutorial showing how to convert a private local AI asset workflow into a public-safe synthetic fixture.\n\nAcceptance criteria:\n- Tutorial explains keep/replace/exclude decisions.\n- No private or copyrighted samples are used.\n- Tutorial links to docs/public-extraction-checklist.md."
+  },
+  {
+    "title": "Prepare v0.1.0 release",
+    "labels": ["release"],
+    "body": "Prepare the first public release after CI passes on GitHub.\n\nAcceptance criteria:\n- CHANGELOG.md has v0.1.0 notes.\n- README quickstart has been verified from a fresh clone.\n- GitHub Actions CI is green.\n- Release notes link to terminal examples and Codex for OSS readiness docs."
+  }
+]

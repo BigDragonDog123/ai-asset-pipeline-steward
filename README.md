@@ -36,6 +36,7 @@ asset-pipeline-steward schema
 asset-pipeline-steward repo-scan .
 asset-pipeline-steward readiness .
 asset-pipeline-steward evidence .
+asset-pipeline-steward starter-issues .
 asset-pipeline-steward examples/fixture_manifest.json
 asset-pipeline-steward report examples/fixture_manifest.json
 asset-pipeline-steward examples/model_inventory_manifest.json
@@ -50,6 +51,7 @@ python -m asset_pipeline_steward.cli schema
 python -m asset_pipeline_steward.cli repo-scan .
 python -m asset_pipeline_steward.cli readiness .
 python -m asset_pipeline_steward.cli evidence .
+python -m asset_pipeline_steward.cli starter-issues .
 python -m asset_pipeline_steward.cli examples/fixture_manifest.json
 python -m asset_pipeline_steward.cli report examples/fixture_manifest.json
 ```

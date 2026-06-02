@@ -104,6 +104,7 @@ EXAMPLE_MANIFESTS = (
 
 SCHEMA_FILE = "schemas/asset-pipeline-manifest.schema.json"
 ADOPTION_EVIDENCE_FILE = "docs/adoption-evidence.json"
+STARTER_ISSUES_FILE = "docs/starter-issues.json"
 
 HIGH_CONFIDENCE_CONTENT_PATTERNS = (
     ("OpenAI-style API key", re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b")),
@@ -794,6 +795,60 @@ def build_evidence_report(root: Path) -> tuple[list[ReadinessCheck], str]:
     return checks, "\n".join(lines)
 
 
+def load_starter_issues(root: Path) -> tuple[list[dict[str, Any]], list[Finding]]:
+    path = root / STARTER_ISSUES_FILE
+    if not path.exists():
+        return [], [Finding("blocker", STARTER_ISSUES_FILE, "starter issues file is missing")]
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return [], [Finding("blocker", STARTER_ISSUES_FILE, f"starter issues file is invalid: {error}")]
+    if not isinstance(data, list):
+        return [], [Finding("blocker", STARTER_ISSUES_FILE, "starter issues root must be a list")]
+
+    findings: list[Finding] = []
+    issues: list[dict[str, Any]] = []
+    for index, issue in enumerate(data):
+        path_prefix = f"{STARTER_ISSUES_FILE}[{index}]"
+        if not isinstance(issue, dict):
+            findings.append(Finding("blocker", path_prefix, "starter issue must be an object"))
+            continue
+        for key in ("title", "labels", "body"):
+            if key not in issue:
+                findings.append(Finding("blocker", f"{path_prefix}.{key}", "required issue field is missing"))
+        if not isinstance(issue.get("title"), str) or not issue.get("title", "").strip():
+            findings.append(Finding("blocker", f"{path_prefix}.title", "issue title is required"))
+        if not isinstance(issue.get("labels"), list):
+            findings.append(Finding("blocker", f"{path_prefix}.labels", "issue labels must be a list"))
+        if not isinstance(issue.get("body"), str) or not issue.get("body", "").strip():
+            findings.append(Finding("blocker", f"{path_prefix}.body", "issue body is required"))
+        issues.append(issue)
+    return issues, findings
+
+
+def format_starter_issues_report(issues: list[dict[str, Any]], findings: list[Finding]) -> str:
+    if findings:
+        lines = ["Starter issue findings:"]
+        for finding in findings:
+            lines.append(f"- {finding.severity.upper()} {finding.path}: {finding.message}")
+        return "\n".join(lines)
+
+    lines = ["# Starter Issues"]
+    for index, issue in enumerate(issues, start=1):
+        labels = ", ".join(map(str, issue.get("labels", [])))
+        lines.extend(
+            [
+                "",
+                f"## {index}. {issue['title']}",
+                "",
+                f"Labels: {labels}",
+                "",
+                str(issue["body"]).strip(),
+            ]
+        )
+    return "\n".join(lines)
+
+
 def build_maintenance_report(
     path: Path, data: dict[str, Any], findings: list[Finding]
 ) -> str:
@@ -924,7 +979,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "command_or_manifest",
-        help="Manifest path, or command: validate/report/schema/repo-scan/readiness/evidence",
+        help="Manifest path, or command: validate/report/schema/repo-scan/readiness/evidence/starter-issues",
     )
     parser.add_argument("manifest", nargs="?", type=Path, help="Path to manifest JSON")
     parser.add_argument("--json", action="store_true", help="Print JSON report")
@@ -982,6 +1037,21 @@ def main(argv: list[str] | None = None) -> int:
             print(report)
         return 1 if has_readiness_blockers(checks) else 0
 
+    if command == "starter-issues":
+        root = manifest_path or Path(".")
+        issues, findings = load_starter_issues(root)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": not has_blockers(findings),
+                "issues": issues,
+                "findings": [asdict(finding) for finding in findings],
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(format_starter_issues_report(issues, findings))
+        return 1 if has_blockers(findings) else 0
+
     try:
         if manifest_path is None:
             raise ValueError("manifest path is required")
@@ -1018,6 +1088,8 @@ def resolve_command(
     if command_or_manifest == "readiness":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "evidence":
+        return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "starter-issues":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest in {"validate", "report"}:
         if manifest is None:
