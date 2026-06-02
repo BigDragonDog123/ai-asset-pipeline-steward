@@ -1,0 +1,135 @@
+{
+  "project": {
+    "name": "synthetic-maintainer-loop",
+    "description": "A public-safe end-to-end example for triaging, reviewing, and handing off an AI asset maintenance batch.",
+    "status": "review-gate-open",
+    "maintainer_intent": "Show how a maintainer can move from issue triage to preflight, review, decision gate, and resumable handoff without exposing private assets."
+  },
+  "assets": [
+    {
+      "id": "loop-asset-001",
+      "kind": "synthetic-placeholder",
+      "path": "examples/synthetic/loop-asset-001.placeholder",
+      "source": "synthetic",
+      "review_state": "accepted",
+      "notes": "Represents a clean generated candidate that passed human review."
+    },
+    {
+      "id": "loop-asset-002",
+      "kind": "synthetic-placeholder",
+      "path": "examples/synthetic/loop-asset-002.placeholder",
+      "source": "synthetic",
+      "review_state": "needs-revision",
+      "notes": "Represents a candidate with composition defects recorded by human review."
+    },
+    {
+      "id": "loop-asset-003",
+      "kind": "synthetic-placeholder",
+      "path": "examples/synthetic/loop-asset-003.placeholder",
+      "source": "synthetic",
+      "review_state": "blocked",
+      "notes": "Represents a candidate that cannot ship until a maintainer resolves an unknown."
+    },
+    {
+      "id": "loop-asset-004",
+      "kind": "synthetic-placeholder",
+      "path": "examples/synthetic/loop-asset-004.placeholder",
+      "source": "synthetic",
+      "review_state": "queued",
+      "notes": "Represents the next smoke-gate item after the blocked candidate is resolved."
+    }
+  ],
+  "models": [
+    {
+      "name": "generation-workflow-reference",
+      "source": "external-reference-only",
+      "weights_included": false,
+      "verification": "workflow parameters are represented as synthetic placeholders only"
+    },
+    {
+      "name": "automated-review-reference",
+      "source": "external-reference-only",
+      "weights_included": false,
+      "verification": "automated observations are supporting evidence and require human calibration"
+    }
+  ],
+  "workflows": [
+    {
+      "name": "issue-triage",
+      "steps": [
+        "read-feedback-or-bug-report",
+        "classify-asset-impact",
+        "choose-review-batch"
+      ],
+      "preflight": [
+        "public-safe-inputs-only",
+        "no-private-paths",
+        "maintainer-intent-recorded"
+      ]
+    },
+    {
+      "name": "review-smoke-gate",
+      "steps": [
+        "validate-manifest",
+        "run-one-item-review",
+        "compare-human-and-automated-notes"
+      ],
+      "preflight": [
+        "manifest-valid",
+        "synthetic-assets-only",
+        "human-reviewer-available",
+        "automated-review-secondary"
+      ]
+    },
+    {
+      "name": "release-or-rerun-decision",
+      "steps": [
+        "summarize-human-findings",
+        "list-blockers",
+        "choose-release-rerun-or-pause"
+      ],
+      "preflight": [
+        "ground-truth-review-recorded",
+        "supporting-observations-recorded",
+        "handoff-next-action-recorded"
+      ]
+    }
+  ],
+  "review_signals": [
+    {
+      "name": "maintainer-human-review",
+      "role": "ground-truth",
+      "scale": "accept-revise-block",
+      "example": "loop-asset-002 needs revision because the maintainer marked composition defects."
+    },
+    {
+      "name": "automated-review-notes",
+      "role": "supporting-evidence",
+      "scale": "structured-notes",
+      "example": "Automated notes can flag possible defects but cannot override maintainer judgement."
+    }
+  ],
+  "decision_gate": {
+    "status": "revise-before-release",
+    "progress": "1 accepted, 1 needs revision, 1 blocked, 1 queued.",
+    "next_action": "Resolve loop-asset-003, revise loop-asset-002, then run one queued smoke-gate item before release.",
+    "known_unknowns": [
+      "Whether loop-asset-003 should be rejected or revised is unknown until maintainer review.",
+      "Whether automated review notes match maintainer judgement is unknown until calibration."
+    ]
+  },
+  "handoff": {
+    "goal": "Complete a public-safe AI asset maintenance loop from triage to resumable handoff.",
+    "current_status": "The batch is not ready for release because one synthetic asset needs revision and one is blocked.",
+    "progress": "Triage is complete, the review smoke gate ran, one candidate was accepted, and two candidates need maintainer action.",
+    "next_action": "Review loop-asset-003, revise loop-asset-002, then run loop-asset-004 as a one-item smoke gate.",
+    "blockers": [
+      "loop-asset-003 has an unresolved maintainer decision.",
+      "loop-asset-002 needs a revision before release."
+    ],
+    "known_unknowns": [
+      "The final status of loop-asset-003 is unknown.",
+      "The release decision is unknown until the one-item smoke gate is rerun."
+    ]
+  }
+}

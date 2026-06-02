@@ -33,7 +33,7 @@ This is an alpha repository scaffold. It is intentionally small:
 
 - a manifest validator for public-safe asset pipeline fixtures;
 - a maintenance report command for handoffs and release notes;
-- synthetic review, model-inventory, review-queue, and handoff-resume example manifests;
+- synthetic review, model-inventory, review-queue, handoff-resume, and end-to-end maintainer-loop example manifests;
 - a repo-local Codex skill at `.agents/skills/ai-asset-pipeline-steward`;
 - GitHub community health files and CI;
 - a command for recording external feedback links without committing private data;
@@ -56,6 +56,7 @@ asset-pipeline-steward report examples/fixture_manifest.json
 asset-pipeline-steward examples/model_inventory_manifest.json
 asset-pipeline-steward examples/review_queue_manifest.json
 asset-pipeline-steward examples/handoff_resume_manifest.json
+asset-pipeline-steward examples/end_to_end_maintainer_loop_manifest.json
 python -m unittest discover -s tests
 ```
 
@@ -93,6 +94,8 @@ See `examples/model_inventory_manifest.json` for a public-safe model inventory a
 See `examples/review_queue_manifest.json` for a public-safe review queue and handoff example.
 
 See `examples/handoff_resume_manifest.json` for a public-safe paused-batch resume example with progress, blockers, known unknowns, and next action fields.
+
+See `examples/end_to_end_maintainer_loop_manifest.json` and `docs/end-to-end-maintainer-loop.md` for a complete triage, review, decision, and handoff walkthrough.
 
 ## Validation Rules
 

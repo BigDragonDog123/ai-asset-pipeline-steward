@@ -37,8 +37,10 @@ Expected result:
 
 - `README.md`
 - `docs/terminal-examples.md`
+- `docs/end-to-end-maintainer-loop.md`
 - `docs/public-extraction-tutorial.md`
 - `examples/handoff_resume_manifest.json`
+- `examples/end_to_end_maintainer_loop_manifest.json`
 - `.agents/skills/ai-asset-pipeline-steward/SKILL.md`
 
 ## Feedback That Helps

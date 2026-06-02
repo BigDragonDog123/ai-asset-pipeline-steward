@@ -28,7 +28,8 @@
   "external_feedback_urls": [],
   "usage_example_urls": [
     "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/terminal-examples.md",
-    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/tree/main/examples"
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/tree/main/examples",
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/end-to-end-maintainer-loop.md"
   ],
   "stars": 0,
   "forks": 0,

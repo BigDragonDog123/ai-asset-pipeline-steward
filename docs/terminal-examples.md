@@ -171,6 +171,15 @@ Expected sections:
 
 Use this report as the starting point for handoffs, release notes, or issue triage summaries.
 
+## Run The End-To-End Maintainer Loop
+
+```bash
+asset-pipeline-steward examples/end_to_end_maintainer_loop_manifest.json
+asset-pipeline-steward report examples/end_to_end_maintainer_loop_manifest.json
+```
+
+Expected behavior: validation passes, then the report shows issue triage, review smoke gate, release/rerun decision, separated human and automated review signals, blockers, known unknowns, and a resumable handoff.
+
 ## Validate Model Inventory Preflight
 
 ```bash
