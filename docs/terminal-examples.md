@@ -175,6 +175,23 @@ Expected output:
 OK: examples/handoff_resume_manifest.json passed public-safety and schema checks.
 ```
 
+## Validate Handoff Completeness
+
+Manifests must include handoff fields that let a maintainer or agent resume work safely:
+
+- `goal`
+- `current_status`
+- `next_action`
+- `blockers`
+- `known_unknowns`
+
+If a required handoff field is missing, validation reports a blocker:
+
+```text
+Findings for manifest.json:
+- BLOCKER handoff.next_action: handoff field is required
+```
+
 ## Render Review Queue Report
 
 ```bash
@@ -202,5 +219,8 @@ Expected highlights:
 Project: synthetic-handoff-resume
 - Assets: 3
 ## Handoff
+- Current status: The batch is paused with progress, blocker, and next-action state recorded.
 - Next action: Have a maintainer review resume-asset-003
+- Blockers:
+- Known unknowns:
 ```

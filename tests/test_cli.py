@@ -88,21 +88,29 @@ class ManifestValidationTests(unittest.TestCase):
 
         self.assertTrue(any("next_action" in finding.path for finding in findings))
 
-    def test_handoff_requires_next_action(self) -> None:
-        manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")
-        manifest["handoff"].pop("next_action")
+    def test_handoff_requires_summary_fields(self) -> None:
+        for required_field in ("goal", "current_status", "next_action"):
+            with self.subTest(required_field=required_field):
+                manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")
+                manifest["handoff"].pop(required_field)
 
-        findings = validate_manifest(manifest)
+                findings = validate_manifest(manifest)
 
-        self.assertTrue(any("handoff.next_action" == finding.path for finding in findings))
+                self.assertTrue(
+                    any(f"handoff.{required_field}" == finding.path for finding in findings)
+                )
 
     def test_handoff_requires_blocker_list(self) -> None:
-        manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")
-        manifest["handoff"]["blockers"] = "none"
+        for required_list in ("blockers", "known_unknowns"):
+            with self.subTest(required_list=required_list):
+                manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")
+                manifest["handoff"][required_list] = "none"
 
-        findings = validate_manifest(manifest)
+                findings = validate_manifest(manifest)
 
-        self.assertTrue(any("handoff.blockers" == finding.path for finding in findings))
+                self.assertTrue(
+                    any(f"handoff.{required_list}" == finding.path for finding in findings)
+                )
 
     def test_model_inventory_manifest_passes(self) -> None:
         manifest = load_manifest(ROOT / "examples" / "model_inventory_manifest.json")
@@ -366,6 +374,11 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("- human-rating: ground-truth", report)
         self.assertIn("## Handoff", report)
         self.assertIn("- Goal: Validate the minimal public-safe review fixture.", report)
+        self.assertIn("- Current status: Manifest is ready for smoke-test demonstration.", report)
+        self.assertIn("- Next action: Run validation and render a maintainer report.", report)
+        self.assertIn("- Blockers: none declared", report)
+        self.assertIn("- Known unknowns:", report)
+        self.assertIn("The fixture does not include real model outputs.", report)
 
     def test_report_command_returns_zero_for_safe_manifest(self) -> None:
         path = ROOT / "examples" / "fixture_manifest.json"

@@ -105,6 +105,7 @@ EXAMPLE_MANIFESTS = (
     "examples/fixture_manifest.json",
     "examples/model_inventory_manifest.json",
     "examples/review_queue_manifest.json",
+    "examples/handoff_resume_manifest.json",
 )
 
 SCHEMA_FILE = "schemas/asset-pipeline-manifest.schema.json"
