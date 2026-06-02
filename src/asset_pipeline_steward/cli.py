@@ -1045,6 +1045,38 @@ def collect_public_evidence(
     return evidence, findings
 
 
+def unique_string_values(*groups: Any) -> list[str]:
+    values: list[str] = []
+    seen: set[str] = set()
+    for group in groups:
+        for item in list_value(group):
+            if not isinstance(item, str):
+                continue
+            value = item.strip()
+            if value and value not in seen:
+                values.append(value)
+                seen.add(value)
+    return values
+
+
+def merge_public_evidence(
+    existing: dict[str, Any], collected: dict[str, Any]
+) -> dict[str, Any]:
+    merged = dict(existing)
+    for key in ("public_repository_url", "status_date"):
+        value = string_value(collected.get(key))
+        if value:
+            merged[key] = value
+    for key in ("stars", "forks"):
+        if isinstance(collected.get(key), int):
+            merged[key] = collected[key]
+    for key in ("ci_run_urls", "release_urls", "issue_urls", "pull_request_urls"):
+        merged[key] = unique_string_values(collected.get(key), existing.get(key))
+    for key in ("external_feedback_urls", "usage_example_urls", "notes"):
+        merged[key] = unique_string_values(existing.get(key), collected.get(key))
+    return merged
+
+
 def validate_external_feedback_url(feedback_url: str) -> list[Finding]:
     findings: list[Finding] = []
     parsed = urlparse(feedback_url)
@@ -1211,6 +1243,13 @@ def record_external_feedback(
     if has_blockers(findings):
         return data, findings
 
+    public_evidence, public_findings = collect_public_evidence(root, fetcher)
+    if public_evidence:
+        data = merge_public_evidence(data, public_evidence)
+    for finding in public_findings:
+        severity = "warn" if finding.severity == "blocker" else finding.severity
+        findings.append(Finding(severity, finding.path, finding.message, finding.value))
+
     existing_urls = [
         item.strip()
         for item in list_value(data.get("external_feedback_urls"))
@@ -1321,6 +1360,9 @@ def format_record_feedback_report(
             [
                 f"- RECORDED external feedback URL: {feedback_url}",
                 f"- Total external feedback URLs: {len(urls)}",
+                f"- Stars: {evidence.get('stars', 0)}",
+                f"- Forks: {evidence.get('forks', 0)}",
+                f"- CI run URLs: {len(list_value(evidence.get('ci_run_urls')))}",
                 "",
                 "Next checks:",
                 "",

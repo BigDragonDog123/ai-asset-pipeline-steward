@@ -288,8 +288,44 @@ class ManifestValidationTests(unittest.TestCase):
 
     def test_record_external_feedback_adds_non_maintainer_github_issue(self) -> None:
         def fake_fetcher(url: str) -> object:
-            self.assertIn("/issues/9", url)
-            return {"user": {"login": "external-reviewer"}}
+            if url.endswith("/issues/9"):
+                return {"user": {"login": "external-reviewer"}}
+            if url.endswith("/BigDragonDog123/ai-asset-pipeline-steward"):
+                return {
+                    "html_url": "https://github.com/BigDragonDog123/ai-asset-pipeline-steward",
+                    "stargazers_count": 3,
+                    "forks_count": 1,
+                }
+            if "actions/runs" in url:
+                return {
+                    "workflow_runs": [
+                        {
+                            "html_url": (
+                                "https://github.com/BigDragonDog123/"
+                                "ai-asset-pipeline-steward/actions/runs/99"
+                            )
+                        }
+                    ]
+                }
+            if "releases" in url:
+                return [
+                    {
+                        "html_url": (
+                            "https://github.com/BigDragonDog123/"
+                            "ai-asset-pipeline-steward/releases/tag/v0.1.0"
+                        )
+                    }
+                ]
+            if "issues" in url:
+                return [
+                    {
+                        "html_url": (
+                            "https://github.com/BigDragonDog123/"
+                            "ai-asset-pipeline-steward/issues/9"
+                        )
+                    }
+                ]
+            raise AssertionError(url)
 
         with tempfile.TemporaryDirectory() as tmpdir:
             docs = Path(tmpdir) / "docs"
@@ -315,8 +351,16 @@ class ManifestValidationTests(unittest.TestCase):
 
             self.assertFalse(any(finding.severity == "blocker" for finding in findings))
             self.assertIn(url, evidence["external_feedback_urls"])
+            self.assertEqual(3, evidence["stars"])
+            self.assertEqual(1, evidence["forks"])
+            self.assertIn(
+                "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/99",
+                evidence["ci_run_urls"],
+            )
             written = json.loads(evidence_path.read_text(encoding="utf-8"))
             self.assertIn(url, written["external_feedback_urls"])
+            self.assertEqual(3, written["stars"])
+            self.assertEqual(1, written["forks"])
 
     def test_record_external_feedback_blocks_maintainer_github_comment(self) -> None:
         def fake_fetcher(url: str) -> object:

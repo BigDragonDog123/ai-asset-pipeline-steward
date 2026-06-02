@@ -49,7 +49,7 @@ Use this after someone other than the maintainer leaves a public feedback link:
 asset-pipeline-steward record-feedback https://example.com/public-feedback-url
 ```
 
-Expected behavior: updates `docs/adoption-evidence.json` with the feedback URL, unless the URL is not public-safe or is a GitHub issue/comment authored by the maintainer.
+Expected behavior: updates `docs/adoption-evidence.json` with the feedback URL and refreshes public GitHub metrics when the API is available, unless the URL is not public-safe or is a GitHub issue/comment authored by the maintainer.
 
 You can also pass an explicit repository root:
 

@@ -38,6 +38,7 @@ Submit only when:
 
 - `external_feedback_urls` has at least one public URL, or you intentionally accept the weaker application;
 - the feedback URL was recorded with `asset-pipeline-steward record-feedback` or reviewed against the same public-safety rules;
+- current public GitHub metrics were refreshed by `record-feedback` or manually reviewed if GitHub API warnings appeared;
 - first name, last name, ChatGPT email, and OpenAI Organization ID are known;
 - the latest GitHub Actions run on `main` is green;
 - `docs/adoption-evidence.json` contains the current public evidence.

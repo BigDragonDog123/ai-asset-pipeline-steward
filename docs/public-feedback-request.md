@@ -45,7 +45,8 @@ After a public feedback link exists:
 asset-pipeline-steward record-feedback https://example.com/public-feedback-url
 ```
 
-2. Re-run:
+2. If the command prints a warning, manually review current public GitHub metrics before submitting.
+3. Re-run:
 
 ```bash
 asset-pipeline-steward evidence .
@@ -53,4 +54,4 @@ asset-pipeline-steward readiness .
 asset-pipeline-steward application .
 ```
 
-3. Close issue #8 once external feedback passes the evidence check.
+4. Close issue #8 once external feedback passes the evidence check.

@@ -62,4 +62,4 @@ After feedback appears, update `docs/adoption-evidence.json`:
 
 - `external_feedback_urls`: public comments, issue links, forum posts, or social posts;
 - `usage_example_urls`: public demos, downstream examples, or tutorials;
-- `stars` and `forks`: current public GitHub values.
+- `stars` and `forks`: current public GitHub values, refreshed by `asset-pipeline-steward record-feedback` when the GitHub API is available.

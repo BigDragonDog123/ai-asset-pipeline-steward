@@ -135,7 +135,7 @@ A feedback link counts when all are true:
 asset-pipeline-steward record-feedback https://example.com/public-feedback-url
 ```
 
-2. Update `stars` and `forks` to current public GitHub values if they changed.
+2. The command also refreshes public GitHub metrics when the API is available. If it prints a warning, manually review stars, forks, CI, release, issue, and PR evidence before submitting.
 3. Re-run:
 
 ```bash
