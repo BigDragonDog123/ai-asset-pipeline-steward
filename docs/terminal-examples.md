@@ -30,6 +30,14 @@ asset-pipeline-steward evidence .
 
 Expected output before public launch includes warnings for missing public repo URL, release, CI run, issues, feedback, usage examples, stars, and forks.
 
+## Print Reviewer Checklist
+
+```bash
+asset-pipeline-steward reviewer-checklist .
+```
+
+Expected output includes 10-minute, 20-minute, and 40-minute review paths; public-safety reminders; the feedback form link; and maintainer follow-up commands for recording reviewed public feedback.
+
 ## Collect Public GitHub Evidence
 
 Use this after the repository exists on GitHub:

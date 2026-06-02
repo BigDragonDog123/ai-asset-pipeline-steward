@@ -1587,6 +1587,111 @@ def format_feedback_candidates_report(
     return "\n".join(lines)
 
 
+def public_repository_url(root: Path) -> str:
+    data, _checks = load_adoption_evidence(root)
+    repo_url = string_value(data.get("public_repository_url")) if data else ""
+    if repo_url:
+        return repo_url.rstrip("/")
+    return f"https://github.com/{DEFAULT_PUBLIC_REPOSITORY}"
+
+
+def public_blob_url(root: Path, path: str) -> str:
+    return f"{public_repository_url(root)}/blob/main/{path}"
+
+
+def build_reviewer_checklist(root: Path) -> dict[str, Any]:
+    repo_url = public_repository_url(root)
+    feedback_form = f"{repo_url}/issues/new?template=feedback.yml"
+    return {
+        "repository_url": repo_url,
+        "review_paths": [
+            {
+                "name": "10-minute skim",
+                "steps": [
+                    f"Read {public_blob_url(root, 'docs/reviewer-brief.md')}",
+                    f"Skim {public_blob_url(root, 'examples/handoff_resume_manifest.json')}",
+                    "Leave one concrete feedback issue",
+                ],
+            },
+            {
+                "name": "20-minute quickstart",
+                "steps": [
+                    "Run `python -m pip install -e .`",
+                    "Run `asset-pipeline-steward repo-scan .`",
+                    "Run `asset-pipeline-steward readiness .`",
+                    "Run `asset-pipeline-steward report examples/handoff_resume_manifest.json`",
+                    "Leave what worked and what was unclear",
+                ],
+            },
+            {
+                "name": "40-minute maintainer review",
+                "steps": [
+                    f"Read {public_blob_url(root, 'docs/end-to-end-maintainer-loop.md')}",
+                    "Compare the manifest shape against one real workflow without sharing private data",
+                    "Identify one missing field, validation rule, report section, or handoff rule",
+                    "Leave a public feedback issue or public comment",
+                ],
+            },
+        ],
+        "useful_feedback": [
+            "unclear field",
+            "missing validation rule",
+            "weak report output",
+            "adoption blocker",
+            "reason this does not fit a real workflow",
+        ],
+        "public_safety": [
+            "Do not include private paths",
+            "Do not include logs, credentials, tokens, or `.env` contents",
+            "Do not include model files, generated private media, or non-public samples",
+        ],
+        "feedback_form": feedback_form,
+        "maintainer_follow_up": [
+            "asset-pipeline-steward feedback-candidates .",
+            "asset-pipeline-steward record-feedback <public-feedback-url>",
+            "asset-pipeline-steward evidence .",
+        ],
+    }
+
+
+def format_reviewer_checklist(checklist: dict[str, Any]) -> str:
+    lines = [
+        "# Reviewer Checklist",
+        "",
+        f"Repository: {checklist['repository_url']}",
+        "",
+        "## Review Paths",
+    ]
+    for path in checklist["review_paths"]:
+        lines.extend(["", f"### {path['name']}", ""])
+        for step in path["steps"]:
+            lines.append(f"- {step}")
+
+    lines.extend(["", "## Useful Feedback", ""])
+    for item in checklist["useful_feedback"]:
+        lines.append(f"- {item}")
+
+    lines.extend(["", "## Public Safety", ""])
+    for item in checklist["public_safety"]:
+        lines.append(f"- {item}")
+
+    lines.extend(
+        [
+            "",
+            "## Feedback Form",
+            "",
+            str(checklist["feedback_form"]),
+            "",
+            "## Maintainer Follow-Up",
+            "",
+            "```bash",
+        ]
+    )
+    lines.extend(checklist["maintainer_follow_up"])
+    lines.append("```")
+    return "\n".join(lines)
+
+
 def load_starter_issues(root: Path) -> tuple[list[dict[str, Any]], list[Finding]]:
     path = root / STARTER_ISSUES_FILE
     if not path.exists():
@@ -1774,7 +1879,7 @@ def build_parser() -> argparse.ArgumentParser:
         help=(
             "Manifest path, or command: validate/report/schema/repo-scan/readiness/"
             "evidence/collect-evidence/feedback-candidates/record-feedback/"
-            "application/submission-ready/starter-issues"
+            "application/submission-ready/starter-issues/reviewer-checklist"
         ),
     )
     parser.add_argument("manifest", nargs="?", help="Path, feedback URL, or issue URL")
@@ -1936,6 +2041,20 @@ def main(argv: list[str] | None = None) -> int:
             print(format_starter_issues_report(issues, findings))
         return 1 if has_blockers(findings) else 0
 
+    if command == "reviewer-checklist":
+        root = manifest_path or Path(".")
+        checklist = build_reviewer_checklist(root)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": True,
+                "checklist": checklist,
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(format_reviewer_checklist(checklist))
+        return 0
+
     try:
         if manifest_path is None:
             raise ValueError("manifest path is required")
@@ -1984,6 +2103,8 @@ def resolve_command(
     if command_or_manifest == "submission-ready":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "starter-issues":
+        return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "reviewer-checklist":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest in {"validate", "report"}:
         if manifest is None:

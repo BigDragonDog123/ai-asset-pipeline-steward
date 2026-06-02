@@ -18,6 +18,12 @@ Avoid asking for generic praise. Ask for one concrete usability gap, confusing f
 
 ## Review Paths
 
+Maintainers can print the same review paths from the CLI:
+
+```bash
+asset-pipeline-steward reviewer-checklist .
+```
+
 ### 10-Minute Skim
 
 1. Open the README.

@@ -24,6 +24,7 @@ This repository turns that repeated maintenance pattern into a small package, a 
 ## For Reviewers
 
 - Start with `docs/reviewer-brief.md`.
+- Run `asset-pipeline-steward reviewer-checklist .` for a concise review path.
 - Run the quickstart or skim `docs/terminal-examples.md`.
 - Leave public feedback with the feedback issue form.
 
@@ -47,6 +48,7 @@ asset-pipeline-steward schema
 asset-pipeline-steward repo-scan .
 asset-pipeline-steward readiness .
 asset-pipeline-steward evidence .
+asset-pipeline-steward reviewer-checklist .
 asset-pipeline-steward feedback-candidates .
 asset-pipeline-steward application .
 asset-pipeline-steward submission-ready .
@@ -67,6 +69,7 @@ python -m asset_pipeline_steward.cli schema
 python -m asset_pipeline_steward.cli repo-scan .
 python -m asset_pipeline_steward.cli readiness .
 python -m asset_pipeline_steward.cli evidence .
+python -m asset_pipeline_steward.cli reviewer-checklist .
 python -m asset_pipeline_steward.cli feedback-candidates .
 python -m asset_pipeline_steward.cli application .
 python -m asset_pipeline_steward.cli submission-ready .

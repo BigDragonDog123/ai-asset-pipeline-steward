@@ -554,6 +554,29 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertEqual([], issues)
         self.assertTrue(any(finding.severity == "blocker" for finding in findings))
 
+    def test_reviewer_checklist_command_prints_review_paths(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["reviewer-checklist", str(ROOT)])
+
+        self.assertEqual(0, exit_code)
+        text = output.getvalue()
+        self.assertIn("# Reviewer Checklist", text)
+        self.assertIn("10-minute skim", text)
+        self.assertIn("20-minute quickstart", text)
+        self.assertIn("40-minute maintainer review", text)
+        self.assertIn("issues/new?template=feedback.yml", text)
+        self.assertIn("record-feedback <public-feedback-url>", text)
+
+    def test_reviewer_checklist_command_prints_json(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["reviewer-checklist", str(ROOT), "--json"])
+
+        self.assertEqual(0, exit_code)
+        payload = json.loads(output.getvalue())
+        self.assertTrue(payload["ok"])
+        self.assertEqual("10-minute skim", payload["checklist"]["review_paths"][0]["name"])
+        self.assertIn("feedback_form", payload["checklist"])
+
     def test_cli_returns_nonzero_for_unsafe_manifest(self) -> None:
         manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")
         manifest["project"]["description"] = "contains token marker"
