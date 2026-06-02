@@ -70,6 +70,7 @@ asset-pipeline-steward feedback-candidates .
 ```
 
 Expected behavior: prints public candidate URLs from issue #8 comments when someone other than the maintainer has commented. Maintainer comments are ignored.
+If GitHub returns a rate-limit `403`, set `GITHUB_TOKEN` to a token with public repository read access and rerun the command.
 
 Use this after someone other than the maintainer leaves a public feedback link:
 
@@ -78,6 +79,7 @@ asset-pipeline-steward record-feedback https://example.com/public-feedback-url
 ```
 
 Expected behavior: updates `docs/adoption-evidence.json` with the feedback URL and refreshes public GitHub metrics when the API is available, unless the URL is not public-safe or is a GitHub issue/comment authored by the maintainer.
+If the author check or public metric refresh hits a GitHub API `403`, rerun with `GITHUB_TOKEN` set before submitting the final application.
 
 You can also pass an explicit repository root:
 

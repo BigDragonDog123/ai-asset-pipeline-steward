@@ -153,6 +153,8 @@ A feedback link counts when all are true:
 asset-pipeline-steward feedback-candidates .
 ```
 
+If GitHub returns a rate-limit `403`, set `GITHUB_TOKEN` to a token with public repository read access and rerun the command. Do not commit the token or record it in this repository.
+
 2. Record the reviewed public URL:
 
 ```bash

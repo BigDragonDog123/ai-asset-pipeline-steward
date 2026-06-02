@@ -441,6 +441,20 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertEqual([], candidates)
         self.assertTrue(any(finding.severity == "blocker" for finding in findings))
 
+    def test_feedback_candidates_explain_github_rate_limit_recovery(self) -> None:
+        def fake_fetcher(url: str) -> object:
+            raise HTTPError(url, 403, "rate limit exceeded", None, None)
+
+        candidates, findings = find_feedback_candidates(
+            ROOT,
+            "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/8",
+            fake_fetcher,
+        )
+
+        self.assertEqual([], candidates)
+        self.assertTrue(any(finding.severity == "blocker" for finding in findings))
+        self.assertTrue(any("GITHUB_TOKEN" in finding.message for finding in findings))
+
     def test_record_feedback_command_requires_feedback_url(self) -> None:
         with self.assertRaises(SystemExit):
             main(["record-feedback", str(ROOT)])
@@ -596,6 +610,7 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("Reviewer Profiles", text)
         self.assertIn("Short Request", text)
         self.assertIn("issues/new?template=feedback.yml", text)
+        self.assertIn("GITHUB_TOKEN", text)
         self.assertIn("feedback-candidates .", text)
         self.assertIn("record-feedback <public-feedback-url>", text)
 
@@ -611,6 +626,7 @@ class ManifestValidationTests(unittest.TestCase):
             payload["playbook"]["goal"],
         )
         self.assertIn("short_request", payload["playbook"])
+        self.assertIn("GITHUB_TOKEN", payload["playbook"]["api_recovery"])
 
     def test_first_feedback_playbook_doc_exists(self) -> None:
         text = (ROOT / "docs" / "first-feedback-playbook.md").read_text(encoding="utf-8")

@@ -79,6 +79,8 @@ asset-pipeline-steward evidence .
 asset-pipeline-steward submission-ready . --manual-ready
 ```
 
+If GitHub returns a rate-limit `403` while scanning candidates or checking authors, set `GITHUB_TOKEN` to a token with public repository read access and rerun the command. Do not commit the token.
+
 The same playbook can be printed from a clone:
 
 ```bash

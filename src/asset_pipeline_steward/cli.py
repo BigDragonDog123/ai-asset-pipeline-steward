@@ -1047,6 +1047,16 @@ def fetch_github_json(url: str) -> Any:
         return json.loads(response.read().decode("utf-8"))
 
 
+def github_api_error_message(scope: str, error: HTTPError) -> str:
+    message = f"{scope} failed: HTTP {error.code}"
+    if error.code in {403, 429}:
+        message += (
+            "; GitHub may be rate-limiting unauthenticated requests. "
+            "Set GITHUB_TOKEN to a token with public repository read access and rerun."
+        )
+    return message
+
+
 def collect_public_evidence(
     root: Path,
     fetcher: Any = fetch_github_json,
@@ -1062,7 +1072,7 @@ def collect_public_evidence(
             Finding(
                 "blocker",
                 repository,
-                f"GitHub repository API failed: HTTP {error.code}",
+                github_api_error_message("GitHub repository API", error),
             )
         ]
     except (OSError, URLError, json.JSONDecodeError) as error:
@@ -1121,7 +1131,7 @@ def collect_public_evidence(
             evidence[evidence_key] = extractor(payload)
         except HTTPError as error:
             findings.append(
-                Finding("warn", endpoint, f"GitHub API failed: HTTP {error.code}")
+                Finding("warn", endpoint, github_api_error_message("GitHub API", error))
             )
         except (OSError, URLError, json.JSONDecodeError) as error:
             findings.append(Finding("warn", endpoint, f"GitHub API failed: {error}"))
@@ -1295,7 +1305,7 @@ def find_feedback_candidates(
             Finding(
                 "blocker",
                 "feedback_candidates",
-                f"GitHub comments API failed: HTTP {error.code}",
+                github_api_error_message("GitHub comments API", error),
             )
         ]
     except (OSError, URLError, json.JSONDecodeError) as error:
@@ -1354,7 +1364,7 @@ def check_external_feedback_author(
             Finding(
                 "blocker",
                 "external_feedback_url.author",
-                f"GitHub feedback author check failed: HTTP {error.code}",
+                github_api_error_message("GitHub feedback author check", error),
             )
         ]
     except (OSError, URLError, json.JSONDecodeError) as error:
@@ -1744,6 +1754,11 @@ def build_first_feedback_playbook(root: Path) -> dict[str, Any]:
             "content discusses this repository or workflow",
             "content does not expose private paths, credentials, logs, model files, or non-public media",
         ],
+        "api_recovery": (
+            "If GitHub returns a rate-limit 403 while scanning candidates or checking authors, "
+            "set GITHUB_TOKEN to a token with public repository read access and rerun. "
+            "Do not commit the token."
+        ),
         "maintainer_follow_up": [
             "asset-pipeline-steward feedback-candidates .",
             "asset-pipeline-steward record-feedback <public-feedback-url>",
@@ -1789,6 +1804,8 @@ def format_first_feedback_playbook(playbook: dict[str, Any]) -> str:
     lines.extend(["", "## Valid Feedback Rules", ""])
     for rule in playbook["valid_feedback_rules"]:
         lines.append(f"- {rule}")
+
+    lines.extend(["", "## API Recovery", "", str(playbook["api_recovery"])])
 
     lines.extend(["", "## Maintainer Follow-Up", "", "```bash"])
     lines.extend(playbook["maintainer_follow_up"])

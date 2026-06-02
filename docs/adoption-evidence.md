@@ -31,6 +31,6 @@ asset-pipeline-steward evidence .
 ```
 
 `collect-evidence` reads the public GitHub API and prints a reviewed JSON starting point for `docs/adoption-evidence.json`. It does not modify files automatically.
-If GitHub returns a rate-limit `403`, set `GITHUB_TOKEN` to a token with public repository read access and rerun the command.
+If GitHub returns a rate-limit `403`, set `GITHUB_TOKEN` to a token with public repository read access and rerun the command. The same recovery path applies to `feedback-candidates` and GitHub-backed `record-feedback` author checks.
 
 Do not record private user data, private logs, credentials, or non-public samples.
