@@ -14,7 +14,7 @@ Do not rush a weak application just because the application packet is ready. Sub
 
 - Public repository: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward`
 - Release: `v0.1.0`
-- CI: passing on `main`; latest verified public run is `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26829719474`
+- CI: passing on `main`; a recent verified public run is `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26829719474`
 - Completed starter issues: issues #3 through #7
 - Usage examples: `docs/terminal-examples.md` and `examples/`
 - Adoption evidence file: `docs/adoption-evidence.json`
