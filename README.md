@@ -146,6 +146,7 @@ See `docs/reviewer-brief.md` for a one-page guide to what reviewers should try f
 This project is being prepared as a candidate open-source direction. OpenAI's Codex for Open Source program asks for a public GitHub profile, a public repository, maintainer role, and evidence of usage, ecosystem importance, or active maintenance. This repository currently provides the structure and a plausible maintenance workflow, but it still needs public adoption evidence before a strong application.
 
 See `docs/codex-for-oss-readiness.md`.
+Use `docs/codex-for-oss-review-packet.md` for the current one-page application evidence summary.
 Use `docs/codex-for-oss-submission-runbook.md` when the final external feedback URL and personal fields are ready.
 Use `docs/github-publish-runbook.md` and `docs/github-connector-setup.md` for the GitHub publishing and ChatGPT/Codex connector steps.
 Use `docs/maintainer-growth-plan.md` to track post-launch feedback, safe adoption signals, and next maintainer actions.

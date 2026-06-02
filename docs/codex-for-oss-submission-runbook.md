@@ -8,6 +8,8 @@ Use this when the final external feedback signal and personal fields are ready. 
 https://openai.com/form/codex-for-oss/
 ```
 
+For the current one-page evidence summary, use `docs/codex-for-oss-review-packet.md`.
+
 Official form requirements verified on 2026-06-02:
 
 - first name;
@@ -116,6 +118,7 @@ Current evidence includes passing CI, v0.1.0, completed starter issues, usage ex
 
 - Repository: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward`
 - Release: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/releases/tag/v0.1.0`
+- Review packet: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/codex-for-oss-review-packet.md`
 - Feedback task: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/8`
 - Terminal examples: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/terminal-examples.md`
 - Public feedback request: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/public-feedback-request.md`

@@ -17,6 +17,7 @@ This plan tracks the next credible public signals for AI Asset Pipeline Steward.
 - Feedback form: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml`
 - Share request: `docs/public-feedback-request.md`
 - Reviewer brief: `docs/reviewer-brief.md`
+- Application review packet: `docs/codex-for-oss-review-packet.md`
 - Repository discovery: README badges plus GitHub topics for public-safe AI asset pipeline maintenance.
 
 ## Signal Rules
@@ -32,8 +33,9 @@ This plan tracks the next credible public signals for AI Asset Pipeline Steward.
 2. Publish one short public usage note that links to the repo, terminal examples, and feedback form.
 3. Add any real external feedback URL to `docs/adoption-evidence.json`.
 4. Close issue #8 after the external feedback URL is recorded.
-5. Use `docs/codex-for-oss-submission-runbook.md` for final form entry.
-6. Re-run:
+5. Review `docs/codex-for-oss-review-packet.md` to confirm the current evidence and remaining weaknesses.
+6. Use `docs/codex-for-oss-submission-runbook.md` for final form entry.
+7. Re-run:
 
 ```bash
 asset-pipeline-steward evidence .
