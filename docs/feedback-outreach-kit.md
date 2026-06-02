@@ -66,7 +66,7 @@ https://github.com/BigDragonDog123/ai-asset-pipeline-steward
 Could you give it a 10-minute skim and leave one public feedback issue? The form asks for one concrete adoption blocker or missing rule, not generic praise.
 
 Best starting point:
-https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/reviewer-brief.md
+https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/REVIEW.md
 
 Feedback form:
 https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml
@@ -89,8 +89,8 @@ Useful review paths:
 
 I would value one concrete critique: unclear field, missing validation rule, weak report output, adoption blocker, or reason this does not fit your workflow.
 
-Reviewer brief:
-https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/reviewer-brief.md
+Review landing:
+https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/REVIEW.md
 
 Feedback form:
 https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml
@@ -104,8 +104,8 @@ https://github.com/BigDragonDog123/ai-asset-pipeline-steward
 
 你方便花 10 分钟看一下 reviewer brief 或 example，然后留一个公开 feedback issue 吗？不用夸，最好指出哪里不清楚、缺哪个字段/校验规则、有什么采用阻碍，或者为什么不适合你的流程。
 
-Reviewer brief:
-https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/reviewer-brief.md
+Review landing:
+https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/REVIEW.md
 
 Feedback form:
 https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml
@@ -128,8 +128,8 @@ https://github.com/BigDragonDog123/ai-asset-pipeline-steward
 
 最有用的是具体批评：哪里不清楚、缺什么字段、缺什么校验规则、report 哪里不好用、有什么采用阻碍、为什么不适合你的流程。
 
-Reviewer brief:
-https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/reviewer-brief.md
+Review landing:
+https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/REVIEW.md
 
 Feedback form:
 https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml
@@ -142,6 +142,7 @@ A feedback link counts when all are true:
 - the author is not the maintainer;
 - the URL is public or otherwise accessible to an application reviewer;
 - the content discusses this repository or its workflow;
+- the reviewer confirms that the public issue URL may be recorded as external feedback evidence;
 - the content does not expose private paths, logs, credentials, local media, model weights, or non-public samples;
 - the URL is recorded in `external_feedback_urls` in `docs/adoption-evidence.json`.
 

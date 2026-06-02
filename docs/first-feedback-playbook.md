@@ -44,7 +44,7 @@ https://github.com/BigDragonDog123/ai-asset-pipeline-steward
 Could you give it a 10-minute skim and leave one public feedback issue? The useful answer is one concrete adoption blocker, unclear field, or missing rule.
 
 Start here:
-https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/reviewer-brief.md
+https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/REVIEW.md
 
 Feedback form:
 https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml
@@ -54,6 +54,7 @@ Please do not include private paths, logs, credentials, model files, or non-publ
 
 ## Public Links
 
+- Review landing: `REVIEW.md`
 - Reviewer brief: `docs/reviewer-brief.md`
 - Reviewer checklist: `docs/reviewer-checklist.md`
 - Outreach kit: `docs/feedback-outreach-kit.md`
@@ -66,6 +67,7 @@ A feedback URL counts only when:
 - the author is not the maintainer;
 - the URL is public or accessible to an application reviewer;
 - the content discusses this repository or workflow;
+- the reviewer confirms that the public issue URL may be recorded as external feedback evidence;
 - the content does not expose private paths, credentials, logs, model files, or non-public media.
 
 ## Maintainer Follow-Up

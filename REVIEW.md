@@ -12,6 +12,8 @@ AI Asset Pipeline Steward needs public feedback from people other than the maint
 https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml
 ```
 
+The feedback form asks you to confirm that the public issue URL may be recorded as external feedback evidence. That helps the maintainer use the feedback without copying private details.
+
 ## 20-Minute Review
 
 From a fresh clone:

@@ -35,7 +35,7 @@ Do not rush a weak application just because the application packet is ready. Sub
 
 Verified on 2026-06-02:
 
-- `python -m pytest -q` passes with 52 tests and 5 subtests.
+- `python -m pytest -q` passes with 53 tests and 5 subtests.
 - `python -m asset_pipeline_steward.cli repo-scan .` passes public-safety checks.
 - `python -m asset_pipeline_steward.cli readiness .` passes required files, schemas, examples, repo scan, git branch, clean status, and remote checks.
 - `python -m asset_pipeline_steward.cli evidence .` still warns that `external_feedback_urls` is `0/1`, with 0 stars and 0 forks.

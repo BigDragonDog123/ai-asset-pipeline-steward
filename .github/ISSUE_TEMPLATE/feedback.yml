@@ -8,6 +8,8 @@ body:
       value: |
         Thanks for reviewing AI Asset Pipeline Steward. Public feedback is most useful when it includes one concrete workflow fit, confusing point, missing rule, or adoption blocker.
 
+        If this issue is public-safe and written by someone other than the maintainer, the maintainer may record the issue URL in `docs/adoption-evidence.json` as external feedback.
+
         Please do not include private paths, logs, credentials, model files, generated private media, or non-public samples.
   - type: textarea
     id: context
@@ -65,6 +67,8 @@ body:
       label: Public safety
       options:
         - label: I am not the repository maintainer.
+          required: true
+        - label: The maintainer may record this public issue URL as external feedback evidence for the project.
           required: true
         - label: This feedback uses only public-safe examples and does not include private paths, credentials, logs, model files, or non-public media.
           required: true

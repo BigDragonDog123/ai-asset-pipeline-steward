@@ -616,6 +616,7 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("40-minute maintainer review", text)
         self.assertIn("REVIEW.md", text)
         self.assertIn("issues/new?template=feedback.yml", text)
+        self.assertIn("may be recorded as external feedback evidence", text)
         self.assertIn("record-feedback <public-feedback-url>", text)
 
     def test_reviewer_checklist_command_prints_json(self) -> None:
@@ -627,6 +628,7 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertTrue(payload["ok"])
         self.assertEqual("10-minute skim", payload["checklist"]["review_paths"][0]["name"])
         self.assertIn("feedback_form", payload["checklist"])
+        self.assertIn("evidence_recording", payload["checklist"])
 
     def test_reviewer_checklist_doc_exists(self) -> None:
         text = (ROOT / "docs" / "reviewer-checklist.md").read_text(encoding="utf-8")
@@ -635,7 +637,9 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("10-Minute Skim", text)
         self.assertIn("20-Minute Quickstart", text)
         self.assertIn("40-Minute Maintainer Review", text)
+        self.assertIn("REVIEW.md", text)
         self.assertIn("issues/new?template=feedback.yml", text)
+        self.assertIn("may be recorded as external feedback evidence", text)
 
     def test_first_feedback_playbook_command_prints_action_plan(self) -> None:
         with redirect_stdout(StringIO()) as output:
@@ -672,6 +676,8 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("# First Feedback Playbook", text)
         self.assertIn("Reviewer Profiles", text)
         self.assertIn("Short Request", text)
+        self.assertIn("REVIEW.md", text)
+        self.assertIn("may be recorded as external feedback evidence", text)
         self.assertIn("asset-pipeline-steward first-feedback-playbook .", text)
 
     def test_review_landing_doc_exists(self) -> None:
@@ -682,7 +688,18 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("20-Minute Review", text)
         self.assertIn("40-Minute Maintainer Review", text)
         self.assertIn("issues/new?template=feedback.yml", text)
+        self.assertIn("may be recorded as external feedback evidence", text)
         self.assertIn("Do not include private paths", text)
+
+    def test_feedback_template_requires_recording_consent(self) -> None:
+        text = (ROOT / ".github" / "ISSUE_TEMPLATE" / "feedback.yml").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("I am not the repository maintainer", text)
+        self.assertIn("may record this public issue URL", text)
+        self.assertIn("external feedback evidence", text)
+        self.assertIn("required: true", text)
 
     def test_outreach_tracker_doc_avoids_private_contact_data(self) -> None:
         text = (ROOT / "docs" / "outreach-tracker.md").read_text(encoding="utf-8")

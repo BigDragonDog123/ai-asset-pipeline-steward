@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added explicit feedback evidence recording consent to the public feedback form and outreach rules.
 - Added a root `REVIEW.md` landing page for first-time external reviewers.
 - Added a `codex-oss-status` command that summarizes Codex for OSS growth mode, evidence counts, blockers, warnings, and next actions.
 - Added a synthetic handoff-resume manifest with progress, blockers, known unknowns, and next-action handoff fields.

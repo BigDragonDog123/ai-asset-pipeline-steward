@@ -45,6 +45,8 @@ Useful links:
 If you clone the repo, `asset-pipeline-steward reviewer-checklist .` prints 10-minute, 20-minute, and 40-minute review paths.
 ```
 
+The feedback form asks reviewers to confirm that the public issue URL may be recorded as external feedback evidence. Do not copy private feedback, DMs, screenshots, or contact details into the repository.
+
 ## Recording Feedback
 
 After a public feedback link exists:

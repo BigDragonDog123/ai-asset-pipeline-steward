@@ -13,9 +13,10 @@ https://github.com/BigDragonDog123/ai-asset-pipeline-steward
 Use this if you only have time to read.
 
 1. Read `docs/reviewer-brief.md`.
-2. Skim `examples/handoff_resume_manifest.json`.
-3. Check whether the handoff fields are understandable.
-4. Leave one concrete feedback issue.
+2. Use `REVIEW.md` as the landing path.
+3. Skim `examples/handoff_resume_manifest.json`.
+4. Check whether the handoff fields are understandable.
+5. Leave one concrete feedback issue.
 
 ## 20-Minute Quickstart
 
@@ -68,6 +69,8 @@ Do not include:
 ```text
 https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml
 ```
+
+The form asks reviewers to confirm that the public issue URL may be recorded as external feedback evidence.
 
 ## Maintainer Follow-Up
 

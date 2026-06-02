@@ -34,16 +34,17 @@ Do not record names, private emails, private chat handles, private DMs, private 
 
 1. Confirm the author is not the maintainer.
 2. Confirm the feedback URL is public and reviewer-accessible.
-3. Confirm the feedback does not expose private paths, credentials, logs, model files, or non-public media.
-4. Record it:
+3. Confirm the reviewer allowed the public issue URL to be recorded as external feedback evidence.
+4. Confirm the feedback does not expose private paths, credentials, logs, model files, or non-public media.
+5. Record it:
 
 ```bash
 asset-pipeline-steward record-feedback <public-feedback-url>
 asset-pipeline-steward evidence .
 ```
 
-5. Turn one concrete critique into a visible issue, docs clarification, validation change, or roadmap decision.
-6. Update this tracker status to `recorded`.
+6. Turn one concrete critique into a visible issue, docs clarification, validation change, or roadmap decision.
+7. Update this tracker status to `recorded`.
 
 ## Submission Rule
 

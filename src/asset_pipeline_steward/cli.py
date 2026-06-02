@@ -1781,6 +1781,10 @@ def build_reviewer_checklist(root: Path) -> dict[str, Any]:
             "Do not include logs, credentials, tokens, or `.env` contents",
             "Do not include model files, generated private media, or non-public samples",
         ],
+        "evidence_recording": [
+            "The feedback form asks reviewers to confirm that the public issue URL may be recorded as external feedback evidence.",
+            "Record only reviewed public-safe URLs from someone other than the maintainer.",
+        ],
         "feedback_form": feedback_form,
         "maintainer_follow_up": [
             "asset-pipeline-steward feedback-candidates .",
@@ -1809,6 +1813,10 @@ def format_reviewer_checklist(checklist: dict[str, Any]) -> str:
 
     lines.extend(["", "## Public Safety", ""])
     for item in checklist["public_safety"]:
+        lines.append(f"- {item}")
+
+    lines.extend(["", "## Evidence Recording", ""])
+    for item in checklist["evidence_recording"]:
         lines.append(f"- {item}")
 
     lines.extend(
@@ -1880,6 +1888,7 @@ def build_first_feedback_playbook(root: Path) -> dict[str, Any]:
             "author is not the maintainer",
             "URL is public or reviewer-accessible",
             "content discusses this repository or workflow",
+            "reviewer confirms the public issue URL may be recorded as external feedback evidence",
             "content does not expose private paths, credentials, logs, model files, or non-public media",
         ],
         "api_recovery": (
