@@ -18,6 +18,7 @@ REQUIRED_TOP_LEVEL_KEYS = (
     "workflows",
     "review_signals",
     "decision_gate",
+    "handoff",
 )
 
 PRIVATE_PATH_PATTERNS = (
@@ -104,6 +105,12 @@ def validate_manifest(data: dict[str, Any]) -> list[Finding]:
     elif isinstance(decision_gate, dict):
         findings.extend(validate_decision_gate(decision_gate))
 
+    handoff = data.get("handoff")
+    if handoff is not None and not isinstance(handoff, dict):
+        findings.append(Finding("blocker", "handoff", "field must be an object"))
+    elif isinstance(handoff, dict):
+        findings.extend(validate_handoff(handoff))
+
     findings.extend(scan_public_safety(data))
     return findings
 
@@ -174,6 +181,18 @@ def validate_decision_gate(decision_gate: dict[str, Any]) -> Iterable[Finding]:
             )
 
 
+def validate_handoff(handoff: dict[str, Any]) -> Iterable[Finding]:
+    for key in ("goal", "current_status", "next_action"):
+        value = handoff.get(key)
+        if not isinstance(value, str) or not value.strip():
+            yield Finding("blocker", f"handoff.{key}", "handoff field is required")
+
+    for key in ("blockers", "known_unknowns"):
+        value = handoff.get(key)
+        if not isinstance(value, list):
+            yield Finding("blocker", f"handoff.{key}", "handoff field must be a list")
+
+
 def scan_public_safety(data: Any) -> Iterable[Finding]:
     for path, value in iter_strings(data):
         lowered = value.lower()
@@ -237,6 +256,7 @@ def build_maintenance_report(
     decision_gate = (
         data.get("decision_gate") if isinstance(data.get("decision_gate"), dict) else {}
     )
+    handoff = data.get("handoff") if isinstance(data.get("handoff"), dict) else {}
 
     lines = [
         "# Asset Pipeline Steward Report",
@@ -297,6 +317,17 @@ def build_maintenance_report(
     else:
         lines.append("- Known unknowns: none declared")
 
+    lines.extend(["", "## Handoff", ""])
+    lines.extend(
+        [
+            f"- Goal: {safe_text(handoff.get('goal'), 'unknown')}",
+            f"- Current status: {safe_text(handoff.get('current_status'), 'unknown')}",
+            f"- Next action: {safe_text(handoff.get('next_action'), 'not specified')}",
+        ]
+    )
+    lines.extend(format_named_list("Blockers", handoff.get("blockers")))
+    lines.extend(format_named_list("Known unknowns", handoff.get("known_unknowns")))
+
     lines.extend(["", "## Validation", ""])
     if findings:
         for finding in findings:
@@ -317,6 +348,12 @@ def safe_text(value: Any, fallback: str) -> str:
     if isinstance(value, str) and value.strip():
         return value.strip()
     return fallback
+
+
+def format_named_list(label: str, value: Any) -> list[str]:
+    if isinstance(value, list) and value:
+        return [f"- {label}:"] + [f"  - {item}" for item in value]
+    return [f"- {label}: none declared"]
 
 
 def format_human_report(path: Path, findings: list[Finding]) -> str:

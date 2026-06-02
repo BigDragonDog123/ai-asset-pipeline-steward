@@ -45,5 +45,12 @@
     "status": "ready",
     "next_action": "Run a one-item smoke test before scaling.",
     "known_unknowns": ["No real model or private output is included in this fixture."]
+  },
+  "handoff": {
+    "goal": "Validate the minimal public-safe review fixture.",
+    "current_status": "Manifest is ready for smoke-test demonstration.",
+    "next_action": "Run validation and render a maintainer report.",
+    "blockers": [],
+    "known_unknowns": ["The fixture does not include real model outputs."]
   }
 }

@@ -60,3 +60,30 @@ Project: synthetic-model-inventory
 - maintainer-rating: ground-truth
 - automated-artifact-notes: supporting-evidence
 ```
+
+## Validate Review Queue Handoff
+
+```bash
+asset-pipeline-steward examples/review_queue_manifest.json
+```
+
+Expected output:
+
+```text
+OK: examples/review_queue_manifest.json passed public-safety and schema checks.
+```
+
+## Render Review Queue Report
+
+```bash
+asset-pipeline-steward report examples/review_queue_manifest.json
+```
+
+Expected highlights:
+
+```text
+Project: synthetic-review-queue
+- Assets: 3
+## Handoff
+- Goal: Demonstrate a public-safe review queue handoff.
+```

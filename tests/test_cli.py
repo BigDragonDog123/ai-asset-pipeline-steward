@@ -77,6 +77,29 @@ class ManifestValidationTests(unittest.TestCase):
 
         self.assertTrue(any("next_action" in finding.path for finding in findings))
 
+    def test_handoff_requires_next_action(self) -> None:
+        manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")
+        manifest["handoff"].pop("next_action")
+
+        findings = validate_manifest(manifest)
+
+        self.assertTrue(any("handoff.next_action" == finding.path for finding in findings))
+
+    def test_handoff_requires_blocker_list(self) -> None:
+        manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")
+        manifest["handoff"]["blockers"] = "none"
+
+        findings = validate_manifest(manifest)
+
+        self.assertTrue(any("handoff.blockers" == finding.path for finding in findings))
+
+    def test_model_inventory_manifest_passes(self) -> None:
+        manifest = load_manifest(ROOT / "examples" / "model_inventory_manifest.json")
+
+        findings = validate_manifest(manifest)
+
+        self.assertEqual([], findings)
+
     def test_cli_returns_nonzero_for_unsafe_manifest(self) -> None:
         manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")
         manifest["project"]["description"] = "contains token marker"
@@ -101,6 +124,8 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("- Assets: 1", report)
         self.assertIn("- review-smoke-gate", report)
         self.assertIn("- human-rating: ground-truth", report)
+        self.assertIn("## Handoff", report)
+        self.assertIn("- Goal: Validate the minimal public-safe review fixture.", report)
 
     def test_report_command_returns_zero_for_safe_manifest(self) -> None:
         path = ROOT / "examples" / "fixture_manifest.json"

@@ -18,8 +18,10 @@ From a fresh clone:
 python -m pip install -e .
 asset-pipeline-steward examples/fixture_manifest.json
 asset-pipeline-steward examples/model_inventory_manifest.json
+asset-pipeline-steward examples/review_queue_manifest.json
 asset-pipeline-steward report examples/fixture_manifest.json
 asset-pipeline-steward report examples/model_inventory_manifest.json
+asset-pipeline-steward report examples/review_queue_manifest.json
 python -m unittest discover -s tests
 ```
 
@@ -39,8 +41,8 @@ Initial public release of AI Asset Pipeline Steward.
 Highlights:
 - Public-safe manifest validator.
 - Maintainer report command.
-- Synthetic review and model-inventory manifests.
-- Maintainability checks for workflow preflight, review-signal roles, and decision gates.
+- Synthetic review, model-inventory, and review-queue manifests.
+- Maintainability checks for workflow preflight, review-signal roles, decision gates, and handoffs.
 - Repo-scoped Codex skill for AI asset pipeline stewardship.
 - GitHub community health files, CI, and Codex for OSS readiness docs.
 

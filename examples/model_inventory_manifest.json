@@ -56,5 +56,12 @@
     "status": "ready",
     "next_action": "Run a one-output smoke gate for each external model reference.",
     "known_unknowns": ["No model quality claims are made before the smoke gate runs."]
+  },
+  "handoff": {
+    "goal": "Demonstrate model inventory before benchmark scaling.",
+    "current_status": "Two external model references are inventoried with no model weights included.",
+    "next_action": "Run one synthetic smoke-gate output per model reference.",
+    "blockers": [],
+    "known_unknowns": ["Model quality remains unknown until a smoke gate runs."]
   }
 }

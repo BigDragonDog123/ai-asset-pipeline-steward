@@ -10,7 +10,7 @@ Status: complete locally.
 - Repo-scoped Codex skill.
 - Manifest validator.
 - Maintenance report command.
-- Synthetic review and model-inventory manifests.
+- Synthetic review, model-inventory, and review-queue manifests.
 - Unit tests and CI.
 - Codex for OSS readiness document.
 
@@ -28,9 +28,9 @@ Status: next.
 
 Status: planned.
 
-- Add more manifest examples for review queues and handoffs.
-- Add a public-safe tutorial for extracting local workflows into synthetic fixtures.
-- Add richer validation rules for handoff completeness.
+- Add more manifest examples for handoff-heavy workflows.
+- Expand the public-safe extraction tutorial with screenshots or rendered examples.
+- Add richer validation rules for handoff completeness and resume safety.
 - Extend the report command with richer maintainer handoff sections.
 
 ## Milestone 4: Adoption Evidence

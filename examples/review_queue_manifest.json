@@ -1,0 +1,70 @@
+{
+  "project": {
+    "name": "synthetic-review-queue",
+    "description": "A public-safe example for tracking queued assets through human and automated review.",
+    "status": "review-queue-ready",
+    "maintainer_intent": "Demonstrate queue state, review signal separation, and handoff completeness with synthetic assets."
+  },
+  "assets": [
+    {
+      "id": "queue-asset-001",
+      "kind": "synthetic-placeholder",
+      "path": "examples/synthetic/queue-asset-001.placeholder",
+      "source": "synthetic",
+      "review_state": "queued"
+    },
+    {
+      "id": "queue-asset-002",
+      "kind": "synthetic-placeholder",
+      "path": "examples/synthetic/queue-asset-002.placeholder",
+      "source": "synthetic",
+      "review_state": "needs-human-rating"
+    },
+    {
+      "id": "queue-asset-003",
+      "kind": "synthetic-placeholder",
+      "path": "examples/synthetic/queue-asset-003.placeholder",
+      "source": "synthetic",
+      "review_state": "automated-notes-ready"
+    }
+  ],
+  "models": [
+    {
+      "name": "review-source-placeholder",
+      "source": "external-reference-only",
+      "weights_included": false,
+      "verification": "not-required-for-synthetic-queue"
+    }
+  ],
+  "workflows": [
+    {
+      "name": "review-queue-triage",
+      "steps": ["inventory-queue", "collect-human-rating", "compare-automated-notes", "decision-gate"],
+      "preflight": ["manifest-valid", "synthetic-assets-only", "human-review-required"]
+    }
+  ],
+  "review_signals": [
+    {
+      "name": "human-rating",
+      "role": "ground-truth",
+      "scale": "accept-revise-reject"
+    },
+    {
+      "name": "automated-queue-notes",
+      "role": "supporting-evidence",
+      "scale": "structured-notes"
+    }
+  ],
+  "decision_gate": {
+    "status": "ready",
+    "next_action": "Have a maintainer rate the queued synthetic assets before any automated recommendation is accepted.",
+    "known_unknowns": ["No queue item has a final human rating yet."]
+  },
+  "handoff": {
+    "goal": "Demonstrate a public-safe review queue handoff.",
+    "current_status": "Three synthetic assets are queued with separate human and automated review signals.",
+    "next_action": "Record maintainer ratings and compare them with automated notes.",
+    "blockers": [],
+    "known_unknowns": ["Final asset decisions are unknown until human review is complete."]
+  }
+}

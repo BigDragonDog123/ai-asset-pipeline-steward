@@ -2,19 +2,19 @@
 
 Create these issues after the repository is public. They are designed to produce visible, useful maintenance activity instead of empty project noise.
 
-## 1. Add public-safe review queue manifest example
+## 1. Add handoff-heavy batch resume manifest example
 
 Labels: `enhancement`, `documentation`
 
 Body:
 
 ```text
-Add a synthetic manifest example that demonstrates a review queue without private outputs or copyrighted samples.
+Add a synthetic manifest example that demonstrates resuming a paused batch without private outputs or copyrighted samples.
 
 Acceptance criteria:
 - Example manifest lives under examples/.
-- It includes at least three queued synthetic assets.
-- It keeps human review and automated observations separate.
+- It includes progress, blocker, known-unknown, and next-action handoff fields.
+- It keeps synthetic assets and public-safe paths only.
 - It passes asset-pipeline-steward validation.
 - README or terminal examples link to it.
 ```
