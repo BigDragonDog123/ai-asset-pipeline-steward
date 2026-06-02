@@ -1,17 +1,36 @@
 {
   "status_date": "2026-06-02",
-  "public_repository_url": "",
-  "ci_run_urls": [],
-  "release_urls": [],
-  "issue_urls": [],
-  "pull_request_urls": [],
+  "public_repository_url": "https://github.com/BigDragonDog123/ai-asset-pipeline-steward",
+  "ci_run_urls": [
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26813317660",
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26813315010",
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26813288568",
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26813286533"
+  ],
+  "release_urls": [
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/releases/tag/v0.1.0"
+  ],
+  "issue_urls": [
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/7",
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/6",
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/5",
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/4",
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/3"
+  ],
+  "pull_request_urls": [
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/pull/2",
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/pull/1"
+  ],
   "external_feedback_urls": [],
-  "usage_example_urls": [],
+  "usage_example_urls": [
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/terminal-examples.md",
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/tree/main/examples"
+  ],
   "stars": 0,
   "forks": 0,
   "notes": [
-    "Fill this file after the repository is public.",
-    "Use URLs that a reviewer can open without private access.",
+    "Generated from public GitHub API data and reviewed on 2026-06-02.",
+    "External feedback, stars, and forks are intentionally left as current public values.",
     "Do not include private user data, private logs, credentials, or non-public samples."
   ]
 }
