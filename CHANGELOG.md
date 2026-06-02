@@ -1,8 +1,15 @@
 # Changelog
 
-## v0.1.0 - Draft
+## Unreleased
 
-Initial public scaffold prepared locally.
+- Added a synthetic handoff-resume manifest with progress, blockers, known unknowns, and next-action handoff fields.
+- Merged Dependabot maintenance updates for `actions/setup-python` v6 and `actions/checkout` v6.
+
+## v0.1.0 - Public scaffold
+
+Published on 2026-06-02.
+
+Initial public scaffold.
 
 - Added public-safe manifest validation.
 - Added repository public-safety scanning.

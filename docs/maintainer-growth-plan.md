@@ -12,6 +12,7 @@ This plan tracks the next credible public signals for AI Asset Pipeline Steward.
 - Starter issues: issues #3 through #7
 - Usage examples: `docs/terminal-examples.md` and `examples/`
 - Adoption evidence file: `docs/adoption-evidence.json`
+- Maintainer activity: issue #3 completed; Dependabot PRs #1 and #2 merged.
 
 ## Signal Rules
 
@@ -22,12 +23,11 @@ This plan tracks the next credible public signals for AI Asset Pipeline Steward.
 
 ## Next Seven Days
 
-1. Complete one small post-launch issue and close it with a linked commit.
-2. Review Dependabot PRs and merge safe updates.
-3. Ask one real user or maintainer to try the quickstart and leave public feedback.
-4. Publish one short public usage note that links to the repo and terminal examples.
-5. Add any real external feedback URL to `docs/adoption-evidence.json`.
-6. Re-run:
+1. Ask one real user or maintainer to try the quickstart and leave public feedback.
+2. Publish one short public usage note that links to the repo and terminal examples.
+3. Add any real external feedback URL to `docs/adoption-evidence.json`.
+4. Implement or close one more starter issue after external feedback.
+5. Re-run:
 
 ```bash
 asset-pipeline-steward evidence .
