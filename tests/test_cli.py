@@ -24,6 +24,7 @@ from asset_pipeline_steward.cli import (
     build_feedback_response_playbook,
     build_feedback_status_update,
     build_public_usage_note,
+    build_reviewer_request,
     build_submission_checks,
     check_latest_main_ci,
     collect_public_evidence,
@@ -777,6 +778,41 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("REVIEW.md", text)
         self.assertIn("may be recorded as external feedback evidence", text)
         self.assertIn("asset-pipeline-steward first-feedback-playbook .", text)
+
+    def test_reviewer_request_command_prints_bilingual_messages(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["reviewer-request", str(ROOT)])
+
+        self.assertEqual(0, exit_code)
+        text = output.getvalue()
+        self.assertIn("# Reviewer Request Pack", text)
+        self.assertIn("English Short DM", text)
+        self.assertIn("Chinese Short DM", text)
+        self.assertIn("Chinese Public Post", text)
+        self.assertIn("Feedback form", text)
+        self.assertIn("record-feedback <public-feedback-url>", text)
+
+    def test_reviewer_request_command_prints_json(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["reviewer-request", str(ROOT), "--json"])
+
+        self.assertEqual(0, exit_code)
+        payload = json.loads(output.getvalue())
+        self.assertTrue(payload["ok"])
+        self.assertIn("chinese_short_dm", payload["reviewer_request"])
+        self.assertIn("feedback_form", payload["reviewer_request"]["links"])
+
+    def test_reviewer_request_doc_exists(self) -> None:
+        request = build_reviewer_request(ROOT)
+        text = (ROOT / "docs" / "reviewer-request-pack.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("# Reviewer Request Pack", text)
+        self.assertIn(request["repository_url"], text)
+        self.assertIn("Chinese Short DM", text)
+        self.assertIn("asset-pipeline-steward reviewer-request .", text)
+        self.assertIn("external feedback evidence", text)
 
     def test_feedback_response_playbook_command_prints_maintenance_plan(self) -> None:
         with redirect_stdout(StringIO()) as output:

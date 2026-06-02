@@ -25,6 +25,7 @@ Do not rush a weak application just because the application packet is ready. Sub
 - Share request: `docs/public-feedback-request.md`
 - Public usage note: `docs/public-usage-note.md`
 - First feedback playbook: `docs/first-feedback-playbook.md`
+- Reviewer request pack: `docs/reviewer-request-pack.md`
 - Feedback response playbook: `docs/feedback-response-playbook.md`
 - Feedback status update draft: `docs/feedback-status-update.md`
 - Outreach kit: `docs/feedback-outreach-kit.md`
@@ -74,7 +75,7 @@ Stronger target before applying:
 ## Next 30 Days
 
 1. Ask one real user or maintainer to try the reviewer brief and leave public feedback through the feedback form.
-2. Use `docs/first-feedback-playbook.md` to choose one reviewer profile and send the short request.
+2. Use `docs/first-feedback-playbook.md` to choose one reviewer profile, then send a bilingual request from `docs/reviewer-request-pack.md` or `asset-pipeline-steward reviewer-request .`.
 3. Send one message from `docs/feedback-outreach-kit.md` to a likely reviewer if the playbook request needs a longer version.
 4. Track only public-safe reviewer status in `docs/outreach-tracker.md`; do not record private contact details.
 5. Publish one short public usage note from `docs/public-usage-note.md` or `asset-pipeline-steward public-usage-note .` that links to the repo, review landing, terminal examples, and feedback form.

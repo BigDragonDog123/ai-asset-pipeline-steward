@@ -32,6 +32,7 @@ The program says applications are reviewed on a rolling basis and looks for acti
 - Reviewer brief: `docs/reviewer-brief.md`
 - Feedback request: `docs/public-feedback-request.md`
 - First feedback playbook: `docs/first-feedback-playbook.md`
+- Reviewer request pack: `docs/reviewer-request-pack.md`
 - Feedback response playbook: `docs/feedback-response-playbook.md`
 - Feedback status update draft: `docs/feedback-status-update.md`
 - Outreach kit: `docs/feedback-outreach-kit.md`

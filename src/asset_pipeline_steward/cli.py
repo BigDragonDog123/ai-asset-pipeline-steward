@@ -2204,6 +2204,122 @@ def format_public_usage_note(note: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def build_reviewer_request(root: Path) -> dict[str, Any]:
+    repo_url = public_repository_url(root)
+    review_landing = public_blob_url(root, "REVIEW.md")
+    reviewer_brief = public_blob_url(root, "docs/reviewer-brief.md")
+    reviewer_checklist = public_blob_url(root, "docs/reviewer-checklist.md")
+    terminal_examples = public_blob_url(root, "docs/terminal-examples.md")
+    feedback_form = f"{repo_url}/issues/new?template=feedback.yml"
+    return {
+        "repository_url": repo_url,
+        "goal": (
+            "Send one concrete public-safe request to a real reviewer and ask for "
+            "a public feedback issue or comment from someone other than the maintainer."
+        ),
+        "english_short_dm": (
+            "I published a small public-safe toolkit for AI asset pipeline maintenance:\n"
+            f"{repo_url}\n\n"
+            "Could you give it a 10-minute skim and leave one public feedback issue? "
+            "The useful answer is one concrete blocker, unclear field, missing validation "
+            "rule, or reason it does not fit your workflow.\n\n"
+            f"Start here: {review_landing}\n"
+            f"Feedback form: {feedback_form}\n\n"
+            "Please do not include private paths, logs, credentials, model files, or non-public media."
+        ),
+        "chinese_short_dm": (
+            "我做了一个公开安全的小工具，用来把本地 AI 素材、模型评测、人工审核这类流程，"
+            "整理成可复现、可交接、可公开的维护记录：\n"
+            f"{repo_url}\n\n"
+            "你方便花 10 分钟看一下 reviewer brief 或 example，然后留一个公开 feedback issue 吗？"
+            "不用夸，最好指出哪里不清楚、缺哪个字段/校验规则、有什么采用阻碍，或者为什么不适合你的流程。\n\n"
+            f"Review landing: {review_landing}\n"
+            f"Feedback form: {feedback_form}\n\n"
+            "不要贴私人路径、日志、密钥、模型文件或非公开素材。"
+        ),
+        "chinese_public_post": (
+            "我在征集一个开源小工具的真实反馈：AI Asset Pipeline Steward\n"
+            f"{repo_url}\n\n"
+            "它的目标是把本地 AI 素材生产、模型/工作流检查、人工审核、VLM 辅助观察、"
+            "批量任务交接这些重复工作，抽成一个公开安全的维护流程。仓库只放合成示例，"
+            "不包含模型权重、私人路径、日志、密钥或非公开素材。\n\n"
+            "希望有做过 AI 图像/音视频/数据集/评测/审核流程的人帮忙看一眼：\n"
+            "- 10 分钟：看 reviewer brief 和 handoff 示例\n"
+            "- 20 分钟：跑 quickstart\n"
+            "- 40 分钟：拿它和你自己的真实维护流程对照，但不要公开私人数据\n\n"
+            "最有用的是具体批评：哪里不清楚、缺什么字段、缺什么校验规则、report 哪里不好用、"
+            "有什么采用阻碍、为什么不适合你的流程。\n\n"
+            f"Review landing: {review_landing}\n"
+            f"Feedback form: {feedback_form}"
+        ),
+        "links": {
+            "review_landing": review_landing,
+            "reviewer_brief": reviewer_brief,
+            "reviewer_checklist": reviewer_checklist,
+            "terminal_examples": terminal_examples,
+            "feedback_form": feedback_form,
+        },
+        "valid_feedback_rules": [
+            "reviewer is not the repository maintainer",
+            "feedback URL is public or reviewer-accessible",
+            "feedback includes one concrete blocker, unclear field, missing rule, or fit concern",
+            "feedback does not expose private paths, logs, credentials, model files, or non-public media",
+            "reviewer confirms the public issue URL may be recorded as external feedback evidence",
+        ],
+        "after_feedback": [
+            "asset-pipeline-steward feedback-candidates .",
+            "asset-pipeline-steward record-feedback <public-feedback-url>",
+            "asset-pipeline-steward feedback-response-playbook .",
+            "asset-pipeline-steward evidence .",
+            "asset-pipeline-steward submission-ready . --manual-ready",
+        ],
+    }
+
+
+def format_reviewer_request(request: dict[str, Any]) -> str:
+    lines = [
+        "# Reviewer Request Pack",
+        "",
+        f"Repository: {request['repository_url']}",
+        "",
+        "## Goal",
+        "",
+        str(request["goal"]),
+        "",
+        "## English Short DM",
+        "",
+        "```text",
+        str(request["english_short_dm"]),
+        "```",
+        "",
+        "## Chinese Short DM",
+        "",
+        "```text",
+        str(request["chinese_short_dm"]),
+        "```",
+        "",
+        "## Chinese Public Post",
+        "",
+        "```text",
+        str(request["chinese_public_post"]),
+        "```",
+        "",
+        "## Links",
+        "",
+    ]
+    for label, url in request["links"].items():
+        lines.append(f"- {label}: {url}")
+
+    lines.extend(["", "## Valid Feedback Rules", ""])
+    for rule in request["valid_feedback_rules"]:
+        lines.append(f"- {rule}")
+
+    lines.extend(["", "## After Feedback", "", "```bash"])
+    lines.extend(request["after_feedback"])
+    lines.append("```")
+    return "\n".join(lines)
+
+
 def build_feedback_response_playbook(root: Path) -> dict[str, Any]:
     repo_url = public_repository_url(root)
     evidence_file = public_blob_url(root, "docs/adoption-evidence.json")
@@ -2608,7 +2724,7 @@ def build_parser() -> argparse.ArgumentParser:
             "Manifest path, or command: validate/report/schema/repo-scan/readiness/"
             "evidence/collect-evidence/latest-ci/feedback-candidates/record-feedback/"
             "application/submission-ready/starter-issues/reviewer-checklist/"
-            "first-feedback-playbook/feedback-response-playbook/"
+            "first-feedback-playbook/reviewer-request/feedback-response-playbook/"
             "feedback-status-update/public-usage-note/codex-oss-status"
         ),
     )
@@ -2828,6 +2944,20 @@ def main(argv: list[str] | None = None) -> int:
             print(format_first_feedback_playbook(playbook))
         return 0
 
+    if command == "reviewer-request":
+        root = manifest_path or Path(".")
+        request = build_reviewer_request(root)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": True,
+                "reviewer_request": request,
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False))
+        else:
+            print(format_reviewer_request(request))
+        return 0
+
     if command == "feedback-response-playbook":
         root = manifest_path or Path(".")
         playbook = build_feedback_response_playbook(root)
@@ -2926,6 +3056,8 @@ def resolve_command(
     if command_or_manifest == "reviewer-checklist":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "first-feedback-playbook":
+        return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "reviewer-request":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "feedback-response-playbook":
         return command_or_manifest, manifest or Path(".")

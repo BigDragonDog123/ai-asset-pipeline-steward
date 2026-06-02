@@ -10,9 +10,11 @@ For the shortest action-oriented version, use `docs/first-feedback-playbook.md` 
 
 ```bash
 asset-pipeline-steward first-feedback-playbook .
+asset-pipeline-steward reviewer-request .
 asset-pipeline-steward feedback-response-playbook .
 ```
 
+Use `docs/reviewer-request-pack.md` for a shorter bilingual copy-paste request pack.
 Use `docs/feedback-response-playbook.md` after a real public feedback URL appears, so the maintainer response becomes visible evidence instead of only a recorded link.
 
 Prioritize people who already understand one of these workflows:

@@ -37,6 +37,8 @@ https://github.com/BigDragonDog123/ai-asset-pipeline-steward
 
 ## Short Request
 
+For bilingual copy-paste messages, run `asset-pipeline-steward reviewer-request .` or read `docs/reviewer-request-pack.md`.
+
 ```text
 I published a small public-safe toolkit for AI asset pipeline maintenance:
 https://github.com/BigDragonDog123/ai-asset-pipeline-steward

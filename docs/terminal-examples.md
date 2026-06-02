@@ -50,6 +50,16 @@ asset-pipeline-steward first-feedback-playbook .
 
 Expected output includes reviewer profiles, the short request to send, public links, valid-feedback rules, and maintainer follow-up commands.
 
+## Print Reviewer Request Pack
+
+Use this when asking one real reviewer for public feedback. It prints English and Chinese copy-paste messages.
+
+```bash
+asset-pipeline-steward reviewer-request .
+```
+
+Expected output includes an English short DM, Chinese short DM, Chinese public post, public links, valid-feedback rules, and after-feedback commands.
+
 ## Print Public Usage Note
 
 Use this when preparing a public post that invites concrete feedback without counting maintainer-authored text as external adoption evidence.
