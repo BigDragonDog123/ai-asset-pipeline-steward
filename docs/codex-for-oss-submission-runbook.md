@@ -135,6 +135,7 @@ Current evidence includes green CI, v0.1.0, completed starter issues, merged mai
 - Feedback task: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/8`
 - Terminal examples: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/terminal-examples.md`
 - Public feedback request: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/public-feedback-request.md`
+- First feedback playbook: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/first-feedback-playbook.md`
 - Reviewer brief: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/reviewer-brief.md`
 - Outreach tracker: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/outreach-tracker.md`
 

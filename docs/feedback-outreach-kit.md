@@ -6,6 +6,12 @@ Use this kit to collect the first real public feedback signal for AI Asset Pipel
 
 ## Best Reviewer Profiles
 
+For the shortest action-oriented version, use `docs/first-feedback-playbook.md` or print it from a clone:
+
+```bash
+asset-pipeline-steward first-feedback-playbook .
+```
+
 Prioritize people who already understand one of these workflows:
 
 - maintaining AI image, audio, video, dataset, benchmark, or review pipelines;

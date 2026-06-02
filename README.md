@@ -23,8 +23,10 @@ This repository turns that repeated maintenance pattern into a small package, a 
 
 ## For Reviewers
 
+- Use `docs/first-feedback-playbook.md` if you are helping collect the first public feedback signal.
 - Start with `docs/reviewer-checklist.md`.
 - Use `docs/reviewer-brief.md` for more context.
+- Run `asset-pipeline-steward first-feedback-playbook .` for a concise first-feedback action plan.
 - Run `asset-pipeline-steward reviewer-checklist .` for a concise review path.
 - Run the quickstart or skim `docs/terminal-examples.md`.
 - Leave public feedback with the feedback issue form.
@@ -49,6 +51,7 @@ asset-pipeline-steward schema
 asset-pipeline-steward repo-scan .
 asset-pipeline-steward readiness .
 asset-pipeline-steward evidence .
+asset-pipeline-steward first-feedback-playbook .
 asset-pipeline-steward reviewer-checklist .
 asset-pipeline-steward feedback-candidates .
 asset-pipeline-steward application .
@@ -70,6 +73,7 @@ python -m asset_pipeline_steward.cli schema
 python -m asset_pipeline_steward.cli repo-scan .
 python -m asset_pipeline_steward.cli readiness .
 python -m asset_pipeline_steward.cli evidence .
+python -m asset_pipeline_steward.cli first-feedback-playbook .
 python -m asset_pipeline_steward.cli reviewer-checklist .
 python -m asset_pipeline_steward.cli feedback-candidates .
 python -m asset_pipeline_steward.cli application .
@@ -153,6 +157,7 @@ https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template
 
 See `docs/public-feedback-request.md` for a short request that can be shared with reviewers.
 Use `docs/feedback-outreach-kit.md` for ready-to-send reviewer requests and evidence rules.
+Use `docs/first-feedback-playbook.md` when collecting the first non-maintainer public feedback signal.
 Use `docs/outreach-tracker.md` to track reviewer slots without storing private contact data.
 See `docs/reviewer-checklist.md` for a direct 10-minute, 20-minute, or 40-minute review path.
 See `docs/reviewer-brief.md` for a one-page guide to what reviewers should try first.

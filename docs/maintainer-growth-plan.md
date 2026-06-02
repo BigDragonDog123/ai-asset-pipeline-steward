@@ -23,6 +23,7 @@ Do not rush a weak application just because the application packet is ready. Sub
 - Open growth task: issue #9 tracks the 30-day GitHub growth loop before Codex for OSS submission.
 - Feedback form: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml`
 - Share request: `docs/public-feedback-request.md`
+- First feedback playbook: `docs/first-feedback-playbook.md`
 - Outreach kit: `docs/feedback-outreach-kit.md`
 - Outreach tracker: `docs/outreach-tracker.md`
 - Reviewer brief: `docs/reviewer-brief.md`
@@ -68,17 +69,18 @@ Stronger target before applying:
 ## Next 30 Days
 
 1. Ask one real user or maintainer to try the reviewer brief and leave public feedback through the feedback form.
-2. Send one message from `docs/feedback-outreach-kit.md` to a likely reviewer.
-3. Track only public-safe reviewer status in `docs/outreach-tracker.md`; do not record private contact details.
-4. Publish one short public usage note that links to the repo, terminal examples, and feedback form.
-5. Scan with `asset-pipeline-steward feedback-candidates`, then record any real external feedback URL with `asset-pipeline-steward record-feedback`.
-6. Turn the first concrete critique into a visible issue or small PR.
-7. Ship one feedback-driven docs or validation improvement.
-8. Consider a small `v0.1.1` release only after feedback produces a meaningful improvement.
-9. Close issue #8 after the external feedback URL is recorded and evidence passes.
-10. Review `docs/codex-for-oss-review-packet.md` to confirm the current evidence and remaining weaknesses.
-11. Use `docs/codex-for-oss-submission-runbook.md` only after the growth target is met.
-12. Re-run:
+2. Use `docs/first-feedback-playbook.md` to choose one reviewer profile and send the short request.
+3. Send one message from `docs/feedback-outreach-kit.md` to a likely reviewer if the playbook request needs a longer version.
+4. Track only public-safe reviewer status in `docs/outreach-tracker.md`; do not record private contact details.
+5. Publish one short public usage note that links to the repo, terminal examples, and feedback form.
+6. Scan with `asset-pipeline-steward feedback-candidates`, then record any real external feedback URL with `asset-pipeline-steward record-feedback`.
+7. Turn the first concrete critique into a visible issue or small PR.
+8. Ship one feedback-driven docs or validation improvement.
+9. Consider a small `v0.1.1` release only after feedback produces a meaningful improvement.
+10. Close issue #8 after the external feedback URL is recorded and evidence passes.
+11. Review `docs/codex-for-oss-review-packet.md` to confirm the current evidence and remaining weaknesses.
+12. Use `docs/codex-for-oss-submission-runbook.md` only after the growth target is met.
+13. Re-run:
 
 ```bash
 asset-pipeline-steward evidence .

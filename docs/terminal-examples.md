@@ -40,6 +40,16 @@ asset-pipeline-steward reviewer-checklist .
 
 Expected output includes 10-minute, 20-minute, and 40-minute review paths; public-safety reminders; the feedback form link; and maintainer follow-up commands for recording reviewed public feedback.
 
+## Print First Feedback Playbook
+
+Use this when the next action is collecting the first public non-maintainer feedback URL.
+
+```bash
+asset-pipeline-steward first-feedback-playbook .
+```
+
+Expected output includes reviewer profiles, the short request to send, public links, valid-feedback rules, and maintainer follow-up commands.
+
 ## Collect Public GitHub Evidence
 
 Use this after the repository exists on GitHub:

@@ -1692,6 +1692,110 @@ def format_reviewer_checklist(checklist: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def build_first_feedback_playbook(root: Path) -> dict[str, Any]:
+    repo_url = public_repository_url(root)
+    feedback_form = f"{repo_url}/issues/new?template=feedback.yml"
+    reviewer_brief = public_blob_url(root, "docs/reviewer-brief.md")
+    reviewer_checklist = public_blob_url(root, "docs/reviewer-checklist.md")
+    outreach_kit = public_blob_url(root, "docs/feedback-outreach-kit.md")
+    return {
+        "repository_url": repo_url,
+        "goal": "Collect one public, non-maintainer feedback URL that can be recorded in external_feedback_urls.",
+        "reviewer_profiles": [
+            {
+                "profile": "AI asset workflow maintainer",
+                "ask": "10-minute skim of reviewer brief and handoff example",
+                "best_feedback": "one unclear field, missing rule, or adoption blocker",
+            },
+            {
+                "profile": "Dataset, benchmark, or review-queue maintainer",
+                "ask": "20-minute quickstart and one report command",
+                "best_feedback": "whether manifest/report output fits a real maintenance workflow",
+            },
+            {
+                "profile": "Open-source maintainer using CI, releases, or issue triage",
+                "ask": "40-minute maintainer review of the end-to-end loop",
+                "best_feedback": "what would make the workflow easier to review, release, or hand off",
+            },
+        ],
+        "send_sequence": [
+            "Send the short request to one reviewer profile only.",
+            "Ask for a public issue or public comment, not private praise.",
+            "Wait for a concrete critique before recording evidence.",
+        ],
+        "short_request": (
+            "I published a small public-safe toolkit for AI asset pipeline maintenance: "
+            f"{repo_url}\n\n"
+            "Could you give it a 10-minute skim and leave one public feedback issue? "
+            "The useful answer is one concrete adoption blocker, unclear field, or missing rule.\n\n"
+            f"Start here: {reviewer_brief}\n"
+            f"Feedback form: {feedback_form}\n\n"
+            "Please do not include private paths, logs, credentials, model files, or non-public media."
+        ),
+        "public_links": {
+            "reviewer_brief": reviewer_brief,
+            "reviewer_checklist": reviewer_checklist,
+            "outreach_kit": outreach_kit,
+            "feedback_form": feedback_form,
+        },
+        "valid_feedback_rules": [
+            "author is not the maintainer",
+            "URL is public or reviewer-accessible",
+            "content discusses this repository or workflow",
+            "content does not expose private paths, credentials, logs, model files, or non-public media",
+        ],
+        "maintainer_follow_up": [
+            "asset-pipeline-steward feedback-candidates .",
+            "asset-pipeline-steward record-feedback <public-feedback-url>",
+            "asset-pipeline-steward evidence .",
+            "asset-pipeline-steward submission-ready . --manual-ready",
+        ],
+    }
+
+
+def format_first_feedback_playbook(playbook: dict[str, Any]) -> str:
+    lines = [
+        "# First Feedback Playbook",
+        "",
+        f"Repository: {playbook['repository_url']}",
+        "",
+        "## Goal",
+        "",
+        str(playbook["goal"]),
+        "",
+        "## Reviewer Profiles",
+    ]
+    for reviewer in playbook["reviewer_profiles"]:
+        lines.extend(
+            [
+                "",
+                f"### {reviewer['profile']}",
+                "",
+                f"- Ask: {reviewer['ask']}",
+                f"- Best feedback: {reviewer['best_feedback']}",
+            ]
+        )
+
+    lines.extend(["", "## Send Sequence", ""])
+    for step in playbook["send_sequence"]:
+        lines.append(f"- {step}")
+
+    lines.extend(["", "## Short Request", "", "```text", playbook["short_request"], "```"])
+
+    lines.extend(["", "## Public Links", ""])
+    for label, url in playbook["public_links"].items():
+        lines.append(f"- {label}: {url}")
+
+    lines.extend(["", "## Valid Feedback Rules", ""])
+    for rule in playbook["valid_feedback_rules"]:
+        lines.append(f"- {rule}")
+
+    lines.extend(["", "## Maintainer Follow-Up", "", "```bash"])
+    lines.extend(playbook["maintainer_follow_up"])
+    lines.append("```")
+    return "\n".join(lines)
+
+
 def load_starter_issues(root: Path) -> tuple[list[dict[str, Any]], list[Finding]]:
     path = root / STARTER_ISSUES_FILE
     if not path.exists():
@@ -1879,7 +1983,8 @@ def build_parser() -> argparse.ArgumentParser:
         help=(
             "Manifest path, or command: validate/report/schema/repo-scan/readiness/"
             "evidence/collect-evidence/feedback-candidates/record-feedback/"
-            "application/submission-ready/starter-issues/reviewer-checklist"
+            "application/submission-ready/starter-issues/reviewer-checklist/"
+            "first-feedback-playbook"
         ),
     )
     parser.add_argument("manifest", nargs="?", help="Path, feedback URL, or issue URL")
@@ -2055,6 +2160,20 @@ def main(argv: list[str] | None = None) -> int:
             print(format_reviewer_checklist(checklist))
         return 0
 
+    if command == "first-feedback-playbook":
+        root = manifest_path or Path(".")
+        playbook = build_first_feedback_playbook(root)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": True,
+                "playbook": playbook,
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(format_first_feedback_playbook(playbook))
+        return 0
+
     try:
         if manifest_path is None:
             raise ValueError("manifest path is required")
@@ -2105,6 +2224,8 @@ def resolve_command(
     if command_or_manifest == "starter-issues":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "reviewer-checklist":
+        return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "first-feedback-playbook":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest in {"validate", "report"}:
         if manifest is None:

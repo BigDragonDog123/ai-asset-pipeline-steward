@@ -586,6 +586,40 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn("40-Minute Maintainer Review", text)
         self.assertIn("issues/new?template=feedback.yml", text)
 
+    def test_first_feedback_playbook_command_prints_action_plan(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["first-feedback-playbook", str(ROOT)])
+
+        self.assertEqual(0, exit_code)
+        text = output.getvalue()
+        self.assertIn("# First Feedback Playbook", text)
+        self.assertIn("Reviewer Profiles", text)
+        self.assertIn("Short Request", text)
+        self.assertIn("issues/new?template=feedback.yml", text)
+        self.assertIn("feedback-candidates .", text)
+        self.assertIn("record-feedback <public-feedback-url>", text)
+
+    def test_first_feedback_playbook_command_prints_json(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["first-feedback-playbook", str(ROOT), "--json"])
+
+        self.assertEqual(0, exit_code)
+        payload = json.loads(output.getvalue())
+        self.assertTrue(payload["ok"])
+        self.assertEqual(
+            "Collect one public, non-maintainer feedback URL that can be recorded in external_feedback_urls.",
+            payload["playbook"]["goal"],
+        )
+        self.assertIn("short_request", payload["playbook"])
+
+    def test_first_feedback_playbook_doc_exists(self) -> None:
+        text = (ROOT / "docs" / "first-feedback-playbook.md").read_text(encoding="utf-8")
+
+        self.assertIn("# First Feedback Playbook", text)
+        self.assertIn("Reviewer Profiles", text)
+        self.assertIn("Short Request", text)
+        self.assertIn("asset-pipeline-steward first-feedback-playbook .", text)
+
     def test_outreach_tracker_doc_avoids_private_contact_data(self) -> None:
         text = (ROOT / "docs" / "outreach-tracker.md").read_text(encoding="utf-8")
 
