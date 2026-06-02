@@ -20,7 +20,7 @@ The program says applications are reviewed on a rolling basis and looks for acti
 - Visibility: public
 - Role: primary maintainer
 - Release: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/releases/tag/v0.1.0`
-- Recorded CI evidence: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26816795435`
+- Recorded CI evidence: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26827404962`
 - Open PRs: none, verified on 2026-06-02
 - Open adoption task: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/8`
 - Completed starter issues: #3 through #7
@@ -30,6 +30,7 @@ The program says applications are reviewed on a rolling basis and looks for acti
 - Reviewer brief: `docs/reviewer-brief.md`
 - Feedback request: `docs/public-feedback-request.md`
 - Outreach kit: `docs/feedback-outreach-kit.md`
+- Outreach tracker: `docs/outreach-tracker.md`
 
 ## Current Weaknesses
 
@@ -37,6 +38,7 @@ The program says applications are reviewed on a rolling basis and looks for acti
 - Current public GitHub stars: 0.
 - Current public forks: 0.
 - The strongest application path is to collect at least one public comment, issue, forum post, social post, or downstream usage link from someone other than the maintainer before submitting.
+- `docs/outreach-tracker.md` is planning evidence only; it must not be counted as external adoption.
 
 ## Public-Safety Statement
 

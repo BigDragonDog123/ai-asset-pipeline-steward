@@ -2,11 +2,11 @@
   "status_date": "2026-06-02",
   "public_repository_url": "https://github.com/BigDragonDog123/ai-asset-pipeline-steward",
   "ci_run_urls": [
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26827404962",
     "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26816795435",
     "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26816477751",
     "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26816353607",
-    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26816211165",
-    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26816047219"
+    "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/actions/runs/26816211165"
   ],
   "release_urls": [
     "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/releases/tag/v0.1.0"
@@ -35,10 +35,11 @@
   "stars": 0,
   "forks": 0,
   "notes": [
-    "Generated from public GitHub API data and reviewed on 2026-06-02 after commit 20ac473.",
+    "Generated from public GitHub API data and reviewed on 2026-06-02 after commit 6e39764.",
     "Starter issues #3 through #7 have been completed with public comments and green CI evidence.",
     "Dependabot maintenance PRs #1 and #2 have been merged.",
     "Reviewer checklist is a maintainer-created usage aid, not external feedback.",
+    "Outreach tracker is maintainer planning evidence for collecting public-safe external feedback, not external feedback itself.",
     "Issue #10 tracks the reviewer checklist command for lowering external feedback friction.",
     "Issue #9 tracks the 30-day GitHub growth loop before Codex for OSS submission.",
     "Issue #8 tracks the remaining external feedback/adoption evidence gap.",
