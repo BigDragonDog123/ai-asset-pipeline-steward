@@ -14,8 +14,10 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from asset_pipeline_steward.cli import (
+    build_readiness_checks,
     build_maintenance_report,
     build_manifest_schema,
+    has_readiness_blockers,
     load_manifest,
     main,
     scan_repository,
@@ -149,6 +151,29 @@ class ManifestValidationTests(unittest.TestCase):
 
         self.assertEqual(0, exit_code)
         self.assertIn("repo scan passed", output.getvalue())
+
+    def test_readiness_checks_without_git_have_no_blockers(self) -> None:
+        checks = build_readiness_checks(ROOT, check_git=False)
+
+        self.assertFalse(has_readiness_blockers(checks))
+        self.assertTrue(any(check.name == "repo-scan" for check in checks))
+
+    def test_readiness_detects_missing_required_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            checks = build_readiness_checks(Path(tmpdir), check_git=False)
+
+        self.assertTrue(has_readiness_blockers(checks))
+        self.assertTrue(any(check.name == "README.md" for check in checks))
+
+    def test_readiness_command_prints_json(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["readiness", str(ROOT), "--json"])
+
+        payload = json.loads(output.getvalue())
+
+        self.assertIn(exit_code, {0, 1})
+        self.assertIn("checks", payload)
+        self.assertTrue(any(check["name"] == "repo-scan" for check in payload["checks"]))
 
     def test_cli_returns_nonzero_for_unsafe_manifest(self) -> None:
         manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")

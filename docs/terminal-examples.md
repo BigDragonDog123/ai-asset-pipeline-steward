@@ -14,6 +14,14 @@ Expected output:
 OK: repo scan passed high-confidence public-safety checks for .
 ```
 
+## Check Local OSS Readiness
+
+```bash
+asset-pipeline-steward readiness .
+```
+
+Expected output includes local pass checks plus a warning that public GitHub repository, CI run, release, and adoption evidence must be verified after push.
+
 ## Print The Manifest Schema
 
 ```bash

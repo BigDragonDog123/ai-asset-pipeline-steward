@@ -19,6 +19,7 @@ Use this repository as a public-safe open-source project. Keep work focused on r
 ```bash
 python -m unittest discover -s tests
 python -m asset_pipeline_steward.cli repo-scan .
+python -m asset_pipeline_steward.cli readiness .
 python -m asset_pipeline_steward.cli examples/fixture_manifest.json
 ```
 

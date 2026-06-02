@@ -44,8 +44,9 @@ Source:
 | Public-safe project scope | In progress | The repo frames the work as AI asset pipeline stewardship rather than private local content. |
 | Reusable Codex skill | In progress | `.agents/skills/ai-asset-pipeline-steward/SKILL.md` exists for repo-scoped use. |
 | Runnable code | In progress | `asset-pipeline-steward` validates public-safe manifests. |
-| Tests | In progress | `tests/test_cli.py` covers safe fixture and unsafe path/model cases. |
+| Tests | In progress | `tests/test_cli.py` covers manifest validation, schema output, repo-scan, readiness checks, and unsafe path/model cases. |
 | Community health files | In progress | README, license, contribution, security, conduct, issue/PR templates, CI added locally. |
+| Local readiness checks | In progress | `asset-pipeline-steward readiness .` checks community files, schema, examples, repo-scan, git branch/status, and origin remote. |
 | Public repository | Missing | The workspace has not yet been pushed to GitHub. |
 | Public adoption | Missing | No stars, downloads, releases, external users, or issue/PR history yet. |
 | Maintainer activity evidence | Missing | Needs commits, releases, issues, changelog, roadmap, and real maintenance history. |
@@ -74,9 +75,10 @@ Unknown:
 2. Add a short roadmap and first release.
 3. Turn at least one local repeated workflow into a public-safe example manifest or tutorial.
 4. Add screenshots or terminal examples that show the validator and skill in action.
-5. Use issues to track roadmap items and maintenance tasks.
-6. Gather adoption evidence: stars, forks, external feedback, usage examples, or integration into a real public workflow.
-7. Draft the Codex for OSS application only after the public repo has credible activity.
+5. Run `asset-pipeline-steward readiness .` after the repo is pushed.
+6. Use issues to track roadmap items and maintenance tasks.
+7. Gather adoption evidence: stars, forks, external feedback, usage examples, or integration into a real public workflow.
+8. Draft the Codex for OSS application only after the public repo has credible activity.
 
 ## Draft Application Notes
 

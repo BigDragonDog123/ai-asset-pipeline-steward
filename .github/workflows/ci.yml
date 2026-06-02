@@ -26,6 +26,9 @@ jobs:
       - name: Scan repository public safety
         run: asset-pipeline-steward repo-scan .
 
+      - name: Check local OSS readiness
+        run: asset-pipeline-steward readiness .
+
       - name: Run tests
         run: python -m unittest discover -s tests
 

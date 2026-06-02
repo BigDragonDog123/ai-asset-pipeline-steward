@@ -10,6 +10,7 @@ Status: complete locally.
 - Repo-scoped Codex skill.
 - Manifest validator.
 - Repository public-safety scan command.
+- Local Codex for OSS readiness command.
 - JSON Schema and schema command.
 - Maintenance report command.
 - Synthetic review, model-inventory, and review-queue manifests.

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -79,6 +80,30 @@ TEXT_FILE_EXTENSIONS = {
     ".yml",
 }
 
+COMMUNITY_HEALTH_FILES = (
+    "README.md",
+    "LICENSE",
+    "CONTRIBUTING.md",
+    "CODE_OF_CONDUCT.md",
+    "SECURITY.md",
+    "AGENTS.md",
+    "ROADMAP.md",
+    "CHANGELOG.md",
+    ".github/PULL_REQUEST_TEMPLATE.md",
+    ".github/ISSUE_TEMPLATE/bug_report.yml",
+    ".github/ISSUE_TEMPLATE/feature_request.yml",
+    ".github/workflows/ci.yml",
+    ".github/dependabot.yml",
+)
+
+EXAMPLE_MANIFESTS = (
+    "examples/fixture_manifest.json",
+    "examples/model_inventory_manifest.json",
+    "examples/review_queue_manifest.json",
+)
+
+SCHEMA_FILE = "schemas/asset-pipeline-manifest.schema.json"
+
 HIGH_CONFIDENCE_CONTENT_PATTERNS = (
     ("OpenAI-style API key", re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b")),
     ("GitHub token", re.compile(r"\bgh[pousr]_[A-Za-z0-9_]{20,}\b")),
@@ -111,6 +136,13 @@ class Finding:
     path: str
     message: str
     value: str | None = None
+
+
+@dataclass(frozen=True)
+class ReadinessCheck:
+    status: str
+    name: str
+    message: str
 
 
 def load_manifest(path: Path) -> dict[str, Any]:
@@ -535,6 +567,160 @@ def format_repo_scan_report(root: Path, findings: list[Finding]) -> str:
     return "\n".join(lines)
 
 
+def build_readiness_checks(root: Path, check_git: bool = True) -> list[ReadinessCheck]:
+    root = root.resolve()
+    checks: list[ReadinessCheck] = []
+
+    checks.extend(check_required_files(root))
+    checks.extend(check_schema_file(root))
+    checks.extend(check_example_manifests(root))
+    checks.extend(check_repo_scan(root))
+    if check_git:
+        checks.extend(check_git_state(root))
+
+    checks.append(
+        ReadinessCheck(
+            "warn",
+            "public_repo",
+            "public GitHub repository, CI run, release, and adoption evidence must be verified after push",
+        )
+    )
+    return checks
+
+
+def check_required_files(root: Path) -> list[ReadinessCheck]:
+    checks: list[ReadinessCheck] = []
+    for rel_path in COMMUNITY_HEALTH_FILES:
+        path = root / rel_path
+        if path.exists():
+            checks.append(ReadinessCheck("pass", rel_path, "required file exists"))
+        else:
+            checks.append(ReadinessCheck("blocker", rel_path, "required file is missing"))
+    return checks
+
+
+def check_schema_file(root: Path) -> list[ReadinessCheck]:
+    path = root / SCHEMA_FILE
+    if not path.exists():
+        return [ReadinessCheck("blocker", SCHEMA_FILE, "schema file is missing")]
+
+    try:
+        schema = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return [ReadinessCheck("blocker", SCHEMA_FILE, f"schema file is invalid: {error}")]
+
+    if schema != build_manifest_schema():
+        return [
+            ReadinessCheck(
+                "blocker",
+                SCHEMA_FILE,
+                "checked-in schema does not match CLI-generated schema",
+            )
+        ]
+    return [ReadinessCheck("pass", SCHEMA_FILE, "schema matches CLI-generated schema")]
+
+
+def check_example_manifests(root: Path) -> list[ReadinessCheck]:
+    checks: list[ReadinessCheck] = []
+    for rel_path in EXAMPLE_MANIFESTS:
+        path = root / rel_path
+        if not path.exists():
+            checks.append(ReadinessCheck("blocker", rel_path, "example manifest is missing"))
+            continue
+        try:
+            findings = validate_manifest(load_manifest(path))
+        except (OSError, json.JSONDecodeError, ValueError) as error:
+            checks.append(ReadinessCheck("blocker", rel_path, f"manifest load failed: {error}"))
+            continue
+        if findings:
+            checks.append(
+                ReadinessCheck(
+                    "blocker",
+                    rel_path,
+                    f"manifest has {len(findings)} validation finding(s)",
+                )
+            )
+        else:
+            checks.append(ReadinessCheck("pass", rel_path, "example manifest validates"))
+    return checks
+
+
+def check_repo_scan(root: Path) -> list[ReadinessCheck]:
+    findings = scan_repository(root)
+    if findings:
+        return [
+            ReadinessCheck(
+                "blocker",
+                "repo-scan",
+                f"repository scan has {len(findings)} public-safety finding(s)",
+            )
+        ]
+    return [ReadinessCheck("pass", "repo-scan", "repository scan passes")]
+
+
+def check_git_state(root: Path) -> list[ReadinessCheck]:
+    checks: list[ReadinessCheck] = []
+
+    inside = run_git(root, ["rev-parse", "--is-inside-work-tree"])
+    if inside.returncode != 0 or inside.stdout.strip() != "true":
+        return [ReadinessCheck("blocker", "git", "not inside a git worktree")]
+    checks.append(ReadinessCheck("pass", "git", "inside a git worktree"))
+
+    branch = run_git(root, ["branch", "--show-current"])
+    if branch.returncode == 0 and branch.stdout.strip() == "main":
+        checks.append(ReadinessCheck("pass", "git.branch", "current branch is main"))
+    else:
+        checks.append(
+            ReadinessCheck(
+                "warn",
+                "git.branch",
+                f"current branch is {branch.stdout.strip() or 'unknown'}, expected main",
+            )
+        )
+
+    status = run_git(root, ["status", "--porcelain"])
+    if status.returncode == 0 and not status.stdout.strip():
+        checks.append(ReadinessCheck("pass", "git.status", "worktree is clean"))
+    else:
+        checks.append(ReadinessCheck("blocker", "git.status", "worktree has uncommitted changes"))
+
+    remote = run_git(root, ["remote", "get-url", "origin"])
+    remote_url = remote.stdout.strip()
+    if remote.returncode == 0 and "github.com" in remote_url:
+        checks.append(ReadinessCheck("pass", "git.remote", f"origin is configured: {remote_url}"))
+    elif remote.returncode == 0 and remote_url:
+        checks.append(ReadinessCheck("warn", "git.remote", f"origin is not GitHub: {remote_url}"))
+    else:
+        checks.append(ReadinessCheck("blocker", "git.remote", "origin remote is missing"))
+
+    return checks
+
+
+def run_git(root: Path, args: list[str]) -> subprocess.CompletedProcess[str]:
+    try:
+        return subprocess.run(
+            ["git", *args],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as error:
+        return subprocess.CompletedProcess(args=["git", *args], returncode=1, stderr=str(error))
+
+
+def has_readiness_blockers(checks: Iterable[ReadinessCheck]) -> bool:
+    return any(check.status == "blocker" for check in checks)
+
+
+def format_readiness_report(checks: list[ReadinessCheck]) -> str:
+    lines = ["# Codex For OSS Local Readiness"]
+    for check in checks:
+        lines.append(f"- {check.status.upper()} {check.name}: {check.message}")
+    return "\n".join(lines)
+
+
 def build_maintenance_report(
     path: Path, data: dict[str, Any], findings: list[Finding]
 ) -> str:
@@ -665,7 +851,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "command_or_manifest",
-        help="Manifest path, or command: validate/report/schema/repo-scan",
+        help="Manifest path, or command: validate/report/schema/repo-scan/readiness",
     )
     parser.add_argument("manifest", nargs="?", type=Path, help="Path to manifest JSON")
     parser.add_argument("--json", action="store_true", help="Print JSON report")
@@ -694,6 +880,20 @@ def main(argv: list[str] | None = None) -> int:
         else:
             print(format_repo_scan_report(scan_root, findings))
         return 1 if has_blockers(findings) else 0
+
+    if command == "readiness":
+        root = manifest_path or Path(".")
+        checks = build_readiness_checks(root)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": not has_readiness_blockers(checks),
+                "checks": [asdict(check) for check in checks],
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(format_readiness_report(checks))
+        return 1 if has_readiness_blockers(checks) else 0
 
     try:
         if manifest_path is None:
@@ -727,6 +927,8 @@ def resolve_command(
             raise SystemExit("schema does not accept a manifest path")
         return command_or_manifest, None
     if command_or_manifest == "repo-scan":
+        return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "readiness":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest in {"validate", "report"}:
         if manifest is None:
