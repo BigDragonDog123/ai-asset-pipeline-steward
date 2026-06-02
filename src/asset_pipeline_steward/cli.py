@@ -1155,6 +1155,7 @@ def build_next_human_action(root: Path, manual_ready: bool = False) -> dict[str,
     repo_url = string_value(status.get("repository_url")) or public_repository_url(root)
 
     if external_feedback_count == 0:
+        reviewer_request = build_reviewer_request(root)
         phase = "collect_external_feedback"
         primary_action = (
             "Send the reviewer request to one real non-maintainer reviewer and ask "
@@ -1184,6 +1185,7 @@ def build_next_human_action(root: Path, manual_ready: bool = False) -> dict[str,
             "Do not record maintainer-authored comments as external feedback.",
             "Do not paste private DMs, screenshots, logs, credentials, or contact details into the repository.",
         ]
+        copy_message = reviewer_request["chinese_short_dm"]
     elif status["recommendation"] != "ready_for_manual_submission":
         phase = "clear_submission_blockers"
         primary_action = "Resolve the remaining submission blockers before opening the official form."
@@ -1203,6 +1205,7 @@ def build_next_human_action(root: Path, manual_ready: bool = False) -> dict[str,
             "Do not submit while blockers remain.",
             "Do not commit personal form fields or confirmation emails.",
         ]
+        copy_message = ""
     else:
         phase = "ready_for_manual_submission"
         primary_action = "Verify latest CI, then fill the official form manually."
@@ -1221,6 +1224,7 @@ def build_next_human_action(root: Path, manual_ready: bool = False) -> dict[str,
         do_not = [
             "Do not commit personal form fields, Organization ID, or application confirmation emails.",
         ]
+        copy_message = ""
 
     return {
         "repository_url": repo_url,
@@ -1230,6 +1234,7 @@ def build_next_human_action(root: Path, manual_ready: bool = False) -> dict[str,
         "evidence_counts": counts,
         "blockers": list_or_empty(status.get("blockers")),
         "manual_steps": manual_steps,
+        "copy_message": copy_message,
         "commands": commands,
         "links": {
             "review_landing": public_blob_url(root, "REVIEW.md"),
@@ -1270,6 +1275,10 @@ def format_next_human_action(action: dict[str, Any]) -> str:
     ]
     for index, step in enumerate(list_or_empty(action.get("manual_steps")), start=1):
         lines.append(f"{index}. {step}")
+
+    copy_message = string_value(action.get("copy_message"))
+    if copy_message:
+        lines.extend(["", "## Copy This Message", "", "```text", copy_message, "```"])
 
     lines.extend(["", "## Commands", "", "```bash"])
     lines.extend(list_or_empty(action.get("commands")))

@@ -180,7 +180,7 @@ Use this when a maintainer wants the single current manual step before applying:
 asset-pipeline-steward next-human-action . --manual-ready
 ```
 
-Expected output reports the current phase, the primary human action, why it matters, the commands to run next, public links, and actions not to take. Before external feedback exists, it tells the maintainer to send the reviewer request and explicitly warns not to submit the official form yet.
+Expected output reports the current phase, the primary human action, why it matters, a copy-paste reviewer message, the commands to run next, public links, and actions not to take. Before external feedback exists, it tells the maintainer to send the reviewer request and explicitly warns not to submit the official form yet.
 
 ## Open Codex For OSS Submission Links
 

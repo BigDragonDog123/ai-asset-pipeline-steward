@@ -687,6 +687,7 @@ class ManifestValidationTests(unittest.TestCase):
 
         self.assertEqual("collect_external_feedback", action["phase"])
         self.assertIn("non-maintainer reviewer", action["primary_action"])
+        self.assertIn("你方便花 10 分钟", action["copy_message"])
         self.assertIn("reviewer-request", "\n".join(action["commands"]))
         self.assertTrue(
             any("Do not submit" in item for item in action["do_not"])
@@ -700,6 +701,8 @@ class ManifestValidationTests(unittest.TestCase):
         text = output.getvalue()
         self.assertIn("# Next Human Action", text)
         self.assertIn("Phase: collect_external_feedback", text)
+        self.assertIn("Copy This Message", text)
+        self.assertIn("你方便花 10 分钟", text)
         self.assertIn("asset-pipeline-steward reviewer-request .", text)
         self.assertIn("Do not submit the official Codex for OSS form yet.", text)
 
@@ -713,6 +716,10 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertEqual(
             "collect_external_feedback",
             payload["next_human_action"]["phase"],
+        )
+        self.assertIn(
+            "issues/new?template=feedback.yml",
+            payload["next_human_action"]["copy_message"],
         )
 
     def test_starter_issues_file_loads(self) -> None:

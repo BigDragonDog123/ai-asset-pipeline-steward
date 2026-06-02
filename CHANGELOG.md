@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Extended `next-human-action` with a copy-paste reviewer message when external feedback is still missing.
 - Added a `next-human-action` command that prints the single current manual step for Codex for OSS growth or submission.
 - Added a `public-usage-note` command and matching public post draft for growth-mode outreach.
 - Added explicit feedback evidence recording consent to the public feedback form and outreach rules.

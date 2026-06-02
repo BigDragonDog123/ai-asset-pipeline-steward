@@ -31,7 +31,7 @@ This repository turns that repeated maintenance pattern into a small package, a 
 - Run `asset-pipeline-steward feedback-response-playbook .` after feedback appears to turn it into visible maintenance evidence.
 - Run `asset-pipeline-steward public-usage-note .` for a public post draft that asks for concrete feedback.
 - Run `asset-pipeline-steward reviewer-checklist .` for a concise review path.
-- Run `asset-pipeline-steward next-human-action . --manual-ready` to see the one current manual action before applying.
+- Run `asset-pipeline-steward next-human-action . --manual-ready` to see the one current manual action and a copy-paste reviewer message before applying.
 - Run the quickstart or skim `docs/terminal-examples.md`.
 - Leave public feedback with the feedback issue form.
 
@@ -166,7 +166,7 @@ Run `asset-pipeline-steward readiness .` before release or Codex for OSS applica
 Run `asset-pipeline-steward latest-ci .` before final submission to verify the latest `main` GitHub Actions push run is green.
 Run `asset-pipeline-steward submission-ready .` before filling the official Codex for OSS form.
 Run `asset-pipeline-steward codex-oss-status . --manual-ready` to see whether the project should stay in growth mode or move to manual submission.
-Run `asset-pipeline-steward next-human-action . --manual-ready` when you want the single next manual step instead of the full status report.
+Run `asset-pipeline-steward next-human-action . --manual-ready` when you want the single next manual step and copy-paste reviewer message instead of the full status report.
 Track public adoption and maintainer evidence in `docs/adoption-evidence.json`.
 
 ## Feedback
