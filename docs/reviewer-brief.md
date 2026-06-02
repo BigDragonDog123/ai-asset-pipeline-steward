@@ -50,6 +50,8 @@ Useful public feedback can be short. Good examples:
 - "I would need a validation rule for..."
 - "This does not fit my workflow because..."
 
+If you have more time, use `docs/feedback-outreach-kit.md` for 10-minute, 20-minute, and 40-minute review paths.
+
 ## Public Safety
 
 Do not include:

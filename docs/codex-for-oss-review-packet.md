@@ -28,6 +28,7 @@ The program says applications are reviewed on a rolling basis and looks for acti
 - Usage examples: `docs/terminal-examples.md` and `examples/`
 - Reviewer brief: `docs/reviewer-brief.md`
 - Feedback request: `docs/public-feedback-request.md`
+- Outreach kit: `docs/feedback-outreach-kit.md`
 
 ## Current Weaknesses
 

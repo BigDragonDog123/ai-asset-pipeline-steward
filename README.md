@@ -139,6 +139,7 @@ https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template
 ```
 
 See `docs/public-feedback-request.md` for a short request that can be shared with reviewers.
+Use `docs/feedback-outreach-kit.md` for ready-to-send reviewer requests and evidence rules.
 See `docs/reviewer-brief.md` for a one-page guide to what reviewers should try first.
 
 ## Codex For OSS Readiness

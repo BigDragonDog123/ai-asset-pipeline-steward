@@ -16,6 +16,7 @@ This plan tracks the next credible public signals for AI Asset Pipeline Steward.
 - Open adoption task: issue #8 tracks the first external feedback signal.
 - Feedback form: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml`
 - Share request: `docs/public-feedback-request.md`
+- Outreach kit: `docs/feedback-outreach-kit.md`
 - Reviewer brief: `docs/reviewer-brief.md`
 - Application review packet: `docs/codex-for-oss-review-packet.md`
 - Repository discovery: README badges plus GitHub topics for public-safe AI asset pipeline maintenance.
@@ -30,12 +31,13 @@ This plan tracks the next credible public signals for AI Asset Pipeline Steward.
 ## Next Seven Days
 
 1. Ask one real user or maintainer to try the reviewer brief and leave public feedback through the feedback form.
-2. Publish one short public usage note that links to the repo, terminal examples, and feedback form.
-3. Add any real external feedback URL to `docs/adoption-evidence.json`.
-4. Close issue #8 after the external feedback URL is recorded.
-5. Review `docs/codex-for-oss-review-packet.md` to confirm the current evidence and remaining weaknesses.
-6. Use `docs/codex-for-oss-submission-runbook.md` for final form entry.
-7. Re-run:
+2. Send one message from `docs/feedback-outreach-kit.md` to a likely reviewer.
+3. Publish one short public usage note that links to the repo, terminal examples, and feedback form.
+4. Add any real external feedback URL to `docs/adoption-evidence.json`.
+5. Close issue #8 after the external feedback URL is recorded.
+6. Review `docs/codex-for-oss-review-packet.md` to confirm the current evidence and remaining weaknesses.
+7. Use `docs/codex-for-oss-submission-runbook.md` for final form entry.
+8. Re-run:
 
 ```bash
 asset-pipeline-steward evidence .

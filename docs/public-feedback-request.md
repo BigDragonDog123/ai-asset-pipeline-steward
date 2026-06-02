@@ -2,6 +2,8 @@
 
 AI Asset Pipeline Steward needs one or more public feedback links from people other than the maintainer. Use this page when asking someone to try the repo, skim the examples, or leave a short issue.
 
+For longer English/Chinese messages, review paths, and evidence rules, use `docs/feedback-outreach-kit.md`.
+
 ## Short Request
 
 ```text
