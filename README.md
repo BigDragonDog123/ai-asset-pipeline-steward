@@ -23,7 +23,8 @@ This repository turns that repeated maintenance pattern into a small package, a 
 
 ## For Reviewers
 
-- Start with `docs/reviewer-brief.md`.
+- Start with `docs/reviewer-checklist.md`.
+- Use `docs/reviewer-brief.md` for more context.
 - Run `asset-pipeline-steward reviewer-checklist .` for a concise review path.
 - Run the quickstart or skim `docs/terminal-examples.md`.
 - Leave public feedback with the feedback issue form.
@@ -152,6 +153,7 @@ https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template
 
 See `docs/public-feedback-request.md` for a short request that can be shared with reviewers.
 Use `docs/feedback-outreach-kit.md` for ready-to-send reviewer requests and evidence rules.
+See `docs/reviewer-checklist.md` for a direct 10-minute, 20-minute, or 40-minute review path.
 See `docs/reviewer-brief.md` for a one-page guide to what reviewers should try first.
 
 After a real public feedback URL exists, record it with:

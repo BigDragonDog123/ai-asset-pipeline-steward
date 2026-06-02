@@ -32,6 +32,8 @@ Expected output before public launch includes warnings for missing public repo U
 
 ## Print Reviewer Checklist
 
+Reviewers can also read the static checklist at `docs/reviewer-checklist.md`.
+
 ```bash
 asset-pipeline-steward reviewer-checklist .
 ```

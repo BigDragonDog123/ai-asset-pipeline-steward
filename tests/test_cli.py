@@ -577,6 +577,15 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertEqual("10-minute skim", payload["checklist"]["review_paths"][0]["name"])
         self.assertIn("feedback_form", payload["checklist"])
 
+    def test_reviewer_checklist_doc_exists(self) -> None:
+        text = (ROOT / "docs" / "reviewer-checklist.md").read_text(encoding="utf-8")
+
+        self.assertIn("# Reviewer Checklist", text)
+        self.assertIn("10-Minute Skim", text)
+        self.assertIn("20-Minute Quickstart", text)
+        self.assertIn("40-Minute Maintainer Review", text)
+        self.assertIn("issues/new?template=feedback.yml", text)
+
     def test_cli_returns_nonzero_for_unsafe_manifest(self) -> None:
         manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")
         manifest["project"]["description"] = "contains token marker"

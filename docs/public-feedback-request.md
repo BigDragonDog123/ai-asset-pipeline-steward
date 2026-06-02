@@ -2,7 +2,7 @@
 
 AI Asset Pipeline Steward needs one or more public feedback links from people other than the maintainer. Use this page when asking someone to try the repo, skim the examples, or leave a short issue.
 
-For longer English/Chinese messages, review paths, and evidence rules, use `docs/feedback-outreach-kit.md`. To print the concise reviewer path from the CLI, run `asset-pipeline-steward reviewer-checklist .`.
+For longer English/Chinese messages, review paths, and evidence rules, use `docs/feedback-outreach-kit.md`. For a direct checklist, use `docs/reviewer-checklist.md`. To print the concise reviewer path from the CLI, run `asset-pipeline-steward reviewer-checklist .`.
 
 ## Short Request
 
@@ -30,6 +30,7 @@ I would value external feedback on whether the manifest checks, report output, a
 
 Useful links:
 - Quickstart: https://github.com/BigDragonDog123/ai-asset-pipeline-steward#quickstart
+- Reviewer checklist: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/reviewer-checklist.md
 - Terminal examples: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/terminal-examples.md
 - Reviewer brief: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/blob/main/docs/reviewer-brief.md
 - Feedback form: https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml

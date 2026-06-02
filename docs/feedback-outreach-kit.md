@@ -18,6 +18,12 @@ Avoid asking for generic praise. Ask for one concrete usability gap, confusing f
 
 ## Review Paths
 
+Reviewers can read the static checklist:
+
+```text
+docs/reviewer-checklist.md
+```
+
 Maintainers can print the same review paths from the CLI:
 
 ```bash

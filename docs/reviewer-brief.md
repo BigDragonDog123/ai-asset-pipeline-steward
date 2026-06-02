@@ -52,7 +52,7 @@ Useful public feedback can be short. Good examples:
 - "I would need a validation rule for..."
 - "This does not fit my workflow because..."
 
-If you have more time, use `docs/feedback-outreach-kit.md` for 10-minute, 20-minute, and 40-minute review paths.
+For direct review paths, use `docs/reviewer-checklist.md`. If you have more time or need shareable messages, use `docs/feedback-outreach-kit.md`.
 
 The feedback form asks for the review path, what was tried, what seemed useful, and one concrete adoption blocker. That shape is intentional: specific critique is more useful than general approval.
 
