@@ -14,6 +14,8 @@ This plan tracks the next credible public signals for AI Asset Pipeline Steward.
 - Adoption evidence file: `docs/adoption-evidence.json`
 - Maintainer activity: issue #3 completed; Dependabot PRs #1 and #2 merged.
 - Open adoption task: issue #8 tracks the first external feedback signal.
+- Feedback form: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml`
+- Share request: `docs/public-feedback-request.md`
 
 ## Signal Rules
 
@@ -24,8 +26,8 @@ This plan tracks the next credible public signals for AI Asset Pipeline Steward.
 
 ## Next Seven Days
 
-1. Ask one real user or maintainer to try the quickstart and leave public feedback.
-2. Publish one short public usage note that links to the repo and terminal examples.
+1. Ask one real user or maintainer to try the quickstart and leave public feedback through the feedback form.
+2. Publish one short public usage note that links to the repo, terminal examples, and feedback form.
 3. Add any real external feedback URL to `docs/adoption-evidence.json`.
 4. Close issue #8 after the external feedback URL is recorded.
 5. Re-run:

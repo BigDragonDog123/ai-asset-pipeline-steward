@@ -120,6 +120,16 @@ Run `asset-pipeline-steward repo-scan .` before publishing or opening a pull req
 Run `asset-pipeline-steward readiness .` before release or Codex for OSS application work.
 Track public adoption and maintainer evidence in `docs/adoption-evidence.json`.
 
+## Feedback
+
+External feedback is especially useful while this project is early. If the workflow overlaps with your maintenance work, use the public feedback form:
+
+```text
+https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template=feedback.yml
+```
+
+See `docs/public-feedback-request.md` for a short request that can be shared with reviewers.
+
 ## Codex For OSS Readiness
 
 This project is being prepared as a candidate open-source direction. OpenAI's Codex for Open Source program asks for a public GitHub profile, a public repository, maintainer role, and evidence of usage, ecosystem importance, or active maintenance. This repository currently provides the structure and a plausible maintenance workflow, but it still needs public adoption evidence before a strong application.

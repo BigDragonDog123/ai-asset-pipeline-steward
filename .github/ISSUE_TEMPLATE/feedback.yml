@@ -1,0 +1,42 @@
+name: Feedback
+description: Share public feedback after trying or reviewing the toolkit.
+title: "[Feedback]: "
+labels: ["feedback"]
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What kind of workflow, repo, or maintainer task made you review this project?
+      placeholder: "Example: I maintain a small image-generation review queue and wanted safer handoffs."
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: What you tried or reviewed
+      description: Link or name the command, example manifest, doc, or skill section you looked at.
+      placeholder: "Example: README quickstart, docs/terminal-examples.md, examples/handoff_resume_manifest.json"
+    validations:
+      required: true
+  - type: textarea
+    id: useful
+    attributes:
+      label: What seemed useful
+      description: Which part could help with real maintenance work?
+    validations:
+      required: true
+  - type: textarea
+    id: confusing
+    attributes:
+      label: What was confusing or missing
+      description: What should be clearer before others adopt it?
+    validations:
+      required: false
+  - type: checkboxes
+    id: public_safety
+    attributes:
+      label: Public safety
+      options:
+        - label: This feedback uses only public-safe examples and does not include private paths, credentials, logs, model files, or non-public media.
+          required: true
