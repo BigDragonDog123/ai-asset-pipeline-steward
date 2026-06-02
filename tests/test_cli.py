@@ -20,8 +20,10 @@ from asset_pipeline_steward.cli import (
     build_maintenance_report,
     build_manifest_schema,
     collect_public_evidence,
+    format_application_report,
     format_public_evidence_report,
     has_readiness_blockers,
+    load_application_packet,
     load_starter_issues,
     load_manifest,
     main,
@@ -263,6 +265,47 @@ class ManifestValidationTests(unittest.TestCase):
 
         self.assertEqual({}, evidence)
         self.assertTrue(any(finding.severity == "blocker" for finding in findings))
+
+    def test_application_packet_loads_and_respects_limits(self) -> None:
+        packet, findings = load_application_packet(ROOT)
+
+        self.assertEqual([], findings)
+        self.assertIsNotNone(packet)
+        assert packet is not None
+        self.assertGreaterEqual(len(packet["limited_answers"]), 3)
+        for answer in packet["limited_answers"]:
+            self.assertLessEqual(len(answer["value"]), answer["max_chars"])
+
+    def test_application_command_prints_packet(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["application", str(ROOT)])
+
+        self.assertEqual(0, exit_code)
+        self.assertIn("# Codex For OSS Application Packet", output.getvalue())
+        self.assertIn("BigDragonDog123", output.getvalue())
+        self.assertIn("Submission Gate", output.getvalue())
+
+    def test_application_packet_blocks_over_limit_answer(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            docs = Path(tmpdir) / "docs"
+            docs.mkdir()
+            packet = {
+                "status_date": "2026-06-02",
+                "fields": [{"label": "GitHub username", "value": "BigDragonDog123"}],
+                "limited_answers": [
+                    {"title": "Why", "max_chars": 5, "value": "too long"}
+                ],
+            }
+            (docs / "codex-for-oss-application.json").write_text(
+                json.dumps(packet),
+                encoding="utf-8",
+            )
+
+            packet, findings = load_application_packet(Path(tmpdir))
+
+        self.assertIsNotNone(packet)
+        self.assertTrue(any(finding.severity == "blocker" for finding in findings))
+        self.assertIn("answer is", format_application_report(packet, findings, []))
 
     def test_starter_issues_file_loads(self) -> None:
         issues, findings = load_starter_issues(ROOT)

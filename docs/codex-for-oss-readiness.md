@@ -48,6 +48,7 @@ Source:
 | Community health files | In progress | README, license, contribution, security, conduct, issue/PR templates, CI added locally. |
 | Local readiness checks | In progress | `asset-pipeline-steward readiness .` checks community files, schema, examples, repo-scan, git branch/status, and origin remote. |
 | Adoption evidence tracking | In progress | `docs/adoption-evidence.json`, `asset-pipeline-steward evidence .`, and `asset-pipeline-steward collect-evidence .` track public repo URL, CI, release, issues, feedback, usage, stars, and forks. |
+| Application packet | In progress | `docs/codex-for-oss-application.json` and `asset-pipeline-steward application .` render draft form fields and check answer length limits. |
 | Public repository | Missing | The workspace has not yet been pushed to GitHub. |
 | GitHub connector authorization | Missing | Codex detects user `BigDragonDog123`, but no GitHub App installations or repositories are visible to the connector. |
 | Public adoption | Missing | No stars, downloads, releases, external users, or issue/PR history yet. |
@@ -82,7 +83,7 @@ Unknown:
 7. Run `asset-pipeline-steward collect-evidence .` and fill `docs/adoption-evidence.json` with public URLs as CI, releases, issues, and usage appear.
 8. Use issues to track roadmap items and maintenance tasks.
 9. Gather adoption evidence: stars, forks, external feedback, usage examples, or integration into a real public workflow.
-10. Draft the Codex for OSS application only after the public repo has credible activity.
+10. Render `asset-pipeline-steward application .` and submit only after the public repo has credible activity.
 
 ## Draft Application Notes
 

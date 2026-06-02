@@ -110,6 +110,7 @@ EXAMPLE_MANIFESTS = (
 SCHEMA_FILE = "schemas/asset-pipeline-manifest.schema.json"
 ADOPTION_EVIDENCE_FILE = "docs/adoption-evidence.json"
 STARTER_ISSUES_FILE = "docs/starter-issues.json"
+APPLICATION_FILE = "docs/codex-for-oss-application.json"
 DEFAULT_PUBLIC_REPOSITORY = "BigDragonDog123/ai-asset-pipeline-steward"
 
 HIGH_CONFIDENCE_CONTENT_PATTERNS = (
@@ -801,6 +802,138 @@ def build_evidence_report(root: Path) -> tuple[list[ReadinessCheck], str]:
     return checks, "\n".join(lines)
 
 
+def load_application_packet(root: Path) -> tuple[dict[str, Any] | None, list[Finding]]:
+    path = root / APPLICATION_FILE
+    if not path.exists():
+        return None, [Finding("blocker", APPLICATION_FILE, "application packet is missing")]
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return None, [
+            Finding("blocker", APPLICATION_FILE, f"application packet is invalid: {error}")
+        ]
+    if not isinstance(data, dict):
+        return None, [Finding("blocker", APPLICATION_FILE, "application packet root must be an object")]
+
+    findings: list[Finding] = []
+    fields = data.get("fields")
+    limited_answers = data.get("limited_answers")
+    if not isinstance(fields, list):
+        findings.append(Finding("blocker", f"{APPLICATION_FILE}.fields", "fields must be a list"))
+    if not isinstance(limited_answers, list):
+        findings.append(
+            Finding(
+                "blocker",
+                f"{APPLICATION_FILE}.limited_answers",
+                "limited_answers must be a list",
+            )
+        )
+
+    if isinstance(fields, list):
+        for index, field in enumerate(fields):
+            prefix = f"{APPLICATION_FILE}.fields[{index}]"
+            if not isinstance(field, dict):
+                findings.append(Finding("blocker", prefix, "field must be an object"))
+                continue
+            for key in ("label", "value"):
+                if not isinstance(field.get(key), str) or not field.get(key, "").strip():
+                    findings.append(Finding("blocker", f"{prefix}.{key}", "field value is required"))
+
+    if isinstance(limited_answers, list):
+        for index, answer in enumerate(limited_answers):
+            prefix = f"{APPLICATION_FILE}.limited_answers[{index}]"
+            if not isinstance(answer, dict):
+                findings.append(Finding("blocker", prefix, "limited answer must be an object"))
+                continue
+            title = answer.get("title")
+            value = answer.get("value")
+            max_chars = answer.get("max_chars")
+            if not isinstance(title, str) or not title.strip():
+                findings.append(Finding("blocker", f"{prefix}.title", "answer title is required"))
+            if not isinstance(value, str) or not value.strip():
+                findings.append(Finding("blocker", f"{prefix}.value", "answer value is required"))
+            if not isinstance(max_chars, int) or max_chars <= 0:
+                findings.append(Finding("blocker", f"{prefix}.max_chars", "max_chars must be positive"))
+            elif isinstance(value, str) and len(value) > max_chars:
+                findings.append(
+                    Finding(
+                        "blocker",
+                        f"{prefix}.value",
+                        f"answer is {len(value)}/{max_chars} characters",
+                    )
+                )
+
+    return data, findings
+
+
+def format_application_report(
+    packet: dict[str, Any] | None,
+    findings: list[Finding],
+    evidence_checks: list[ReadinessCheck],
+) -> str:
+    if packet is None:
+        lines = ["# Codex For OSS Application Packet"]
+        for finding in findings:
+            lines.append(f"- {finding.severity.upper()} {finding.path}: {finding.message}")
+        return "\n".join(lines)
+
+    lines = [
+        "# Codex For OSS Application Packet",
+        "",
+        f"Status date: {safe_text(packet.get('status_date'), 'unknown')}",
+        "",
+        "## Submission Gate",
+        "",
+    ]
+
+    for finding in findings:
+        lines.append(f"- {finding.severity.upper()} {finding.path}: {finding.message}")
+    for check in evidence_checks:
+        if check.status != "pass":
+            lines.append(f"- {check.status.upper()} {check.name}: {check.message}")
+    if not findings and all(check.status == "pass" for check in evidence_checks):
+        lines.append("- PASS evidence: public evidence fields are populated")
+
+    lines.extend(["", "## Form Fields", ""])
+    for field in list_value(packet.get("fields")):
+        if isinstance(field, dict):
+            label = safe_text(field.get("label"), "unknown")
+            value = safe_text(field.get("value"), "Fill manually")
+            lines.append(f"- {label}: {value}")
+
+    manual_fields = list_value(packet.get("manual_fields"))
+    if manual_fields:
+        lines.extend(["", "## Manual Fields", ""])
+        for field in manual_fields:
+            lines.append(f"- {field}")
+
+    lines.extend(["", "## Limited Answers", ""])
+    for answer in list_value(packet.get("limited_answers")):
+        if not isinstance(answer, dict):
+            continue
+        title = safe_text(answer.get("title"), "unknown")
+        value = safe_text(answer.get("value"), "")
+        max_chars = int_value(answer.get("max_chars"))
+        lines.extend(
+            [
+                f"### {title} ({len(value)}/{max_chars})",
+                "",
+                "```text",
+                value,
+                "```",
+                "",
+            ]
+        )
+
+    requirements = list_value(packet.get("do_not_submit_until"))
+    if requirements:
+        lines.extend(["## Do Not Submit Until", ""])
+        for requirement in requirements:
+            lines.append(f"- {requirement}")
+
+    return "\n".join(lines).rstrip()
+
+
 def infer_public_repository(root: Path) -> str:
     data, _checks = load_adoption_evidence(root)
     repo_url = string_value(data.get("public_repository_url")) if data else ""
@@ -1165,7 +1298,7 @@ def build_parser() -> argparse.ArgumentParser:
         "command_or_manifest",
         help=(
             "Manifest path, or command: validate/report/schema/repo-scan/readiness/"
-            "evidence/collect-evidence/starter-issues"
+            "evidence/collect-evidence/application/starter-issues"
         ),
     )
     parser.add_argument("manifest", nargs="?", type=Path, help="Path to manifest JSON")
@@ -1239,6 +1372,23 @@ def main(argv: list[str] | None = None) -> int:
             print(format_public_evidence_report(evidence, findings))
         return 1 if has_blockers(findings) else 0
 
+    if command == "application":
+        root = manifest_path or Path(".")
+        packet, findings = load_application_packet(root)
+        evidence_checks = check_adoption_evidence(root)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": not has_blockers(findings),
+                "packet": packet or {},
+                "findings": [asdict(finding) for finding in findings],
+                "evidence_checks": [asdict(check) for check in evidence_checks],
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(format_application_report(packet, findings, evidence_checks))
+        return 1 if has_blockers(findings) else 0
+
     if command == "starter-issues":
         root = manifest_path or Path(".")
         issues, findings = load_starter_issues(root)
@@ -1292,6 +1442,8 @@ def resolve_command(
     if command_or_manifest == "evidence":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "collect-evidence":
+        return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "application":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "starter-issues":
         return command_or_manifest, manifest or Path(".")

@@ -19,6 +19,7 @@ python -m unittest discover -s tests
 python -m asset_pipeline_steward.cli repo-scan .
 python -m asset_pipeline_steward.cli readiness .
 python -m asset_pipeline_steward.cli evidence .
+python -m asset_pipeline_steward.cli application .
 python -m asset_pipeline_steward.cli starter-issues .
 ```
 

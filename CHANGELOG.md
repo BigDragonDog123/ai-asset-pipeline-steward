@@ -9,6 +9,7 @@ Initial public scaffold prepared locally.
 - Added local Codex for OSS readiness checks.
 - Added adoption evidence tracking.
 - Added public GitHub evidence collection.
+- Added Codex for OSS application packet rendering.
 - Added starter issue export.
 - Added GitHub publishing and connector setup guidance.
 - Added JSON Schema output and a checked-in manifest schema.

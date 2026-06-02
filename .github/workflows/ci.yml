@@ -32,6 +32,9 @@ jobs:
       - name: Report adoption evidence gaps
         run: asset-pipeline-steward evidence .
 
+      - name: Render Codex for OSS application packet
+        run: asset-pipeline-steward application .
+
       - name: Render starter issues
         run: asset-pipeline-steward starter-issues .
 

@@ -4,6 +4,18 @@ Status date: 2026-06-02.
 
 This draft should not be submitted until the repository is public and has maintenance or usage evidence.
 
+Machine-readable source:
+
+```text
+docs/codex-for-oss-application.json
+```
+
+Render and check the packet with:
+
+```bash
+asset-pipeline-steward application .
+```
+
 ## Fields
 
 First name:
@@ -69,5 +81,6 @@ The project is being built from repeated local maintenance workflows, but the pu
 Track these in `docs/adoption-evidence.json` and review them with:
 
 ```bash
+asset-pipeline-steward application .
 asset-pipeline-steward evidence .
 ```

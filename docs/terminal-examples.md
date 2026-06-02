@@ -41,6 +41,14 @@ asset-pipeline-steward collect-evidence .
 Expected output includes a JSON block with the public repository URL, recent CI run URLs, release URLs, issue URLs, pull request URLs, stars, and forks. Before the repository is public, this command reports a blocker.
 If GitHub returns a rate-limit `403`, set `GITHUB_TOKEN` to a token with public repository read access and rerun the command.
 
+## Render Application Packet
+
+```bash
+asset-pipeline-steward application .
+```
+
+Expected output includes draft Codex for OSS form fields, 500-character answer checks, manual fields still needed, and submission-gate warnings for missing public evidence.
+
 ## Render Starter Issues
 
 ```bash

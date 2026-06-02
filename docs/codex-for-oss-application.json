@@ -1,0 +1,56 @@
+{
+  "status_date": "2026-06-02",
+  "fields": [
+    {
+      "label": "GitHub username",
+      "value": "BigDragonDog123"
+    },
+    {
+      "label": "GitHub repository URL",
+      "value": "https://github.com/BigDragonDog123/ai-asset-pipeline-steward"
+    },
+    {
+      "label": "Repository role",
+      "value": "Primary maintainer"
+    },
+    {
+      "label": "Codex Security interest",
+      "value": "Maybe, after the repository has public usage evidence"
+    },
+    {
+      "label": "API credits interest",
+      "value": "Yes, for maintainer workflow automation"
+    }
+  ],
+  "manual_fields": [
+    "First name",
+    "Last name",
+    "Email associated with the ChatGPT account",
+    "OpenAI Organization ID from https://platform.openai.com/settings/organization/general"
+  ],
+  "limited_answers": [
+    {
+      "title": "Why does this repository qualify?",
+      "max_chars": 500,
+      "value": "AI Asset Pipeline Steward helps maintainers turn ad-hoc AI-generated asset workflows into verified, public-safe pipelines with manifests, smoke gates, human/VLM review separation, and Codex repo skills. It targets repeatable maintenance work: review queues, batch gates, handoffs, and open-source extraction."
+    },
+    {
+      "title": "How will you use API credits for your project?",
+      "max_chars": 500,
+      "value": "Use credits to test Codex-assisted maintainer workflows: PR review, manifest validation improvements, release checklist automation, synthetic fixture generation, and issue triage for AI asset pipeline maintainers."
+    },
+    {
+      "title": "Anything else we should know?",
+      "max_chars": 500,
+      "value": "The project is being built from repeated local maintenance workflows, but the public repo uses only synthetic fixtures and public-safe examples. The goal is to make AI asset pipeline maintenance more reproducible, reviewable, and safe for open-source contributors."
+    }
+  ],
+  "do_not_submit_until": [
+    "Public repository URL actually exists",
+    "GitHub Actions CI has a passing public run",
+    "First release is public",
+    "Starter issues are public",
+    "docs/adoption-evidence.json contains public URLs",
+    "There is at least some public activity or external feedback"
+  ]
+}
