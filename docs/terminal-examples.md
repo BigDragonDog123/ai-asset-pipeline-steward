@@ -163,6 +163,18 @@ Expected output:
 OK: examples/review_queue_manifest.json passed public-safety and schema checks.
 ```
 
+## Validate Handoff Resume Manifest
+
+```bash
+asset-pipeline-steward examples/handoff_resume_manifest.json
+```
+
+Expected output:
+
+```text
+OK: examples/handoff_resume_manifest.json passed public-safety and schema checks.
+```
+
 ## Render Review Queue Report
 
 ```bash
@@ -176,4 +188,19 @@ Project: synthetic-review-queue
 - Assets: 3
 ## Handoff
 - Goal: Demonstrate a public-safe review queue handoff.
+```
+
+## Render Handoff Resume Report
+
+```bash
+asset-pipeline-steward report examples/handoff_resume_manifest.json
+```
+
+Expected highlights:
+
+```text
+Project: synthetic-handoff-resume
+- Assets: 3
+## Handoff
+- Next action: Have a maintainer review resume-asset-003
 ```

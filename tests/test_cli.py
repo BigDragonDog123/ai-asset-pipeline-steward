@@ -111,6 +111,17 @@ class ManifestValidationTests(unittest.TestCase):
 
         self.assertEqual([], findings)
 
+    def test_handoff_resume_manifest_passes(self) -> None:
+        manifest = load_manifest(ROOT / "examples" / "handoff_resume_manifest.json")
+
+        findings = validate_manifest(manifest)
+
+        self.assertEqual([], findings)
+        self.assertIn("progress", manifest["handoff"])
+        self.assertTrue(manifest["handoff"]["blockers"])
+        self.assertTrue(manifest["handoff"]["known_unknowns"])
+        self.assertTrue(manifest["handoff"]["next_action"])
+
     def test_schema_file_matches_generated_schema(self) -> None:
         schema_path = ROOT / "schemas" / "asset-pipeline-manifest.schema.json"
         schema = json.loads(schema_path.read_text(encoding="utf-8"))

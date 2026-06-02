@@ -2,7 +2,7 @@
 
 Status date: 2026-06-02.
 
-This draft should not be submitted until the repository is public and has maintenance or usage evidence.
+This draft is ready for manual form entry after personal fields are filled. The remaining strategic weakness is early public adoption: external feedback, stars, forks, or a public downstream use case would make the application stronger.
 
 Machine-readable source:
 
@@ -45,7 +45,7 @@ Role:
 Why does this repository qualify? Maximum 500 characters.
 
 ```text
-AI Asset Pipeline Steward helps maintainers turn ad-hoc AI-generated asset workflows into verified, public-safe pipelines with manifests, smoke gates, human/VLM review separation, and Codex repo skills. It targets repeatable maintenance work: review queues, batch gates, handoffs, and open-source extraction.
+AI Asset Pipeline Steward turns repeated local AI-asset maintenance into a public-safe OSS workflow: manifest validation, repo scanning, synthetic fixtures, CI, release, and starter issues. It helps maintainers verify model/workflow readiness, separate human and VLM review signals, preserve handoffs, and extract private workflows into reusable public examples.
 ```
 
 Interest:
@@ -60,23 +60,27 @@ OpenAI Organization ID:
 How will you use API credits for your project? Maximum 500 characters.
 
 ```text
-Use credits to test Codex-assisted maintainer workflows: PR review, manifest validation improvements, release checklist automation, synthetic fixture generation, and issue triage for AI asset pipeline maintainers.
+Use credits to build and test Codex maintainer automation: PR review for manifest/schema changes, issue triage, release checklist checks, evidence collection, synthetic fixture expansion, and security/public-safety scans. Credits would help verify real maintenance workflows instead of only static docs.
 ```
 
 Anything else we should know? Maximum 500 characters.
 
 ```text
-The project is being built from repeated local maintenance workflows, but the public repo uses only synthetic fixtures and public-safe examples. The goal is to make AI asset pipeline maintenance more reproducible, reviewable, and safe for open-source contributors.
+The repo is intentionally public-safe: no private paths, credentials, model weights, logs, caches, or non-public media. Current evidence includes passing CI, v0.1.0, starter issues, and usage examples; the next milestone is outside feedback and adoption.
 ```
+
+## Current Public Evidence
+
+- Public repository: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward`
+- Passing CI: tracked in `docs/adoption-evidence.json`
+- First release: `v0.1.0`
+- Starter issues: issues #3 through #7
+- Usage examples: `docs/terminal-examples.md` and `examples/`
 
 ## Evidence Still Needed
 
-- Public repo URL actually exists.
-- CI passing on GitHub.
-- First release.
-- Issue/PR activity.
-- Usage signal: stars, forks, feedback, external example, or integration.
-- Clear maintainer history over time.
+- Usage signal: stars, forks, external feedback, external example, or integration.
+- Clear maintainer history over time beyond initial setup.
 
 Track these in `docs/adoption-evidence.json` and review them with:
 

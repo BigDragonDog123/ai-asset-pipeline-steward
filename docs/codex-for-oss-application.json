@@ -32,25 +32,22 @@
     {
       "title": "Why does this repository qualify?",
       "max_chars": 500,
-      "value": "AI Asset Pipeline Steward helps maintainers turn ad-hoc AI-generated asset workflows into verified, public-safe pipelines with manifests, smoke gates, human/VLM review separation, and Codex repo skills. It targets repeatable maintenance work: review queues, batch gates, handoffs, and open-source extraction."
+      "value": "AI Asset Pipeline Steward turns repeated local AI-asset maintenance into a public-safe OSS workflow: manifest validation, repo scanning, synthetic fixtures, CI, release, and starter issues. It helps maintainers verify model/workflow readiness, separate human and VLM review signals, preserve handoffs, and extract private workflows into reusable public examples."
     },
     {
       "title": "How will you use API credits for your project?",
       "max_chars": 500,
-      "value": "Use credits to test Codex-assisted maintainer workflows: PR review, manifest validation improvements, release checklist automation, synthetic fixture generation, and issue triage for AI asset pipeline maintainers."
+      "value": "Use credits to build and test Codex maintainer automation: PR review for manifest/schema changes, issue triage, release checklist checks, evidence collection, synthetic fixture expansion, and security/public-safety scans. Credits would help verify real maintenance workflows instead of only static docs."
     },
     {
       "title": "Anything else we should know?",
       "max_chars": 500,
-      "value": "The project is being built from repeated local maintenance workflows, but the public repo uses only synthetic fixtures and public-safe examples. The goal is to make AI asset pipeline maintenance more reproducible, reviewable, and safe for open-source contributors."
+      "value": "The repo is intentionally public-safe: no private paths, credentials, model weights, logs, caches, or non-public media. Current evidence includes passing CI, v0.1.0, starter issues, and usage examples; the next milestone is outside feedback and adoption."
     }
   ],
   "do_not_submit_until": [
-    "Public repository URL actually exists",
-    "GitHub Actions CI has a passing public run",
-    "First release is public",
-    "Starter issues are public",
-    "docs/adoption-evidence.json contains public URLs",
-    "There is at least some public activity or external feedback"
+    "Manual personal fields are filled",
+    "OpenAI Organization ID is filled",
+    "At least one public activity or external feedback signal beyond the maintainer is recorded"
   ]
 }

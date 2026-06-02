@@ -1,0 +1,77 @@
+{
+  "project": {
+    "name": "synthetic-handoff-resume",
+    "description": "A public-safe example for resuming a paused batch from a maintainer handoff.",
+    "status": "paused-ready-to-resume",
+    "maintainer_intent": "Demonstrate progress, blockers, known unknowns, and next actions without private outputs or copyrighted samples."
+  },
+  "assets": [
+    {
+      "id": "resume-asset-001",
+      "kind": "synthetic-placeholder",
+      "path": "examples/synthetic/resume-asset-001.placeholder",
+      "source": "synthetic",
+      "review_state": "accepted"
+    },
+    {
+      "id": "resume-asset-002",
+      "kind": "synthetic-placeholder",
+      "path": "examples/synthetic/resume-asset-002.placeholder",
+      "source": "synthetic",
+      "review_state": "queued"
+    },
+    {
+      "id": "resume-asset-003",
+      "kind": "synthetic-placeholder",
+      "path": "examples/synthetic/resume-asset-003.placeholder",
+      "source": "synthetic",
+      "review_state": "blocked"
+    }
+  ],
+  "models": [
+    {
+      "name": "resume-source-placeholder",
+      "source": "external-reference-only",
+      "weights_included": false,
+      "verification": "not-required-for-synthetic-resume-example"
+    }
+  ],
+  "workflows": [
+    {
+      "name": "batch-resume-preflight",
+      "steps": ["read-handoff", "verify-progress", "check-blockers", "resume-queue"],
+      "preflight": ["manifest-valid", "synthetic-assets-only", "progress-recorded", "next-action-recorded"]
+    },
+    {
+      "name": "resume-decision-gate",
+      "steps": ["human-review-blockers", "rerun-single-item", "update-handoff"],
+      "preflight": ["human-review-required", "automated-observation-secondary", "known-unknowns-recorded"]
+    }
+  ],
+  "review_signals": [
+    {
+      "name": "maintainer-rating",
+      "role": "ground-truth",
+      "scale": "accept-revise-block"
+    },
+    {
+      "name": "automated-resume-notes",
+      "role": "supporting-evidence",
+      "scale": "structured-notes"
+    }
+  ],
+  "decision_gate": {
+    "status": "paused",
+    "progress": "1 accepted, 1 queued, 1 blocked.",
+    "next_action": "Review the blocked synthetic item, then resume with one queued item before scaling.",
+    "known_unknowns": ["The blocked item's final status is unknown until a maintainer reviews it."]
+  },
+  "handoff": {
+    "goal": "Resume a paused synthetic batch without losing review context.",
+    "current_status": "The batch is paused with progress, blocker, and next-action state recorded.",
+    "progress": "Completed 1 of 3 synthetic assets; 1 queued asset is ready; 1 asset is blocked for manual review.",
+    "next_action": "Have a maintainer review resume-asset-003, then run a one-item resume smoke gate on resume-asset-002.",
+    "blockers": ["resume-asset-003 needs a maintainer decision before the batch can scale."],
+    "known_unknowns": ["Whether resume-asset-003 should be revised or rejected is unknown until human review."]
+  }
+}

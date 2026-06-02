@@ -7,13 +7,16 @@ Use this after the repository has been created on GitHub. The local repository c
 As of 2026-06-02:
 
 - GitHub user detected by Codex connector: `BigDragonDog123`.
-- Installed GitHub App accounts visible to the connector: none.
-- Repositories visible to the connector: none.
-- Target repository status: `BigDragonDog123/ai-asset-pipeline-steward` returns 404.
+- Installed GitHub App accounts visible to connector listing: none.
+- Repositories visible through connector listing: none.
+- Target repository status by explicit full name: accessible.
+- Repository URL: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward`
 
-This means the next missing piece is not another local code edit. The missing piece is public GitHub setup and ChatGPT/Codex GitHub authorization.
+This means the public repository setup is complete, but the GitHub app installation listing still looks incomplete. Codex can inspect the repository when the full name is provided.
 
 ## Create The Repository
+
+Completed on 2026-06-02. Keep these instructions only for recreating the repository from scratch.
 
 1. Open https://github.com/new.
 2. Repository name: `ai-asset-pipeline-steward`.

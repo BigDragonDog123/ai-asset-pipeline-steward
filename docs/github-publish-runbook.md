@@ -5,11 +5,12 @@ This runbook turns the local repository into a public GitHub repository.
 ## Current Local State
 
 - Branch: `main`
-- Initial commit: `2fcd67f`
-- Suggested repository name: `ai-asset-pipeline-steward`
-- Suggested visibility: public
-- Suggested owner: `BigDragonDog123`
-- Current external blocker: GitHub connector can identify `BigDragonDog123`, but no GitHub App installations or repositories are visible yet.
+- Repository: `https://github.com/BigDragonDog123/ai-asset-pipeline-steward`
+- Visibility: public
+- Publication status: published and pushed
+- First release: `v0.1.0`
+- Starter issues: public issues #3 through #7
+- Current strategic blocker: external adoption evidence is still early.
 
 ## Option A: GitHub Website
 
@@ -54,9 +55,20 @@ gh repo create BigDragonDog123/ai-asset-pipeline-steward --public --source=. --r
 
 After the repository exists, follow `docs/github-connector-setup.md`.
 
-The important rule: the ChatGPT/Codex GitHub app must be installed and configured to access `BigDragonDog123/ai-asset-pipeline-steward`. Otherwise Codex cannot inspect the public repo through the connector even if the GitHub page exists.
+The important rule: the ChatGPT/Codex GitHub app should be installed and configured to access `BigDragonDog123/ai-asset-pipeline-steward`. Codex can currently fetch the repository by explicit full name, but the installation listing still does not show visible accounts.
 
 ## After Push
+
+Completed once on 2026-06-02:
+
+- public repository created;
+- `main` pushed;
+- CI confirmed green;
+- starter issues created;
+- `v0.1.0` release published;
+- `docs/adoption-evidence.json` filled with public evidence.
+
+Repeat this checklist only for a fresh repository or a new release:
 
 1. Open the repository on GitHub.
 2. Check the Community Standards page.

@@ -56,6 +56,9 @@ jobs:
       - name: Validate review queue manifest
         run: asset-pipeline-steward examples/review_queue_manifest.json
 
+      - name: Validate handoff resume manifest
+        run: asset-pipeline-steward examples/handoff_resume_manifest.json
+
       - name: Render maintainer report
         run: asset-pipeline-steward report examples/fixture_manifest.json
 
@@ -64,3 +67,6 @@ jobs:
 
       - name: Render review queue report
         run: asset-pipeline-steward report examples/review_queue_manifest.json
+
+      - name: Render handoff resume report
+        run: asset-pipeline-steward report examples/handoff_resume_manifest.json

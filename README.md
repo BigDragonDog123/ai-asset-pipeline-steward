@@ -23,7 +23,7 @@ This is an alpha repository scaffold. It is intentionally small:
 
 - a manifest validator for public-safe asset pipeline fixtures;
 - a maintenance report command for handoffs and release notes;
-- synthetic review, model-inventory, and review-queue example manifests;
+- synthetic review, model-inventory, review-queue, and handoff-resume example manifests;
 - a repo-local Codex skill at `.agents/skills/ai-asset-pipeline-steward`;
 - GitHub community health files and CI;
 - documentation for Codex for OSS readiness.
@@ -42,6 +42,7 @@ asset-pipeline-steward examples/fixture_manifest.json
 asset-pipeline-steward report examples/fixture_manifest.json
 asset-pipeline-steward examples/model_inventory_manifest.json
 asset-pipeline-steward examples/review_queue_manifest.json
+asset-pipeline-steward examples/handoff_resume_manifest.json
 python -m unittest discover -s tests
 ```
 
@@ -75,6 +76,8 @@ See `examples/fixture_manifest.json` for a minimal example.
 See `examples/model_inventory_manifest.json` for a public-safe model inventory and smoke-gate example.
 
 See `examples/review_queue_manifest.json` for a public-safe review queue and handoff example.
+
+See `examples/handoff_resume_manifest.json` for a public-safe paused-batch resume example with progress, blockers, known unknowns, and next action fields.
 
 ## Validation Rules
 
@@ -123,3 +126,4 @@ This project is being prepared as a candidate open-source direction. OpenAI's Co
 
 See `docs/codex-for-oss-readiness.md`.
 Use `docs/github-publish-runbook.md` and `docs/github-connector-setup.md` for the GitHub publishing and ChatGPT/Codex connector steps.
+Use `docs/maintainer-growth-plan.md` to track post-launch feedback, safe adoption signals, and next maintainer actions.
