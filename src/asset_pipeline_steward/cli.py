@@ -49,6 +49,55 @@ MODEL_WEIGHT_EXTENSIONS = (
     ".bin",
 )
 
+REPO_EXCLUDED_DIRS = {
+    ".git",
+    "__pycache__",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+    "build",
+    "dist",
+    "htmlcov",
+}
+
+SENSITIVE_REPO_FILENAMES = {
+    ".env",
+    "id_ed25519",
+    "id_rsa",
+}
+
+TEXT_FILE_EXTENSIONS = {
+    "",
+    ".cfg",
+    ".ini",
+    ".json",
+    ".md",
+    ".py",
+    ".toml",
+    ".txt",
+    ".yaml",
+    ".yml",
+}
+
+HIGH_CONFIDENCE_CONTENT_PATTERNS = (
+    ("OpenAI-style API key", re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b")),
+    ("GitHub token", re.compile(r"\bgh[pousr]_[A-Za-z0-9_]{20,}\b")),
+    (
+        "secret assignment",
+        re.compile(
+            r"(?i)\b(api[_-]?key|auth[_-]?token|password|secret|token)\s*=\s*['\"]?[^'\"\s]{8,}"
+        ),
+    ),
+    (
+        "private Windows user path",
+        re.compile(r"C:\\Users\\(?!example\b)[A-Za-z0-9_.-]+|C:/Users/(?!example\b)[A-Za-z0-9_.-]+"),
+    ),
+    (
+        "private E drive path",
+        re.compile(r"\b" + "E:" + r"\\[A-Za-z0-9_.-]|\b" + "E:" + r"/[A-Za-z0-9_.-]"),
+    ),
+)
+
 
 SCHEMA_ID = (
     "https://raw.githubusercontent.com/BigDragonDog123/"
@@ -402,6 +451,90 @@ def has_blockers(findings: Iterable[Finding]) -> bool:
     return any(finding.severity == "blocker" for finding in findings)
 
 
+def scan_repository(root: Path) -> list[Finding]:
+    root = root.resolve()
+    if not root.exists():
+        return [Finding("blocker", str(root), "repo scan path does not exist")]
+
+    findings: list[Finding] = []
+    for path in iter_repo_files(root):
+        rel_path = relative_display_path(root, path)
+        lower_name = path.name.lower()
+
+        if lower_name in SENSITIVE_REPO_FILENAMES or lower_name.startswith(".env."):
+            findings.append(
+                Finding("blocker", rel_path, "sensitive file name should not be public")
+            )
+
+        if path.suffix.lower() in MODEL_WEIGHT_EXTENSIONS:
+            findings.append(
+                Finding("blocker", rel_path, "model weight file should not be public")
+            )
+
+        content = read_text_for_scan(path)
+        if content is None:
+            continue
+
+        for message, pattern in HIGH_CONFIDENCE_CONTENT_PATTERNS:
+            match = pattern.search(content)
+            if match:
+                findings.append(
+                    Finding("blocker", rel_path, f"{message} found in file content")
+                )
+                break
+
+    return findings
+
+
+def iter_repo_files(root: Path) -> Iterable[Path]:
+    if root.is_file():
+        yield root
+        return
+
+    for path in root.rglob("*"):
+        if path.is_dir() or should_skip_repo_path(path):
+            continue
+        yield path
+
+
+def should_skip_repo_path(path: Path) -> bool:
+    return any(
+        part in REPO_EXCLUDED_DIRS or part.endswith(".egg-info") for part in path.parts
+    )
+
+
+def relative_display_path(root: Path, path: Path) -> str:
+    try:
+        return path.relative_to(root).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
+def read_text_for_scan(path: Path) -> str | None:
+    if path.suffix.lower() not in TEXT_FILE_EXTENSIONS:
+        return None
+    try:
+        data = path.read_bytes()
+    except OSError:
+        return None
+    if len(data) > 1_000_000 or b"\x00" in data:
+        return None
+    try:
+        return data.decode("utf-8")
+    except UnicodeDecodeError:
+        return data.decode("utf-8", errors="ignore")
+
+
+def format_repo_scan_report(root: Path, findings: list[Finding]) -> str:
+    if not findings:
+        return f"OK: repo scan passed high-confidence public-safety checks for {root}"
+
+    lines = [f"Repo scan findings for {root}:"]
+    for finding in findings:
+        lines.append(f"- {finding.severity.upper()} {finding.path}: {finding.message}")
+    return "\n".join(lines)
+
+
 def build_maintenance_report(
     path: Path, data: dict[str, Any], findings: list[Finding]
 ) -> str:
@@ -532,7 +665,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "command_or_manifest",
-        help="Manifest path, or command: validate/report/schema",
+        help="Manifest path, or command: validate/report/schema/repo-scan",
     )
     parser.add_argument("manifest", nargs="?", type=Path, help="Path to manifest JSON")
     parser.add_argument("--json", action="store_true", help="Print JSON report")
@@ -547,6 +680,20 @@ def main(argv: list[str] | None = None) -> int:
     if command == "schema":
         print(json.dumps(build_manifest_schema(), indent=2, sort_keys=True))
         return 0
+
+    if command == "repo-scan":
+        scan_root = manifest_path or Path(".")
+        findings = scan_repository(scan_root)
+        if args.json:
+            payload = {
+                "root": str(scan_root),
+                "ok": not has_blockers(findings),
+                "findings": [asdict(finding) for finding in findings],
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(format_repo_scan_report(scan_root, findings))
+        return 1 if has_blockers(findings) else 0
 
     try:
         if manifest_path is None:
@@ -579,6 +726,8 @@ def resolve_command(
         if manifest is not None:
             raise SystemExit("schema does not accept a manifest path")
         return command_or_manifest, None
+    if command_or_manifest == "repo-scan":
+        return command_or_manifest, manifest or Path(".")
     if command_or_manifest in {"validate", "report"}:
         if manifest is None:
             raise SystemExit(f"{command_or_manifest} requires a manifest path")

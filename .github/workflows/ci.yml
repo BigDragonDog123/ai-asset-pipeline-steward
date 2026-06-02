@@ -23,6 +23,9 @@ jobs:
       - name: Print manifest schema
         run: asset-pipeline-steward schema
 
+      - name: Scan repository public safety
+        run: asset-pipeline-steward repo-scan .
+
       - name: Run tests
         run: python -m unittest discover -s tests
 

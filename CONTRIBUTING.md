@@ -16,6 +16,7 @@ Run:
 
 ```bash
 python -m unittest discover -s tests
+python -m asset_pipeline_steward.cli repo-scan .
 ```
 
 For manifest changes, also run:

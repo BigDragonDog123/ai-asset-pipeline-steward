@@ -18,6 +18,7 @@ from asset_pipeline_steward.cli import (
     build_manifest_schema,
     load_manifest,
     main,
+    scan_repository,
     validate_manifest,
 )
 
@@ -116,6 +117,38 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertEqual(0, exit_code)
         self.assertEqual("AI Asset Pipeline Steward Manifest", schema["title"])
         self.assertIn("handoff", schema["required"])
+
+    def test_repo_scan_current_repo_passes(self) -> None:
+        findings = scan_repository(ROOT)
+
+        self.assertEqual([], findings)
+
+    def test_repo_scan_blocks_sensitive_file_and_api_key(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / ".env"
+            fake_key = "s" + "k-" + "a" * 40
+            path.write_text("API_KEY=" + fake_key, encoding="utf-8")
+
+            findings = scan_repository(Path(tmpdir))
+
+        self.assertTrue(any(".env" == finding.path for finding in findings))
+        self.assertTrue(any("API key" in finding.message for finding in findings))
+
+    def test_repo_scan_blocks_model_weight_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "example.safetensors"
+            path.write_text("placeholder", encoding="utf-8")
+
+            findings = scan_repository(Path(tmpdir))
+
+        self.assertTrue(any("model weight" in finding.message for finding in findings))
+
+    def test_repo_scan_command_returns_zero_for_current_repo(self) -> None:
+        with redirect_stdout(StringIO()) as output:
+            exit_code = main(["repo-scan", str(ROOT)])
+
+        self.assertEqual(0, exit_code)
+        self.assertIn("repo scan passed", output.getvalue())
 
     def test_cli_returns_nonzero_for_unsafe_manifest(self) -> None:
         manifest = load_manifest(ROOT / "examples" / "fixture_manifest.json")

@@ -5,6 +5,7 @@
 Initial public scaffold prepared locally.
 
 - Added public-safe manifest validation.
+- Added repository public-safety scanning.
 - Added JSON Schema output and a checked-in manifest schema.
 - Added maintainer report generation from a manifest.
 - Added synthetic review, model-inventory, and review-queue manifests.

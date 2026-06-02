@@ -2,6 +2,18 @@
 
 These examples use only the synthetic fixture manifest.
 
+## Scan Repository Public Safety
+
+```bash
+asset-pipeline-steward repo-scan .
+```
+
+Expected output:
+
+```text
+OK: repo scan passed high-confidence public-safety checks for .
+```
+
 ## Print The Manifest Schema
 
 ```bash

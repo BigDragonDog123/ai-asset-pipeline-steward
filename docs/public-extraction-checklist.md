@@ -34,6 +34,7 @@ Before publishing:
 
 ```bash
 python -m unittest discover -s tests
+asset-pipeline-steward repo-scan .
 python -m asset_pipeline_steward.cli examples/fixture_manifest.json
 rg -n "C:\\\\|E:\\\\|/Users/|AppData|token|secret|password|private_key|\\.env" .
 ```

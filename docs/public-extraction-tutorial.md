@@ -66,9 +66,10 @@ Before committing, run:
 
 ```bash
 python -m unittest discover -s tests
+asset-pipeline-steward repo-scan .
 asset-pipeline-steward examples/fixture_manifest.json
 asset-pipeline-steward examples/model_inventory_manifest.json
 asset-pipeline-steward examples/review_queue_manifest.json
 ```
 
-Then scan for private paths and secret-like strings using the command in `docs/public-extraction-checklist.md`.
+Then use `docs/public-extraction-checklist.md` for any additional manual review.

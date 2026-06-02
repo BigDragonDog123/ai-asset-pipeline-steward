@@ -17,6 +17,7 @@ From a fresh clone:
 ```bash
 python -m pip install -e .
 asset-pipeline-steward schema
+asset-pipeline-steward repo-scan .
 asset-pipeline-steward examples/fixture_manifest.json
 asset-pipeline-steward examples/model_inventory_manifest.json
 asset-pipeline-steward examples/review_queue_manifest.json
