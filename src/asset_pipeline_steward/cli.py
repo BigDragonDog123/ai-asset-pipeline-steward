@@ -13,6 +13,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Iterable
 from urllib.error import HTTPError, URLError
+from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 
@@ -1044,6 +1045,197 @@ def collect_public_evidence(
     return evidence, findings
 
 
+def validate_external_feedback_url(feedback_url: str) -> list[Finding]:
+    findings: list[Finding] = []
+    parsed = urlparse(feedback_url)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        return [
+            Finding(
+                "blocker",
+                "external_feedback_url",
+                "feedback URL must be an absolute http(s) URL",
+                feedback_url,
+            )
+        ]
+
+    host = parsed.netloc.lower()
+    if host in {"localhost", "127.0.0.1"} or host.startswith("127."):
+        findings.append(
+            Finding("blocker", "external_feedback_url", "feedback URL is not public", feedback_url)
+        )
+    if "private-user-images.githubusercontent.com" in host:
+        findings.append(
+            Finding(
+                "blocker",
+                "external_feedback_url",
+                "private GitHub attachment URLs are not public evidence",
+                feedback_url,
+            )
+        )
+    if any(pattern.search(feedback_url) for pattern in PRIVATE_PATH_PATTERNS):
+        findings.append(
+            Finding(
+                "blocker",
+                "external_feedback_url",
+                "feedback URL appears to contain a private local path",
+                feedback_url,
+            )
+        )
+    if parsed.query and re.search(
+        r"(?i)(api[_-]?key|auth[_-]?token|password|private_key|secret|token|signature|sig)=",
+        parsed.query,
+    ):
+        findings.append(
+            Finding(
+                "blocker",
+                "external_feedback_url",
+                "feedback URL query appears to contain a secret or signed token",
+                feedback_url,
+            )
+        )
+    for label, pattern in HIGH_CONFIDENCE_CONTENT_PATTERNS:
+        if pattern.search(feedback_url):
+            findings.append(
+                Finding(
+                    "blocker",
+                    "external_feedback_url",
+                    f"feedback URL appears to contain {label}",
+                    feedback_url,
+                )
+            )
+    return findings
+
+
+def github_feedback_api_url(feedback_url: str) -> str | None:
+    parsed = urlparse(feedback_url)
+    if parsed.scheme not in {"http", "https"} or parsed.netloc.lower() != "github.com":
+        return None
+
+    parts = [part for part in parsed.path.strip("/").split("/") if part]
+    if len(parts) < 4 or parts[2] not in {"issues", "pull"} or not parts[3].isdigit():
+        return None
+
+    owner, repo, kind, number = parts[:4]
+    if parsed.fragment.startswith("issuecomment-"):
+        comment_id = parsed.fragment.removeprefix("issuecomment-")
+        if comment_id.isdigit():
+            return f"https://api.github.com/repos/{owner}/{repo}/issues/comments/{comment_id}"
+    if kind == "issues":
+        return f"https://api.github.com/repos/{owner}/{repo}/issues/{number}"
+    return None
+
+
+def check_external_feedback_author(
+    feedback_url: str,
+    maintainer_login: str,
+    fetcher: Any = fetch_github_json,
+) -> list[Finding]:
+    api_url = github_feedback_api_url(feedback_url)
+    if api_url is None:
+        return [
+            Finding(
+                "warn",
+                "external_feedback_url.author",
+                "feedback author cannot be automatically verified for this URL",
+            )
+        ]
+
+    try:
+        payload = fetcher(api_url)
+    except HTTPError as error:
+        return [
+            Finding(
+                "blocker",
+                "external_feedback_url.author",
+                f"GitHub feedback author check failed: HTTP {error.code}",
+            )
+        ]
+    except (OSError, URLError, json.JSONDecodeError) as error:
+        return [
+            Finding(
+                "blocker",
+                "external_feedback_url.author",
+                f"GitHub feedback author check failed: {error}",
+            )
+        ]
+
+    if not isinstance(payload, dict):
+        return [
+            Finding(
+                "blocker",
+                "external_feedback_url.author",
+                "GitHub feedback response was not an object",
+            )
+        ]
+    user = payload.get("user")
+    login = string_value(user.get("login")) if isinstance(user, dict) else ""
+    if not login:
+        return [
+            Finding(
+                "blocker",
+                "external_feedback_url.author",
+                "GitHub feedback response did not include an author",
+            )
+        ]
+    if login.lower() == maintainer_login.lower():
+        return [
+            Finding(
+                "blocker",
+                "external_feedback_url.author",
+                "feedback URL is authored by the maintainer, not an external reviewer",
+                login,
+            )
+        ]
+    return []
+
+
+def record_external_feedback(
+    root: Path,
+    feedback_url: str,
+    fetcher: Any = fetch_github_json,
+) -> tuple[dict[str, Any], list[Finding]]:
+    root = root.resolve()
+    data, checks = load_adoption_evidence(root)
+    findings = [
+        Finding(check.status, check.name, check.message)
+        for check in checks
+        if check.status == "blocker"
+    ]
+    if data is None:
+        return {}, findings
+
+    url = feedback_url.strip()
+    findings.extend(validate_external_feedback_url(url))
+    maintainer_login = infer_public_repository(root).split("/", 1)[0]
+    findings.extend(check_external_feedback_author(url, maintainer_login, fetcher))
+    if has_blockers(findings):
+        return data, findings
+
+    existing_urls = [
+        item.strip()
+        for item in list_value(data.get("external_feedback_urls"))
+        if isinstance(item, str) and item.strip()
+    ]
+    if url not in existing_urls:
+        existing_urls.append(url)
+    data["external_feedback_urls"] = existing_urls
+    data["status_date"] = dt.date.today().isoformat()
+
+    notes = [
+        item
+        for item in list_value(data.get("notes"))
+        if isinstance(item, str) and item.strip()
+    ]
+    note = "External feedback URLs must stay public-safe and reviewer-accessible."
+    if note not in notes:
+        notes.append(note)
+    data["notes"] = notes
+
+    path = root / ADOPTION_EVIDENCE_FILE
+    path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    return data, findings
+
+
 def extract_html_urls(payload: Any) -> list[str]:
     if not isinstance(payload, list):
         return []
@@ -1112,6 +1304,33 @@ def format_public_evidence_report(
             lines.append(
                 f"- {finding.severity.upper()} {finding.path}: {finding.message}"
             )
+    return "\n".join(lines)
+
+
+def format_record_feedback_report(
+    evidence: dict[str, Any], findings: list[Finding], feedback_url: str
+) -> str:
+    lines = ["# External Feedback Recording", ""]
+    for finding in findings:
+        lines.append(f"- {finding.severity.upper()} {finding.path}: {finding.message}")
+    if has_blockers(findings):
+        lines.extend(["", "No evidence file changes were written."])
+    else:
+        urls = list_value(evidence.get("external_feedback_urls"))
+        lines.extend(
+            [
+                f"- RECORDED external feedback URL: {feedback_url}",
+                f"- Total external feedback URLs: {len(urls)}",
+                "",
+                "Next checks:",
+                "",
+                "```bash",
+                "asset-pipeline-steward evidence .",
+                "asset-pipeline-steward readiness .",
+                "asset-pipeline-steward application .",
+                "```",
+            ]
+        )
     return "\n".join(lines)
 
 
@@ -1301,10 +1520,11 @@ def build_parser() -> argparse.ArgumentParser:
         "command_or_manifest",
         help=(
             "Manifest path, or command: validate/report/schema/repo-scan/readiness/"
-            "evidence/collect-evidence/application/starter-issues"
+            "evidence/collect-evidence/record-feedback/application/starter-issues"
         ),
     )
-    parser.add_argument("manifest", nargs="?", type=Path, help="Path to manifest JSON")
+    parser.add_argument("manifest", nargs="?", help="Path to manifest JSON or feedback URL")
+    parser.add_argument("extra", nargs="?", help="Feedback URL for record-feedback")
     parser.add_argument("--json", action="store_true", help="Print JSON report")
     return parser
 
@@ -1312,7 +1532,27 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
-    command, manifest_path = resolve_command(args.command_or_manifest, args.manifest)
+
+    if args.command_or_manifest == "record-feedback":
+        root, feedback_url = resolve_record_feedback_args(args.manifest, args.extra)
+        evidence, findings = record_external_feedback(root, feedback_url)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": not has_blockers(findings),
+                "evidence": evidence,
+                "findings": [asdict(finding) for finding in findings],
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(format_record_feedback_report(evidence, findings, feedback_url))
+        return 1 if has_blockers(findings) else 0
+
+    if args.extra is not None:
+        raise SystemExit("unexpected extra argument")
+
+    manifest_arg = Path(args.manifest) if args.manifest is not None else None
+    command, manifest_path = resolve_command(args.command_or_manifest, manifest_arg)
 
     if command == "schema":
         print(json.dumps(build_manifest_schema(), indent=2, sort_keys=True))
@@ -1446,6 +1686,8 @@ def resolve_command(
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "collect-evidence":
         return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "record-feedback":
+        raise SystemExit("record-feedback requires a feedback URL")
     if command_or_manifest == "application":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "starter-issues":
@@ -1457,6 +1699,18 @@ def resolve_command(
     if manifest is not None:
         raise SystemExit("unexpected extra manifest path")
     return "validate", Path(command_or_manifest)
+
+
+def resolve_record_feedback_args(
+    manifest_or_url: str | None, feedback_url: str | None
+) -> tuple[Path, str]:
+    if manifest_or_url is None:
+        raise SystemExit("record-feedback requires a feedback URL")
+    if feedback_url is None:
+        if manifest_or_url.startswith(("http://", "https://")):
+            return Path("."), manifest_or_url
+        raise SystemExit("record-feedback requires a feedback URL")
+    return Path(manifest_or_url), feedback_url
 
 
 if __name__ == "__main__":

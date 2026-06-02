@@ -36,6 +36,7 @@ This is an alpha repository scaffold. It is intentionally small:
 - synthetic review, model-inventory, review-queue, and handoff-resume example manifests;
 - a repo-local Codex skill at `.agents/skills/ai-asset-pipeline-steward`;
 - GitHub community health files and CI;
+- a command for recording external feedback links without committing private data;
 - documentation for Codex for OSS readiness.
 
 ## Quickstart
@@ -141,6 +142,12 @@ https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/new?template
 See `docs/public-feedback-request.md` for a short request that can be shared with reviewers.
 Use `docs/feedback-outreach-kit.md` for ready-to-send reviewer requests and evidence rules.
 See `docs/reviewer-brief.md` for a one-page guide to what reviewers should try first.
+
+After a real public feedback URL exists, record it with:
+
+```bash
+asset-pipeline-steward record-feedback https://example.com/public-feedback-url
+```
 
 ## Codex For OSS Readiness
 

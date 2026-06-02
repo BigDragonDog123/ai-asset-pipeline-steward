@@ -39,7 +39,12 @@ Useful links:
 
 After a public feedback link exists:
 
-1. Add it to `external_feedback_urls` in `docs/adoption-evidence.json`.
+1. Record it:
+
+```bash
+asset-pipeline-steward record-feedback https://example.com/public-feedback-url
+```
+
 2. Re-run:
 
 ```bash

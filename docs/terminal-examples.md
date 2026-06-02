@@ -41,6 +41,22 @@ asset-pipeline-steward collect-evidence .
 Expected output includes a JSON block with the public repository URL, recent CI run URLs, release URLs, issue URLs, pull request URLs, stars, and forks. Before the repository is public, this command reports a blocker.
 If GitHub returns a rate-limit `403`, set `GITHUB_TOKEN` to a token with public repository read access and rerun the command.
 
+## Record External Feedback
+
+Use this after someone other than the maintainer leaves a public feedback link:
+
+```bash
+asset-pipeline-steward record-feedback https://example.com/public-feedback-url
+```
+
+Expected behavior: updates `docs/adoption-evidence.json` with the feedback URL, unless the URL is not public-safe or is a GitHub issue/comment authored by the maintainer.
+
+You can also pass an explicit repository root:
+
+```bash
+asset-pipeline-steward record-feedback . https://example.com/public-feedback-url
+```
+
 ## Render Application Packet
 
 ```bash

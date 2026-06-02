@@ -129,8 +129,13 @@ A feedback link counts when all are true:
 
 ## After Feedback Arrives
 
-1. Add the public URL to `external_feedback_urls` in `docs/adoption-evidence.json`.
-2. Update `stars` and `forks` to current public GitHub values.
+1. Record the public URL:
+
+```bash
+asset-pipeline-steward record-feedback https://example.com/public-feedback-url
+```
+
+2. Update `stars` and `forks` to current public GitHub values if they changed.
 3. Re-run:
 
 ```bash

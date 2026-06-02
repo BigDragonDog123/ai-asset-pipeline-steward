@@ -27,6 +27,7 @@ from asset_pipeline_steward.cli import (
     load_starter_issues,
     load_manifest,
     main,
+    record_external_feedback,
     scan_repository,
     validate_manifest,
 )
@@ -284,6 +285,76 @@ class ManifestValidationTests(unittest.TestCase):
 
         self.assertEqual({}, evidence)
         self.assertTrue(any(finding.severity == "blocker" for finding in findings))
+
+    def test_record_external_feedback_adds_non_maintainer_github_issue(self) -> None:
+        def fake_fetcher(url: str) -> object:
+            self.assertIn("/issues/9", url)
+            return {"user": {"login": "external-reviewer"}}
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            docs = Path(tmpdir) / "docs"
+            docs.mkdir()
+            evidence_path = docs / "adoption-evidence.json"
+            evidence_path.write_text(
+                json.dumps(
+                    {
+                        "status_date": "2026-06-02",
+                        "public_repository_url": (
+                            "https://github.com/BigDragonDog123/"
+                            "ai-asset-pipeline-steward"
+                        ),
+                        "external_feedback_urls": [],
+                        "notes": [],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            url = "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/issues/9"
+            evidence, findings = record_external_feedback(Path(tmpdir), url, fake_fetcher)
+
+            self.assertFalse(any(finding.severity == "blocker" for finding in findings))
+            self.assertIn(url, evidence["external_feedback_urls"])
+            written = json.loads(evidence_path.read_text(encoding="utf-8"))
+            self.assertIn(url, written["external_feedback_urls"])
+
+    def test_record_external_feedback_blocks_maintainer_github_comment(self) -> None:
+        def fake_fetcher(url: str) -> object:
+            self.assertIn("/issues/comments/4601738454", url)
+            return {"user": {"login": "BigDragonDog123"}}
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            docs = Path(tmpdir) / "docs"
+            docs.mkdir()
+            evidence_path = docs / "adoption-evidence.json"
+            evidence_path.write_text(
+                json.dumps(
+                    {
+                        "status_date": "2026-06-02",
+                        "public_repository_url": (
+                            "https://github.com/BigDragonDog123/"
+                            "ai-asset-pipeline-steward"
+                        ),
+                        "external_feedback_urls": [],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            url = (
+                "https://github.com/BigDragonDog123/ai-asset-pipeline-steward/"
+                "issues/8#issuecomment-4601738454"
+            )
+            evidence, findings = record_external_feedback(Path(tmpdir), url, fake_fetcher)
+
+            self.assertTrue(any(finding.severity == "blocker" for finding in findings))
+            self.assertNotIn(url, evidence["external_feedback_urls"])
+            written = json.loads(evidence_path.read_text(encoding="utf-8"))
+            self.assertEqual([], written["external_feedback_urls"])
+
+    def test_record_feedback_command_requires_feedback_url(self) -> None:
+        with self.assertRaises(SystemExit):
+            main(["record-feedback", str(ROOT)])
 
     def test_application_packet_loads_and_respects_limits(self) -> None:
         packet, findings = load_application_packet(ROOT)
