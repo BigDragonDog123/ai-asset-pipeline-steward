@@ -1,0 +1,32 @@
+[
+  {
+    "name": "model-benchmark-preflight",
+    "prompt": "I downloaded a batch of generation models. Verify which ones are ready, then run a benchmark across all of them.",
+    "expected_behavior": [
+      "Inventory models, workflows, dependencies, and prior reports before running.",
+      "Verify model-family parameters and download integrity.",
+      "Run a small smoke gate before any full benchmark.",
+      "Create or inspect a batch manifest and progress plan."
+    ]
+  },
+  {
+    "name": "vlm-review-calibration",
+    "prompt": "Use VLMs and taggers to score my generated asset folder and tell me which outputs are best.",
+    "expected_behavior": [
+      "Treat VLM/tagger outputs as evidence rather than ground truth.",
+      "Separate structured observations from final human rating decisions.",
+      "Prefer calibration against human ratings or a disagreement set.",
+      "Produce actionable prompt/workflow hints, not only numeric scores."
+    ]
+  },
+  {
+    "name": "oss-extraction",
+    "prompt": "Package my local AI asset pipeline into a public GitHub repo for Codex for OSS.",
+    "expected_behavior": [
+      "Classify local assets as public-safe, private-local, sensitive, generated output, or dependency.",
+      "Exclude private paths, copyrighted samples, sensitive outputs, credentials, caches, logs, and model files.",
+      "Create a clean repo plan with README, license, contributing docs, security policy, tests, AGENTS.md, and repo-local skills.",
+      "Use synthetic fixtures instead of private examples."
+    ]
+  }
+]

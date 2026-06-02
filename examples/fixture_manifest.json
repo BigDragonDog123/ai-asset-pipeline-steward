@@ -1,0 +1,49 @@
+{
+  "project": {
+    "name": "synthetic-review-demo",
+    "description": "A public-safe fixture for validating an AI asset pipeline manifest.",
+    "status": "ready-for-smoke-test",
+    "maintainer_intent": "Demonstrate inventory, review signals, and decision gates without private assets."
+  },
+  "assets": [
+    {
+      "id": "asset-001",
+      "kind": "synthetic-image-placeholder",
+      "path": "examples/synthetic/asset-001.placeholder",
+      "source": "synthetic",
+      "review_state": "queued"
+    }
+  ],
+  "models": [
+    {
+      "name": "example-generator",
+      "source": "external-reference-only",
+      "weights_included": false,
+      "verification": "not-required-for-synthetic-fixture"
+    }
+  ],
+  "workflows": [
+    {
+      "name": "review-smoke-gate",
+      "steps": ["inventory", "single-output-smoke", "human-review", "decision-gate"],
+      "preflight": ["manifest-valid", "public-safe-fixtures-only"]
+    }
+  ],
+  "review_signals": [
+    {
+      "name": "human-rating",
+      "role": "ground-truth",
+      "scale": "pass-fail"
+    },
+    {
+      "name": "automated-observation",
+      "role": "supporting-evidence",
+      "scale": "structured-notes"
+    }
+  ],
+  "decision_gate": {
+    "status": "ready",
+    "next_action": "Run a one-item smoke test before scaling.",
+    "known_unknowns": ["No real model or private output is included in this fixture."]
+  }
+}

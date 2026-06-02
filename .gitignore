@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Environments and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+
+# Local/editor
+.idea/
+.vscode/
+*.swp
+*.tmp
+*.bak
+
+# Logs and caches
+*.log
+logs/
+cache/
+caches/
+tmp/
+temp/
+
+# Generated outputs and large local artifacts
+outputs/
+generated/
+artifacts/
+checkpoints/
+models/
+weights/
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.onnx
+*.bin
+
+# Private or bulky media samples
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.mp4
+*.mov
+*.wav
+*.mp3
+
+!docs/**/*.png
+!examples/**/*.json
