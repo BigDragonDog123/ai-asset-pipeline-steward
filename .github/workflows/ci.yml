@@ -25,3 +25,6 @@ jobs:
 
       - name: Validate example manifest
         run: asset-pipeline-steward examples/fixture_manifest.json
+
+      - name: Render maintainer report
+        run: asset-pipeline-steward report examples/fixture_manifest.json

@@ -150,6 +150,99 @@ def has_blockers(findings: Iterable[Finding]) -> bool:
     return any(finding.severity == "blocker" for finding in findings)
 
 
+def build_maintenance_report(
+    path: Path, data: dict[str, Any], findings: list[Finding]
+) -> str:
+    project = data.get("project", {})
+    assets = list_or_empty(data.get("assets"))
+    models = list_or_empty(data.get("models"))
+    workflows = list_or_empty(data.get("workflows"))
+    review_signals = list_or_empty(data.get("review_signals"))
+    decision_gate = (
+        data.get("decision_gate") if isinstance(data.get("decision_gate"), dict) else {}
+    )
+
+    lines = [
+        "# Asset Pipeline Steward Report",
+        "",
+        f"Manifest: `{path}`",
+        f"Project: {safe_text(project.get('name'), 'unknown')}",
+        f"Status: {safe_text(project.get('status'), 'unknown')}",
+        "",
+        "## Inventory",
+        "",
+        f"- Assets: {len(assets)}",
+        f"- Models: {len(models)}",
+        f"- Workflows: {len(workflows)}",
+        f"- Review signals: {len(review_signals)}",
+        "",
+        "## Workflows",
+        "",
+    ]
+
+    if workflows:
+        for workflow in workflows:
+            if isinstance(workflow, dict):
+                name = safe_text(workflow.get("name"), "unnamed workflow")
+                preflight = ", ".join(map(str, workflow.get("preflight", [])))
+                suffix = f" | preflight: {preflight}" if preflight else ""
+                lines.append(f"- {name}{suffix}")
+            else:
+                lines.append(f"- {workflow}")
+    else:
+        lines.append("- None declared")
+
+    lines.extend(["", "## Review Signals", ""])
+    if review_signals:
+        for signal in review_signals:
+            if isinstance(signal, dict):
+                name = safe_text(signal.get("name"), "unnamed signal")
+                role = safe_text(signal.get("role"), "unspecified role")
+                lines.append(f"- {name}: {role}")
+            else:
+                lines.append(f"- {signal}")
+    else:
+        lines.append("- None declared")
+
+    lines.extend(
+        [
+            "",
+            "## Decision Gate",
+            "",
+            f"- Status: {safe_text(decision_gate.get('status'), 'unknown')}",
+            f"- Next action: {safe_text(decision_gate.get('next_action'), 'not specified')}",
+        ]
+    )
+
+    unknowns = decision_gate.get("known_unknowns")
+    if isinstance(unknowns, list) and unknowns:
+        lines.append("- Known unknowns:")
+        lines.extend(f"  - {unknown}" for unknown in unknowns)
+    else:
+        lines.append("- Known unknowns: none declared")
+
+    lines.extend(["", "## Validation", ""])
+    if findings:
+        for finding in findings:
+            lines.append(
+                f"- {finding.severity.upper()} {finding.path}: {finding.message}"
+            )
+    else:
+        lines.append("- Passed public-safety and schema checks.")
+
+    return "\n".join(lines)
+
+
+def list_or_empty(value: Any) -> list[Any]:
+    return value if isinstance(value, list) else []
+
+
+def safe_text(value: Any, fallback: str) -> str:
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    return fallback
+
+
 def format_human_report(path: Path, findings: list[Finding]) -> str:
     if not findings:
         return f"OK: {path} passed public-safety and schema checks."
@@ -167,7 +260,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Validate a public-safe AI asset pipeline manifest."
     )
-    parser.add_argument("manifest", type=Path, help="Path to manifest JSON")
+    parser.add_argument("command_or_manifest", help="Manifest path, or command: validate/report")
+    parser.add_argument("manifest", nargs="?", type=Path, help="Path to manifest JSON")
     parser.add_argument("--json", action="store_true", help="Print JSON report")
     return parser
 
@@ -175,24 +269,38 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    command, manifest_path = resolve_command(args.command_or_manifest, args.manifest)
 
     try:
-        manifest = load_manifest(args.manifest)
+        manifest = load_manifest(manifest_path)
         findings = validate_manifest(manifest)
     except (OSError, json.JSONDecodeError, ValueError) as error:
+        manifest = {}
         findings = [Finding("blocker", "$", str(error))]
 
-    if args.json:
+    if command == "report":
+        print(build_maintenance_report(manifest_path, manifest, findings))
+    elif args.json:
         payload = {
-            "manifest": str(args.manifest),
+            "manifest": str(manifest_path),
             "ok": not has_blockers(findings),
             "findings": [asdict(finding) for finding in findings],
         }
         print(json.dumps(payload, indent=2, sort_keys=True))
     else:
-        print(format_human_report(args.manifest, findings))
+        print(format_human_report(manifest_path, findings))
 
     return 1 if has_blockers(findings) else 0
+
+
+def resolve_command(command_or_manifest: str, manifest: Path | None) -> tuple[str, Path]:
+    if command_or_manifest in {"validate", "report"}:
+        if manifest is None:
+            raise SystemExit(f"{command_or_manifest} requires a manifest path")
+        return command_or_manifest, manifest
+    if manifest is not None:
+        raise SystemExit("unexpected extra manifest path")
+    return "validate", Path(command_or_manifest)
 
 
 if __name__ == "__main__":

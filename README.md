@@ -22,6 +22,7 @@ This repository turns that repeated maintenance pattern into a small package, a 
 This is an alpha repository scaffold. It is intentionally small:
 
 - a manifest validator for public-safe asset pipeline fixtures;
+- a maintenance report command for handoffs and release notes;
 - a synthetic example manifest;
 - a repo-local Codex skill at `.agents/skills/ai-asset-pipeline-steward`;
 - GitHub community health files and CI;
@@ -32,6 +33,7 @@ This is an alpha repository scaffold. It is intentionally small:
 ```bash
 python -m pip install -e .
 asset-pipeline-steward examples/fixture_manifest.json
+asset-pipeline-steward report examples/fixture_manifest.json
 python -m unittest discover -s tests
 ```
 
@@ -39,6 +41,7 @@ You can also run the validator without installing:
 
 ```bash
 python -m asset_pipeline_steward.cli examples/fixture_manifest.json
+python -m asset_pipeline_steward.cli report examples/fixture_manifest.json
 ```
 
 ## Manifest Shape

@@ -9,6 +9,7 @@ Status: complete locally.
 - README, license, contributing guide, security policy, code of conduct.
 - Repo-scoped Codex skill.
 - Manifest validator.
+- Maintenance report command.
 - Synthetic fixture manifest.
 - Unit tests and CI.
 - Codex for OSS readiness document.
@@ -20,7 +21,7 @@ Status: next.
 - Push the repository to GitHub.
 - Open 3 to 5 roadmap issues.
 - Add a `v0.1.0` release with a short changelog.
-- Add a terminal example showing manifest validation.
+- Add terminal examples showing manifest validation and maintainer report output.
 - Confirm GitHub community profile checklist is green.
 
 ## Milestone 3: Useful Maintainer Workflows
@@ -30,7 +31,7 @@ Status: planned.
 - Add manifest examples for model inventory, smoke gates, review queues, and handoffs.
 - Add a public-safe tutorial for extracting local workflows into synthetic fixtures.
 - Add validation rules for review signal separation and decision gates.
-- Add a small report command for maintainer handoffs.
+- Extend the report command with richer maintainer handoff sections.
 
 ## Milestone 4: Adoption Evidence
 
