@@ -30,6 +30,17 @@ asset-pipeline-steward evidence .
 
 Expected output before public launch includes warnings for missing public repo URL, release, CI run, issues, feedback, usage examples, stars, and forks.
 
+## Collect Public GitHub Evidence
+
+Use this after the repository exists on GitHub:
+
+```bash
+asset-pipeline-steward collect-evidence .
+```
+
+Expected output includes a JSON block with the public repository URL, recent CI run URLs, release URLs, issue URLs, pull request URLs, stars, and forks. Before the repository is public, this command reports a blocker.
+If GitHub returns a rate-limit `403`, set `GITHUB_TOKEN` to a token with public repository read access and rerun the command.
+
 ## Render Starter Issues
 
 ```bash

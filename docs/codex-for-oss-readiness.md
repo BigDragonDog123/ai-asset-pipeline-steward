@@ -47,7 +47,7 @@ Source:
 | Tests | In progress | `tests/test_cli.py` covers manifest validation, schema output, repo-scan, readiness checks, and unsafe path/model cases. |
 | Community health files | In progress | README, license, contribution, security, conduct, issue/PR templates, CI added locally. |
 | Local readiness checks | In progress | `asset-pipeline-steward readiness .` checks community files, schema, examples, repo-scan, git branch/status, and origin remote. |
-| Adoption evidence tracking | In progress | `docs/adoption-evidence.json` and `asset-pipeline-steward evidence .` track public repo URL, CI, release, issues, feedback, usage, stars, and forks. |
+| Adoption evidence tracking | In progress | `docs/adoption-evidence.json`, `asset-pipeline-steward evidence .`, and `asset-pipeline-steward collect-evidence .` track public repo URL, CI, release, issues, feedback, usage, stars, and forks. |
 | Public repository | Missing | The workspace has not yet been pushed to GitHub. |
 | GitHub connector authorization | Missing | Codex detects user `BigDragonDog123`, but no GitHub App installations or repositories are visible to the connector. |
 | Public adoption | Missing | No stars, downloads, releases, external users, or issue/PR history yet. |
@@ -79,7 +79,7 @@ Unknown:
 4. Add screenshots or terminal examples that show the validator and skill in action.
 5. Install/configure the ChatGPT/Codex GitHub app so Codex can see the repository.
 6. Run `asset-pipeline-steward readiness .` after the repo is pushed.
-7. Fill `docs/adoption-evidence.json` with public URLs as CI, releases, issues, and usage appear.
+7. Run `asset-pipeline-steward collect-evidence .` and fill `docs/adoption-evidence.json` with public URLs as CI, releases, issues, and usage appear.
 8. Use issues to track roadmap items and maintenance tasks.
 9. Gather adoption evidence: stars, forks, external feedback, usage examples, or integration into a real public workflow.
 10. Draft the Codex for OSS application only after the public repo has credible activity.

@@ -67,6 +67,7 @@ Record public proof in `docs/adoption-evidence.json`:
 Then run:
 
 ```powershell
+asset-pipeline-steward collect-evidence .
 asset-pipeline-steward evidence .
 asset-pipeline-steward readiness .
 ```

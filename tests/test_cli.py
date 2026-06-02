@@ -7,6 +7,7 @@ import unittest
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
+from urllib.error import HTTPError
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
@@ -18,6 +19,8 @@ from asset_pipeline_steward.cli import (
     build_evidence_report,
     build_maintenance_report,
     build_manifest_schema,
+    collect_public_evidence,
+    format_public_evidence_report,
     has_readiness_blockers,
     load_starter_issues,
     load_manifest,
@@ -194,6 +197,72 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertEqual(0, exit_code)
         self.assertIn("checks", payload)
         self.assertTrue(any(check["name"] == "evidence.issue_urls" for check in payload["checks"]))
+
+    def test_collect_public_evidence_with_fake_github_api(self) -> None:
+        def fake_fetcher(url: str) -> object:
+            if url.endswith("/BigDragonDog123/ai-asset-pipeline-steward"):
+                return {
+                    "html_url": "https://github.com/BigDragonDog123/ai-asset-pipeline-steward",
+                    "stargazers_count": 7,
+                    "forks_count": 2,
+                }
+            if "actions/runs" in url:
+                return {
+                    "workflow_runs": [
+                        {
+                            "html_url": (
+                                "https://github.com/BigDragonDog123/"
+                                "ai-asset-pipeline-steward/actions/runs/1"
+                            )
+                        }
+                    ]
+                }
+            if "releases" in url:
+                return [
+                    {
+                        "html_url": (
+                            "https://github.com/BigDragonDog123/"
+                            "ai-asset-pipeline-steward/releases/tag/v0.1.0"
+                        )
+                    }
+                ]
+            if "issues" in url:
+                return [
+                    {
+                        "html_url": (
+                            "https://github.com/BigDragonDog123/"
+                            "ai-asset-pipeline-steward/issues/1"
+                        )
+                    },
+                    {
+                        "html_url": (
+                            "https://github.com/BigDragonDog123/"
+                            "ai-asset-pipeline-steward/pull/2"
+                        ),
+                        "pull_request": {},
+                    },
+                ]
+            raise AssertionError(url)
+
+        evidence, findings = collect_public_evidence(ROOT, fake_fetcher)
+
+        self.assertEqual([], findings)
+        self.assertEqual(7, evidence["stars"])
+        self.assertEqual(2, evidence["forks"])
+        self.assertEqual(1, len(evidence["ci_run_urls"]))
+        self.assertEqual(1, len(evidence["release_urls"]))
+        self.assertEqual(1, len(evidence["issue_urls"]))
+        self.assertEqual(1, len(evidence["pull_request_urls"]))
+        self.assertIn("docs/adoption-evidence.json", format_public_evidence_report(evidence, []))
+
+    def test_collect_public_evidence_blocks_missing_repo(self) -> None:
+        def fake_fetcher(_url: str) -> object:
+            raise HTTPError(_url, 404, "Not Found", None, None)
+
+        evidence, findings = collect_public_evidence(ROOT, fake_fetcher)
+
+        self.assertEqual({}, evidence)
+        self.assertTrue(any(finding.severity == "blocker" for finding in findings))
 
     def test_starter_issues_file_loads(self) -> None:
         issues, findings = load_starter_issues(ROOT)

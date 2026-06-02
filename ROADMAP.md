@@ -12,6 +12,7 @@ Status: complete locally.
 - Repository public-safety scan command.
 - Local Codex for OSS readiness command.
 - Adoption evidence tracking command.
+- Public GitHub evidence collection command.
 - Starter issue export command.
 - GitHub publishing and connector setup guidance.
 - JSON Schema and schema command.

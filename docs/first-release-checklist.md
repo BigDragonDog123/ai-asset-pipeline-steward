@@ -58,5 +58,6 @@ This release uses only synthetic examples and does not include model files, priv
 
 - Open the starter issues in docs/starter-issues.md.
 - Link the release in docs/codex-for-oss-readiness.md.
+- Run `asset-pipeline-steward collect-evidence .` to gather public GitHub URLs.
 - Record public URLs in docs/adoption-evidence.json.
 - Wait for at least some public activity before submitting the Codex for OSS form.

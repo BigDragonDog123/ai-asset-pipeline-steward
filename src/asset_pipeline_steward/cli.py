@@ -3,13 +3,17 @@
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
+import os
 import re
 import subprocess
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Iterable
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
 
 REQUIRED_TOP_LEVEL_KEYS = (
@@ -73,6 +77,7 @@ TEXT_FILE_EXTENSIONS = {
     ".ini",
     ".json",
     ".md",
+    ".ps1",
     ".py",
     ".toml",
     ".txt",
@@ -105,6 +110,7 @@ EXAMPLE_MANIFESTS = (
 SCHEMA_FILE = "schemas/asset-pipeline-manifest.schema.json"
 ADOPTION_EVIDENCE_FILE = "docs/adoption-evidence.json"
 STARTER_ISSUES_FILE = "docs/starter-issues.json"
+DEFAULT_PUBLIC_REPOSITORY = "BigDragonDog123/ai-asset-pipeline-steward"
 
 HIGH_CONFIDENCE_CONTENT_PATTERNS = (
     ("OpenAI-style API key", re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b")),
@@ -795,6 +801,184 @@ def build_evidence_report(root: Path) -> tuple[list[ReadinessCheck], str]:
     return checks, "\n".join(lines)
 
 
+def infer_public_repository(root: Path) -> str:
+    data, _checks = load_adoption_evidence(root)
+    repo_url = string_value(data.get("public_repository_url")) if data else ""
+    match = re.search(r"github\.com/([^/\s]+)/([^/\s#?]+)", repo_url)
+    if match:
+        return f"{match.group(1)}/{match.group(2).removesuffix('.git')}"
+    return DEFAULT_PUBLIC_REPOSITORY
+
+
+def fetch_github_json(url: str) -> Any:
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "ai-asset-pipeline-steward",
+    }
+    github_access_value = os.getenv("GITHUB_TOKEN")
+    if github_access_value:
+        headers["Authorization"] = f"Bearer {github_access_value}"
+    request = Request(
+        url,
+        headers=headers,
+    )
+    with urlopen(request, timeout=15) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def collect_public_evidence(
+    root: Path,
+    fetcher: Any = fetch_github_json,
+) -> tuple[dict[str, Any], list[Finding]]:
+    repository = infer_public_repository(root)
+    api_root = f"https://api.github.com/repos/{repository}"
+    findings: list[Finding] = []
+
+    try:
+        repo = fetcher(api_root)
+    except HTTPError as error:
+        return {}, [
+            Finding(
+                "blocker",
+                repository,
+                f"GitHub repository API failed: HTTP {error.code}",
+            )
+        ]
+    except (OSError, URLError, json.JSONDecodeError) as error:
+        return {}, [
+            Finding("blocker", repository, f"GitHub repository API failed: {error}")
+        ]
+
+    if not isinstance(repo, dict):
+        return {}, [
+            Finding("blocker", repository, "GitHub repository response was not an object")
+        ]
+
+    evidence: dict[str, Any] = {
+        "status_date": dt.date.today().isoformat(),
+        "public_repository_url": string_value(repo.get("html_url")),
+        "ci_run_urls": [],
+        "release_urls": [],
+        "issue_urls": [],
+        "pull_request_urls": [],
+        "external_feedback_urls": [],
+        "usage_example_urls": [],
+        "stars": int_value(repo.get("stargazers_count")),
+        "forks": int_value(repo.get("forks_count")),
+        "notes": [
+            "Generated from public GitHub API data.",
+            "Review before copying into docs/adoption-evidence.json.",
+            "Add external feedback and usage examples manually when available.",
+        ],
+    }
+
+    optional_endpoints = (
+        (
+            "actions/runs?per_page=5",
+            "workflow_runs",
+            "ci_run_urls",
+            extract_workflow_run_urls,
+        ),
+        ("releases?per_page=5", None, "release_urls", extract_html_urls),
+        ("issues?state=all&per_page=20", None, "issue_urls", extract_issue_urls),
+        (
+            "issues?state=all&per_page=20",
+            None,
+            "pull_request_urls",
+            extract_pull_request_urls,
+        ),
+    )
+    cache: dict[str, Any] = {}
+    for endpoint, root_key, evidence_key, extractor in optional_endpoints:
+        url = f"{api_root}/{endpoint}"
+        try:
+            if endpoint not in cache:
+                cache[endpoint] = fetcher(url)
+            payload = cache[endpoint]
+            if root_key and isinstance(payload, dict):
+                payload = payload.get(root_key, [])
+            evidence[evidence_key] = extractor(payload)
+        except HTTPError as error:
+            findings.append(
+                Finding("warn", endpoint, f"GitHub API failed: HTTP {error.code}")
+            )
+        except (OSError, URLError, json.JSONDecodeError) as error:
+            findings.append(Finding("warn", endpoint, f"GitHub API failed: {error}"))
+
+    return evidence, findings
+
+
+def extract_html_urls(payload: Any) -> list[str]:
+    if not isinstance(payload, list):
+        return []
+    urls: list[str] = []
+    for item in payload:
+        if isinstance(item, dict):
+            url = string_value(item.get("html_url"))
+            if url:
+                urls.append(url)
+    return urls
+
+
+def extract_workflow_run_urls(payload: Any) -> list[str]:
+    return extract_html_urls(payload)
+
+
+def extract_issue_urls(payload: Any) -> list[str]:
+    if not isinstance(payload, list):
+        return []
+    urls: list[str] = []
+    for item in payload:
+        if isinstance(item, dict) and "pull_request" not in item:
+            url = string_value(item.get("html_url"))
+            if url:
+                urls.append(url)
+    return urls
+
+
+def extract_pull_request_urls(payload: Any) -> list[str]:
+    if not isinstance(payload, list):
+        return []
+    urls: list[str] = []
+    for item in payload:
+        if isinstance(item, dict) and "pull_request" in item:
+            url = string_value(item.get("html_url"))
+            if url:
+                urls.append(url)
+    return urls
+
+
+def format_public_evidence_report(
+    evidence: dict[str, Any], findings: list[Finding]
+) -> str:
+    if not evidence:
+        lines = ["# Public Evidence Collection"]
+        for finding in findings:
+            lines.append(f"- {finding.severity.upper()} {finding.path}: {finding.message}")
+        return "\n".join(lines)
+
+    lines = [
+        "# Public Evidence Collection",
+        "",
+        f"Repository: {evidence.get('public_repository_url') or 'unknown'}",
+        f"Stars: {evidence.get('stars', 0)}",
+        f"Forks: {evidence.get('forks', 0)}",
+        "",
+        "Copy reviewed values into `docs/adoption-evidence.json`:",
+        "",
+        "```json",
+        json.dumps(evidence, indent=2, sort_keys=True),
+        "```",
+    ]
+    if findings:
+        lines.extend(["", "Warnings:"])
+        for finding in findings:
+            lines.append(
+                f"- {finding.severity.upper()} {finding.path}: {finding.message}"
+            )
+    return "\n".join(lines)
+
+
 def load_starter_issues(root: Path) -> tuple[list[dict[str, Any]], list[Finding]]:
     path = root / STARTER_ISSUES_FILE
     if not path.exists():
@@ -979,7 +1163,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "command_or_manifest",
-        help="Manifest path, or command: validate/report/schema/repo-scan/readiness/evidence/starter-issues",
+        help=(
+            "Manifest path, or command: validate/report/schema/repo-scan/readiness/"
+            "evidence/collect-evidence/starter-issues"
+        ),
     )
     parser.add_argument("manifest", nargs="?", type=Path, help="Path to manifest JSON")
     parser.add_argument("--json", action="store_true", help="Print JSON report")
@@ -1037,6 +1224,21 @@ def main(argv: list[str] | None = None) -> int:
             print(report)
         return 1 if has_readiness_blockers(checks) else 0
 
+    if command == "collect-evidence":
+        root = manifest_path or Path(".")
+        evidence, findings = collect_public_evidence(root)
+        if args.json:
+            payload = {
+                "root": str(root),
+                "ok": not has_blockers(findings),
+                "evidence": evidence,
+                "findings": [asdict(finding) for finding in findings],
+            }
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print(format_public_evidence_report(evidence, findings))
+        return 1 if has_blockers(findings) else 0
+
     if command == "starter-issues":
         root = manifest_path or Path(".")
         issues, findings = load_starter_issues(root)
@@ -1088,6 +1290,8 @@ def resolve_command(
     if command_or_manifest == "readiness":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "evidence":
+        return command_or_manifest, manifest or Path(".")
+    if command_or_manifest == "collect-evidence":
         return command_or_manifest, manifest or Path(".")
     if command_or_manifest == "starter-issues":
         return command_or_manifest, manifest or Path(".")

@@ -56,8 +56,9 @@ The important rule: the ChatGPT/Codex GitHub app must be installed and configure
    asset-pipeline-steward starter-issues .
    ```
 5. Create release `v0.1.0`.
-6. Fill `docs/adoption-evidence.json` with the public repo URL, CI run URL, release URL, and starter issue URLs.
-7. Commit and push the updated adoption evidence file.
+6. Run `asset-pipeline-steward collect-evidence .` and use the output as a reviewed starting point.
+7. Fill `docs/adoption-evidence.json` with the public repo URL, CI run URL, release URL, and starter issue URLs.
+8. Commit and push the updated adoption evidence file.
 
 ## Do Not Publish Yet If
 
